@@ -1,0 +1,730 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Data;
+using System.Data.SqlClient;
+using System.Configuration;
+using ssc1200028_ssc_spacemanModel;
+using System.Text;
+using System.Net.Mail;
+
+
+public partial class ssc1200028_Home : System.Web.UI.Page
+{
+    protected void Page_Load(object sender, EventArgs e)
+    {
+
+    }
+
+    private void ShowExceptionMessage()
+    {
+        lblError.Text = "An an unknown error has occurred. Please contact Craig MacIvor and explain what you were doing and with which record(s).";
+        lblError.Visible = true;
+    }
+
+    protected void btnSearchSKU_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            if (String.IsNullOrEmpty(txtSearchSKU.Text))
+            {
+                lblError.Text = "Pleas enter a SKU or a .";
+                lblError.Visible = true;
+            }
+            else
+            {
+                //search Snapshots by the entered SKU here
+                using (ssc1200028_ssc_spacemanEntities1 context = new ssc1200028_ssc_spacemanEntities1())
+                {
+                    ssc1200028_AssortmentPlanningBL bl = new ssc1200028_AssortmentPlanningBL();
+                    ssc1200028_Search search = new ssc1200028_Search();
+                    //List<ssc1200028_Search> planograms = new List<ssc1200028_Search>();
+                    var results = search.SearchSnapshotsBySKU(txtSearchSKU.Text, context);
+                    if (results.Any())
+                    {
+                        gdvSnapshots.DataSource = results;
+                        gdvSnapshots.DataBind();
+                        lblError.Visible = false;
+                        gdvSnapshots.Visible = true;
+                        gdvSnapshots.SelectedRowStyle.Reset();
+                    }
+                    //there are no Snapshots by this SKU- need to check if this SKU is associated with any existing, valid (currently used) Planograms
+                    else
+                    {
+                        search.Planograms = search.SearchPlanogramsBySKU(context, txtSearchSKU.Text);
+                        if (search.Planograms.Any())
+                        {
+                            search.Planograms = search.SearchPlanogramsBySKU(context, txtSearchSKU.Text);
+                            CreateSnapshotPrompt(search.Planograms.FirstOrDefault().Key_id);
+                            PopulateSnapshotIDTextBox(search.Planograms.FirstOrDefault().Key_id);
+                            ddlPlanograms.SelectedValue = search.Planograms.FirstOrDefault().Key_id.ToString();
+                        }
+                        else
+                        {
+                            gdvSnapshots.Visible = false;
+                            lblError.Text = "There are no Planograms or Snapshots associated with this SKU. ";
+                            lblError.Visible = true;
+                            divAddSnapshot.Visible = false;
+                        }
+                    }
+                }
+            }
+        }
+        catch (Exception)
+        {
+            ShowExceptionMessage();
+        }
+    }
+
+    protected void Button1_Click(object sender, EventArgs e)
+    {
+        Response.Redirect("~/ssc1200028/ssc1200028_EditSnapshot.aspx");
+    }
+
+    private void BindGrid(int keyID)
+    {
+        ssc_spaceman_ASSORTMENT_CHANGE_SNAPSHOT snapshot = new ssc_spaceman_ASSORTMENT_CHANGE_SNAPSHOT();
+        using (ssc1200028_ssc_spacemanEntities1 context = new ssc1200028_ssc_spacemanEntities1())
+        {
+            var selectedSnapshots = snapshot.GetSnapshotByKeyID(keyID, context);
+            if (selectedSnapshots != null)
+            {
+                gdvSnapshots.DataSource = selectedSnapshots;
+                gdvSnapshots.DataBind();
+                gdvSnapshots.Visible = true;
+            }
+        }
+    }
+
+
+    private void BindGrid(List<ssc_spaceman_ASSORTMENT_CHANGE_SNAPSHOT> snapshots)
+    {
+        gdvSnapshots.DataSource = snapshots;
+        gdvSnapshots.DataBind();
+        gdvSnapshots.Visible = true;       
+    }
+
+    protected void btnSave_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            Page.Validate("NewSnapshot");
+            if (!Page.IsValid)
+            {
+                lblError.Text = "All fields are required.";
+                lblError.Visible = true;
+            }
+            else
+            {
+                if (String.IsNullOrWhiteSpace(txtSnapshotID.Text) && ddlSnapshotStatus.SelectedValue != "Please Select")
+                {
+                    lblError.Text = "All fields are required.";
+                    lblError.Visible = true;
+                }
+                else
+                {
+                    ssc1200027_Utilities util = new ssc1200027_Utilities();
+                    ssc1200028_AssortmentPlanningBL bl = new ssc1200028_AssortmentPlanningBL();
+                    int size;
+                    int keyid = Convert.ToInt32(ddlPlanograms.SelectedValue);
+                    using (ssc1200028_ssc_spacemanEntities1 context = new ssc1200028_ssc_spacemanEntities1())
+                    {
+                        int keyID = Convert.ToInt32(ddlPlanograms.SelectedValue);
+                        var snapshotName = (from s in context.PLANO_KEY
+                                            where s.Key_id == keyID
+                                            select s).SingleOrDefault();
+                        //this block is for editing a snapshot that was selected from the grid.
+                        if (Session["snapshotID"] != null)
+                        {
+
+                            int snapshotID = Convert.ToInt32(Session["snapshotID"]);
+                            var selectedSnapshot = (from c in context.ssc_assortment_change_snapshot
+                                                    where c.snapshot_id == snapshotID
+                                                    select c).SingleOrDefault();
+
+                            selectedSnapshot.snapshot_nbr = txtSnapshotID.Text;
+                            selectedSnapshot.snapshot_desc = snapshotName.Planogram.ToString();
+                            selectedSnapshot.snapshot_status = ddlSnapshotStatus.SelectedValue;
+                            selectedSnapshot.snapshot_location = ddlLocation.SelectedValue;
+                            Int32.TryParse(txtSize.Text, out size);
+                            selectedSnapshot.snapshot_size = size;
+                            selectedSnapshot.snapshot_season = ddlSeason.SelectedValue;
+                            selectedSnapshot.snapshot_buyer = ddlBuyer.SelectedValue;
+                            selectedSnapshot.snapshot_year = DateTime.Now.Year;
+                            context.SaveChanges();
+                            //BindGrid(Convert.ToInt32(ddlPlanograms.SelectedValue));
+                            BindGrid(bl.GetSnapshotsByValidKeyID(context, Convert.ToInt32(ddlPlanograms.SelectedValue)));
+                            lblError.Visible = false;
+                        }
+                    }
+                }
+            }
+        }
+        catch (Exception)
+        {
+            ShowExceptionMessage();
+        }
+    }
+
+    protected void ddlPlanograms_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        //try
+        //{
+            using (ssc1200028_ssc_spacemanEntities1 context = new ssc1200028_ssc_spacemanEntities1())
+            {
+                //ssc1200028_AssortmentPlanningBL bl = new ssc1200028_AssortmentPlanningBL();
+                ssc_spaceman_ASSORTMENT_CHANGE_SNAPSHOT dl = new ssc_spaceman_ASSORTMENT_CHANGE_SNAPSHOT();
+                int keyID = Convert.ToInt32(ddlPlanograms.SelectedValue);
+                txtKeyID.Text = ddlPlanograms.SelectedValue;
+                //ShowSelection(keyID);
+                ShowSelection(dl.GetSnapshotsByKeyID(context, keyID), keyID);
+                PopulateSnapshotIDTextBox(keyID);
+                txtPlanogramName.Text = "";
+                txtSearchSKU.Text = "";
+            }
+        //}
+        //catch (Exception)
+        //{
+        //    ShowExceptionMessage();
+        //}
+    }
+
+    private void HideSnapshotDetails()
+    {
+        divAddSnapshot.Visible = false;
+        btnNewSnapshot.Visible = false;
+        gdvSnapshots.Visible = false;
+    }
+
+    private void CreateSnapshotPrompt(int selectedKeyID)
+    {
+        divAddSnapshot.Visible = true;
+        lblError.Text = "There are currently no snapshots associated with this Planogram. If this is the Planogram you meant to select, please complete the fields below and click Save New to create a Snapshot for the selected Planogram.";
+        lblError.ForeColor = System.Drawing.Color.Blue;
+        lblError.Visible = true;
+        btnNewSnapshot.Visible = true;
+        //BindBuyerDropDown();
+        //txtSnapshotID.Text = DateTime.Now.ToString("MM-dd-yyyy");
+        gdvSnapshots.Visible = false;
+
+        PopulateDescriptionField(selectedKeyID);
+        txtSize.Text = "";
+        ddlLocation.SelectedValue = "Please Select";
+        ddlSeason.SelectedValue = "Please Select";
+        ddlSnapshotStatus.SelectedValue = "Please Select";
+        btnCreateNewSnapshot.Visible = false;
+        BindBuyerDropDown();
+    }
+
+    private void ShowSelection(List<ssc_spaceman_ASSORTMENT_CHANGE_SNAPSHOT> snapshotRecords, int keyid)
+    {
+        //BindGrid(Convert.ToInt32(keyID));
+        BindGrid(snapshotRecords);
+        //BindRepeater(Convert.ToInt32(ddlPlanograms.SelectedValue));
+        //txtKeyID.Text = ddlPlanograms.SelectedValue;
+
+        //query if snapshots exist for this keyID
+        //int selectedKeyID = Convert.ToInt32(keyID);
+        using (ssc1200028_ssc_spacemanEntities1 context = new ssc1200028_ssc_spacemanEntities1())
+        {
+
+            //var products = from c in context.ssc_assortment_change_snapshot
+            //               where c.snapshot_keyid == selectedKeyID
+            //               select c;
+            if (snapshotRecords.Any())
+            {
+                ClearDivAddSnapshot();
+            }
+            else
+            {
+                CreateSnapshotPrompt(keyid);
+            }
+        }
+    }
+
+    private void ClearDivAddSnapshot()
+    {
+        divAddSnapshot.Visible = false;
+        lblError.Visible = false;
+        btnNewSnapshot.Visible = false;
+        txtSnapshotID.Text = "";
+        txtDescription.Text = "";
+        BindBuyerDropDown();
+        btnCreateNewSnapshot.Visible = true;
+        gdvSnapshots.SelectedRowStyle.Reset();
+    }
+
+
+    private void PopulateDescriptionField(int keyID)
+    {
+        int selectedKeyID = Convert.ToInt32(keyID);
+        using (ssc1200028_ssc_spacemanEntities1 context = new ssc1200028_ssc_spacemanEntities1())
+        {
+            var snapshotName = (from s in context.PLANO_KEY
+                                where s.Key_id == selectedKeyID
+                                select s).SingleOrDefault();
+            if (snapshotName != null)
+            {
+                txtDescription.Text = snapshotName.Planogram;
+            }
+        }
+    }
+
+    /// <summary>
+    /// For the button label "Search by Key ID and/or Planogram Name"
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    protected void btnSearch_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            if (String.IsNullOrWhiteSpace(txtKeyID.Text) && String.IsNullOrWhiteSpace(txtPlanogramName.Text))
+            {
+                lblError.Text = "Please enter the key id or Planogram Name";
+                lblError.Visible = true;
+            }
+            else
+            {
+                ssc_spaceman_PLANO_KEY key = new ssc_spaceman_PLANO_KEY();
+                ssc1200028_AssortmentPlanningBL bl = new ssc1200028_AssortmentPlanningBL();
+                ssc_spaceman_ASSORTMENT_CHANGE_SNAPSHOT dl = new ssc_spaceman_ASSORTMENT_CHANGE_SNAPSHOT();
+                //if the user enters a key ID but not the Planogram name
+                if (!String.IsNullOrWhiteSpace(txtKeyID.Text) && String.IsNullOrWhiteSpace(txtPlanogramName.Text))
+                {
+                    int keyid = Convert.ToInt32(txtKeyID.Text);
+                    //need to first check if the key exists in the PLANO_KEY table
+                    using (ssc1200028_ssc_spacemanEntities1 context = new ssc1200028_ssc_spacemanEntities1())
+                    {
+                        //bool isKeyValid = bl.CheckForValidKeyID(context, Convert.ToInt32(txtKeyID.Text));
+                        bool isKeyValid = bl.CheckForActivePlanogram(context, Convert.ToInt32(txtKeyID.Text));
+                        if (isKeyValid == true)
+                        {
+                            //ShowSelection(Convert.ToInt32(txtKeyID.Text));
+                            ShowSelection(bl.GetSnapshotsByValidKeyID(context, keyid), keyid);
+                            ddlPlanograms.SelectedValue = txtKeyID.Text;
+                            PopulateSnapshotIDTextBox(keyid);
+                            //lblError.Visible = false;
+                        }
+                        else
+                        {
+                            lblError.Text = "This key ID does not exist in the Spaceman database, or is in the Archive folder.";
+                            lblError.Visible = true;
+                        }
+                    }
+                }
+                //if the user enters the Planogram name but not the Key ID
+                if (String.IsNullOrWhiteSpace(txtKeyID.Text) && !String.IsNullOrWhiteSpace(txtPlanogramName.Text))
+                {
+                    using (ssc1200028_ssc_spacemanEntities1 context = new ssc1200028_ssc_spacemanEntities1())
+                    {
+                        //first check if the entered text exists in the PLANO_KEY table, and offer to create snapshot if it does, but there is no snapshot for it
+                        ssc_spaceman_PLANO_KEY names = new ssc_spaceman_PLANO_KEY();
+                        names.PlanogramNames = names.GetPlanogramsByName(context, txtPlanogramName.Text);
+
+                        //to check if there are any Snaphots that match the entered description
+                        ssc_spaceman_ASSORTMENT_CHANGE_SNAPSHOT snapshots = new ssc_spaceman_ASSORTMENT_CHANGE_SNAPSHOT();
+                        snapshots.Snapshots = snapshots.GetSnapshotsByPlanogramName(context, txtPlanogramName.Text);
+
+                        //the entered text does match a description in the PLANO_KEY table
+                        if (names.PlanogramNames.Any())
+                        {
+                            //if there is a snapshot created for the entered description text
+                            if (snapshots.Snapshots.Any())
+                            {
+                                if (snapshots.Snapshots.Count == 1)
+                                {
+                                    ddlPlanograms.SelectedValue = snapshots.Snapshots.SingleOrDefault().AssociatedPlanogramKeyID.ToString();
+                                }
+                                ShowSelection(snapshots.Snapshots, snapshots.AssociatedPlanogramKeyID);
+                            }
+                            //there is no snapshot created for this text- prompt to create one
+                            else
+                            {
+                                //now handle if the entered text returns one existing planogram, or many:
+                                //if the entered text is unique and matches only one record in the PLANO_KEY table
+                                if (names.PlanogramNames.Count == 1)
+                                {
+                                    CreateSnapshotPrompt(names.Key_id);
+                                    PopulateSnapshotIDTextBox(names.Key_id);
+                                    txtDescription.Text = names.PlanogramNames.FirstOrDefault().Planogram_Name;
+                                    ddlPlanograms.SelectedValue = names.PlanogramNames.FirstOrDefault().Key_id.ToString();
+                                    //txtKeyID.Text = names.PlanogramNames.FirstOrDefault().Key_id.ToString();
+                                    
+                                }
+                                if (names.PlanogramNames.Count > 1)
+                                {
+                                    HideSnapshotDetails();
+                                    lblError.Text = "The text you entered matches multiple Planogram records in the Spaceman database. Please change your text to be more specific and try again.";
+                                    lblError.ForeColor = System.Drawing.Color.Blue;
+                                    lblError.Visible = true;
+                                    
+                                }
+                                //CreateSnapshotPrompt(names.Key_id);
+                                //PopulateSnapshotIDTextBox(names.Key_id);
+                            }
+                        }
+                        //the entered text isn't valid
+                        else
+                        {
+                            HideSnapshotDetails();
+                            lblError.Text = "The text you entered does not match any active Planogram in the Spaceman database. Please try again.";
+                            lblError.ForeColor = System.Drawing.Color.Blue;
+                            lblError.Visible = true;
+                        }
+                    }
+                }
+                //if the user enters both the Planogram Name and the Key ID
+                if (!String.IsNullOrWhiteSpace(txtKeyID.Text) && !String.IsNullOrWhiteSpace(txtPlanogramName.Text))
+                {
+                    using (ssc1200028_ssc_spacemanEntities1 context = new ssc1200028_ssc_spacemanEntities1())
+                    {
+                        ssc_spaceman_ASSORTMENT_CHANGE_SNAPSHOT snapshots = new ssc_spaceman_ASSORTMENT_CHANGE_SNAPSHOT();
+                        snapshots.Snapshots = dl.GetSnapshotsByPlanogramNameAndKeyID(context, txtPlanogramName.Text, Convert.ToInt32(txtKeyID.Text));
+                        if (snapshots.Snapshots.Any())
+                        {
+                            ShowSelection(snapshots.Snapshots, Convert.ToInt32(txtKeyID.Text));
+                        }
+                        else
+                        {
+                            ShowSelection(snapshots.Snapshots, Convert.ToInt32(txtKeyID.Text));
+                            lblError.Text = "The Key ID and description text you have entered don't match any existing Planogram Snapshots. Please try again.";
+                            lblError.ForeColor = System.Drawing.Color.Blue;
+                            lblError.Visible = true;
+                            divAddSnapshot.Visible = false;
+                            //gdvSnapshots.Visible = false;
+                            
+                        }
+                        //BindGrid(dl.GetSnapshotsByPlanogramNameAndKeyID(context, txtPlanogramName.Text, Convert.ToInt32(txtKeyID.Text)));
+                        //ShowSelection(dl.GetSnapshotsByPlanogramNameAndKeyID(context, txtPlanogramName.Text, Convert.ToInt32(txtKeyID.Text)));
+                    }
+                }
+            }
+        }
+        catch (Exception)
+        {
+            ShowExceptionMessage();
+        }
+    }
+
+    protected void btnCopySnapshot_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            if (Session["snapshotID"] != null)
+            {
+                using (ssc1200028_ssc_spacemanEntities1 context = new ssc1200028_ssc_spacemanEntities1())
+                {
+                    //ssc1200028_AssortmentPlanningBL bl = new ssc1200028_AssortmentPlanningBL();
+                    ssc_spaceman_ASSORTMENT_CHANGE_SNAPSHOT snapshotDL = new ssc_spaceman_ASSORTMENT_CHANGE_SNAPSHOT();
+                    ssc1200027_Utilities util = new ssc1200027_Utilities();
+                    util.CopySnapshot(Convert.ToInt32(Session["snapshotID"]));
+                    int keyid = snapshotDL.GetKeyIDBySnapshotID(context, Convert.ToInt32(Session["snapshotID"]));
+                    BindGrid(snapshotDL.GetSnapshotsByKeyID(context, keyid));
+                    util.runjQueryCode("alert('This snapshot and its associated products have been copied. Change the Snapshot ID and other parameters to differentiate between it and the snapshot just copied.');", this);
+                }
+            }
+        }
+        catch (Exception)
+        {
+            ShowExceptionMessage();
+        }
+    }
+
+    protected void gdvPositions_SelectedIndexChanging(object sender, GridViewSelectEventArgs e)
+    {
+        try
+        {
+            string keyid;
+            ssc_spaceman_ASSORTMENT_CHANGE_SNAPSHOT snapshot = new ssc_spaceman_ASSORTMENT_CHANGE_SNAPSHOT();
+            int snapshotid = Convert.ToInt32(gdvSnapshots.DataKeys[e.NewSelectedIndex].Value);
+            using (ssc1200028_ssc_spacemanEntities1 context = new ssc1200028_ssc_spacemanEntities1())
+            {
+                var snapshotDetails = (from c in context.ssc_assortment_change_snapshot
+                                       where c.snapshot_id == snapshotid
+                                       select c).SingleOrDefault();
+                divAddSnapshot.Visible = true;
+                BindBuyerDropDown();
+                txtDescription.Text = snapshotDetails.snapshot_desc.ToString();
+                txtSnapshotID.Text = snapshotDetails.snapshot_nbr.ToString();
+                ddlSnapshotStatus.SelectedValue = snapshotDetails.snapshot_status.ToString();
+                txtSize.Text = snapshotDetails.snapshot_size.ToString();
+                ddlBuyer.Items.FindByText(snapshotDetails.snapshot_buyer.ToString()).Selected = true;
+                PopulateDescriptionField(Convert.ToInt32(snapshotDetails.snapshot_keyid));
+                ddlLocation.SelectedValue = snapshotDetails.snapshot_location.ToString();
+                ddlSeason.SelectedValue = snapshotDetails.snapshot_season.ToString();
+                ddlSnapshotStatus.SelectedValue = snapshotDetails.snapshot_status;
+                //gdvSnapshots.SelectedRowStyle.BackColor = System.Drawing.Color.Red;
+                divAddSnapshot.Visible = true;
+                btnEditSkus.Visible = true;
+                btnSave.Visible = true;
+                btnCopySnapshot.Visible = true;
+                btnNewSnapshot.Visible = false;
+                Session["snapshotID"] = snapshotid;
+                btnCreateNewSnapshot.Visible = true;
+
+                keyid = snapshotDetails.snapshot_keyid.ToString();
+                ddlPlanograms.SelectedValue = keyid;
+
+            }
+        }
+        catch (Exception)
+        {
+            ShowExceptionMessage();
+        }
+    }
+
+    protected void btnEditSkus_Click(object sender, EventArgs e)
+    {
+        Response.Redirect("~/ssc1200028/ssc1200028_EditSKU.aspx");
+    }
+
+    protected void gdvSnapshots_PageIndexChanging(object sender, GridViewPageEventArgs e)
+    {
+        try
+        {
+            ssc1200028_AssortmentPlanningBL bl = new ssc1200028_AssortmentPlanningBL();
+            using (ssc1200028_ssc_spacemanEntities1 context = new ssc1200028_ssc_spacemanEntities1())
+            {
+                gdvSnapshots.PageIndex = e.NewPageIndex;
+                gdvSnapshots.DataBind();
+                //BindGrid(Convert.ToInt32(ddlPlanograms.SelectedValue));
+                BindGrid(bl.GetSnapshotsByValidKeyID(context, Convert.ToInt32(ddlPlanograms.SelectedValue)));
+            }
+        }
+        catch (Exception)
+        {
+            ShowExceptionMessage();
+        }
+    }
+
+    private void BindBuyerDropDown()
+    {
+        ssc1200027_Utilities util = new ssc1200027_Utilities();
+        ddlBuyer.DataSource = util.GetBuyers();
+        ddlBuyer.DataValueField = "buyer_name";
+        ddlBuyer.DataTextField = "buyer_name";
+        ddlBuyer.DataBind();
+        ddlBuyer.Visible = true;    
+    }
+
+    private void SetDefaultBuyerDropDown()
+    {
+        ddlBuyer.Items.Insert(0, new ListItem("Please Select", "Please Select"));
+    }
+
+    private void ResetFields()
+    {
+        txtSnapshotID.Text = "";
+        txtSize.Text = "";
+        txtDescription.Text = "";
+        BindBuyerDropDown();
+        ddlLocation.SelectedValue = "Please Select";
+        ddlSeason.SelectedValue = "Please Select";
+        ddlSnapshotStatus.SelectedValue = "Please Select";
+    }
+
+    private void ShowDuplicateMessage()
+    {
+        lblError.Text = "A snapshot with this snapshotID already exists. Please change the value to something unique and click Save New again.";
+        lblError.Visible = true;
+    }
+
+    protected void btnNewSnapshot_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            if (txtSnapshotID.Text != "" && txtSize.Text != "" && ddlBuyer.SelectedValue != "Please Select" && ddlLocation.SelectedValue != "Please Select" && ddlSeason.SelectedValue != "Please Select" && ddlSnapshotStatus.SelectedValue != "Please Select")
+            {
+                int size;
+                int keyID = Convert.ToInt32(ddlPlanograms.SelectedValue);
+                ssc1200028_AssortmentPlanningBL bl = new ssc1200028_AssortmentPlanningBL();
+                //need to check if the snapshot ID is unique
+                using (ssc1200028_ssc_spacemanEntities1 context = new ssc1200028_ssc_spacemanEntities1())
+                {
+                    //need to check if the snapshot ID is unique
+                    var snapshotID = from c in context.ssc_assortment_change_snapshot
+                                     where c.snapshot_nbr == txtSnapshotID.Text &&
+                                     c.snapshot_keyid == keyID
+                                     select c;
+
+                    if (snapshotID.Any())
+                    {
+                        ShowDuplicateMessage();
+                    }
+                    else
+                    {
+                        var snapshotName = (from s in context.PLANO_KEY
+                                            where s.Key_id == keyID
+                                            select s).SingleOrDefault();
+                        //if (Request.Cookies["UserID"] != null)
+                        //{
+                        //string cookieUserID = Request.Cookies["UserID"].ToString();
+                        ssc1200027_Utilities util = new ssc1200027_Utilities();
+                        lblError.Visible = false;
+                        int snapshotKeyID = Convert.ToInt32(ddlPlanograms.SelectedValue);
+                        DateTime currentDate = DateTime.Now;
+                        var snapshot = new ssc_assortment_change_snapshot();
+
+                        snapshot.snapshot_nbr = txtSnapshotID.Text;
+                        snapshot.snapshot_desc = snapshotName.Planogram.ToString();
+                        snapshot.snapshot_keyid = snapshotKeyID;
+                        snapshot.snapshot_status = ddlSnapshotStatus.SelectedValue;
+                        snapshot.snapshot_location = ddlLocation.SelectedValue;
+                        Int32.TryParse(txtSize.Text, out size);
+                        snapshot.snapshot_size = size;
+                        snapshot.snapshot_season = ddlSeason.SelectedValue;
+                        snapshot.snapshot_buyer = ddlBuyer.SelectedValue;
+                        //snapshot.snapshot_chg_user = cookieUserID;
+                        snapshot.snapshot_chg_date = currentDate;
+                        snapshot.snapshot_year = DateTime.Now.Year;
+                        snapshot.snapshot_date_added = DateTime.Now;
+                        context.AddTossc_assortment_change_snapshot(snapshot);
+                        context.SaveChanges();
+
+                        //get the snapshotid that was just created
+                        var snapshotid = (from s in context.ssc_assortment_change_snapshot
+                                          orderby s.snapshot_id descending
+                                          select s).FirstOrDefault();
+
+                        //copy the SKU's for the selected planogram into the snapshot
+                        util.ImportSKU(keyID, snapshotid.snapshot_id);
+
+                        ResetFields();
+                        //BindGrid(Convert.ToInt32(ddlPlanograms.SelectedValue));
+                        BindGrid(bl.GetSnapshotsByValidKeyID(context, Convert.ToInt32(ddlPlanograms.SelectedValue)));
+                        ClearDivAddSnapshot();
+                        PopulateDescriptionField(keyID);
+                        PopulateSnapshotIDTextBox(keyID);
+                    }
+                }
+            }
+            else
+            {
+                lblError.Text = "All fields are required to create a new Snapshot. If you want to edit an existing Snapshot, click the Select button on the grid after a snapshot has been created.";
+                lblError.Visible = true;
+            }
+        }
+        catch (Exception)
+        {
+            ShowExceptionMessage();
+        }
+    }
+
+    private void Page_Error(object sender, EventArgs e)
+    {
+        Exception exc = Server.GetLastError();
+        
+        ShowExceptionMessage();
+        MailMessage mail = new MailMessage();
+        mail.From = new MailAddress("craig.macivor@sscoop.com");
+        mail.To.Add("craig.macivor@sscoop.com");
+        mail.Subject = "Exception thrown";
+        mail.Body = exc.Message + "<br /><br /> " + exc.InnerException + "<br /><br />" + exc.StackTrace;
+        SmtpClient client = new SmtpClient("mailserver2", 25);
+        client.Send(mail);
+        
+        Server.ClearError();
+    }
+
+
+    protected void btnCreateNewSnapshot_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            if (ddlPlanograms.SelectedValue != "1000")
+            {
+                ResetFields();
+                //lblBuyer.Visible = false;
+                Session["snapshotID"] = null;
+                btnNewSnapshot.Visible = true;
+                btnSave.Visible = false;
+                btnCopySnapshot.Visible = false;
+                //gdvSnapshots.Visible = false;
+                gdvSnapshots.SelectedRowStyle.Reset();
+                btnEditSkus.Visible = false;
+                PopulateSnapshotIDTextBox(Convert.ToInt32(ddlPlanograms.SelectedValue));
+                PopulateDescriptionField(Convert.ToInt32(ddlPlanograms.SelectedValue));
+                divAddSnapshot.Visible = true;
+            }
+            else
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append("In order to create a fresh snapshot, please enter a key ID, ");
+                sb.Append("select a Planogram from the drop down menu, or enter a Planogram Name ");
+                sb.Append("that returns only one Planogram in the search results. ");
+                sb.Append("A snapshot can only be created from one Planogram.");
+                lblError.Text = sb.ToString();
+                lblError.Visible = true;
+            }
+        }
+        catch (Exception)
+        {
+            ShowExceptionMessage();
+        }
+    }
+
+    private void PopulateSnapshotIDTextBox(int keyID)
+    {
+        using (ssc1200028_ssc_spacemanEntities1 context = new ssc1200028_ssc_spacemanEntities1())
+        {
+            //first need to check if there are any snapshots by the selected keyID
+            var snapshotsByKeyID = from s in context.ssc_assortment_change_snapshot
+                                   where s.snapshot_keyid == keyID
+                                   orderby s.snapshot_id descending
+                                   select s;
+            if (snapshotsByKeyID.Any())
+            {
+                //in this case the snapshot_nbr will be the date only- to add a second record with that date, put a "-2" at the end
+                if (snapshotsByKeyID.Count() == 1)
+                {
+                    var snapshotNumber = (from s in snapshotsByKeyID
+                                          select s).SingleOrDefault();
+                    txtSnapshotID.Text = snapshotNumber.snapshot_nbr + " - 2";
+                }
+                //with more than one record, the second record and on will be formatted like this: 1/1/2013 - 2
+                //will need to increment a number by the date
+                if (snapshotsByKeyID.Count() > 1)
+                {
+                    //get the snapshot_nbr of the first record- this has been ordered by descending, so the top one will have the most recent number
+                    var snapshotNumber = (from s in snapshotsByKeyID
+                                          select s).FirstOrDefault();
+
+                    string latestID = snapshotNumber.snapshot_nbr.Substring(snapshotNumber.snapshot_nbr.Length - 1);
+                    int id = Convert.ToInt32(latestID);
+                    id++;
+                    string removed = snapshotNumber.snapshot_nbr.Remove(snapshotNumber.snapshot_nbr.Length - 1);
+                    string newSnapshotID = removed + Convert.ToString(id);
+                    txtSnapshotID.Text = newSnapshotID;
+                }
+            }
+            //to populate the box when no snapshot record exists for the selected KeyID
+            else
+            {
+                txtSnapshotID.Text = DateTime.Now.ToString("MM-dd-yyyy");
+            }
+        }
+    }
+
+    //for the autocomplete on txtPlanogramName
+    [System.Web.Services.WebMethodAttribute(), System.Web.Script.Services.ScriptMethodAttribute()]
+    public static List<string> GetPlanogramList(string prefixText, int count, string contextKey)
+    {
+        using (ssc1200028_ssc_spacemanEntities1 context = new ssc1200028_ssc_spacemanEntities1())
+        {
+            var skus = (from s in context.PLANO_KEY 
+                        where s.Planogram.Contains(prefixText) &&
+                        s.Group1 != "Archive"
+                        select new { s.Planogram }).Take(count).ToList();
+            List<string> skuList = new List<string>();
+            foreach (var item in skus)
+            {
+                skuList.Add(item.Planogram.ToString());
+            }
+            return skuList;
+        }
+    }
+}

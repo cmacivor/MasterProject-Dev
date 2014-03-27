@@ -1,0 +1,591 @@
+﻿
+Partial Class CheckImage
+    Inherits System.Web.UI.Page
+
+    Protected dvReprint As New Data.DataView
+    Property dicTotals As New Dictionary(Of String, Double) From {{"c_earnings", 0},
+                                                                  {"c_taxes", 0},
+                                                                  {"c_deductions", 0},
+                                                                  {"y_earnings", 0},
+                                                                  {"y_taxes", 0},
+                                                                  {"y_deductions", 0}}
+
+    Protected Sub Page_Init(sender As Object, e As System.EventArgs) Handles Me.Init
+        Me.sdsReprint.ConnectionString = HR_User.ConnectionStringJOVEII
+        Me.sdsCheckOther.ConnectionString = HR_User.ConnectionStringJOVEII
+    End Sub
+
+
+    Protected Sub Page_Load(sender As Object, e As System.EventArgs) Handles Me.Load
+
+        If IsNothing(Request.QueryString) OrElse IsNothing(Request.QueryString("emp_id")) OrElse IsNothing(Request.QueryString("pay_pd_id")) Then
+            Response.Write("Cannot Process with Parameters Provided.")
+            Response.End()
+        End If
+
+        Me.sdsReprint.SelectParameters("emp_id").DefaultValue = Decrypt(Request.QueryString("emp_id").ToString.Trim, "!#$a54?3")
+        Me.sdsReprint.SelectParameters("pay_pd_id").DefaultValue = Request.QueryString("pay_pd_id").ToString.Trim
+        Me.sdsCheckOther.SelectParameters("emp_id").DefaultValue = Decrypt(Request.QueryString("emp_id").ToString.Trim, "!#$a54?3")
+        Me.sdsCheckOther.SelectParameters("pay_pd_id").DefaultValue = Request.QueryString("pay_pd_id").ToString.Trim
+
+
+        dvReprint = Me.sdsReprint.Select(Web.UI.DataSourceSelectArguments.Empty)
+        If dvReprint.Count = 0 Then
+            Response.Write("Cannot Process with Parameters Provided.")
+            Response.End()
+        End If
+
+        Dim pdfDoc As New PdfSharp.Pdf.PdfDocument
+        Dim pdfCheck As PdfSharp.Pdf.PdfPage = pdfDoc.AddPage()
+
+        Dim gfx As PdfSharp.Drawing.XGraphics = PdfSharp.Drawing.XGraphics.FromPdfPage(pdfCheck)
+        Dim pen As New PdfSharp.Drawing.XPen(PdfSharp.Drawing.XColor.FromArgb(0, 0, 0), 1)
+
+        Print_Titles(gfx, pen)
+        Print_Earnings(gfx, pen)
+        Print_TaxDeductions(gfx, pen)
+        Print_SSC(gfx, pen)
+        Print_Totals(gfx, pen)
+        Print_Footer(gfx, pen)
+
+        pdfDoc.Info.Author = "Southern States Coop"
+        pdfDoc.Info.Title = "Paycheck Advice"
+
+        pdfDoc.SecuritySettings.DocumentSecurityLevel = PdfSharp.Pdf.Security.PdfDocumentSecurityLevel.Encrypted128Bit
+        pdfDoc.SecuritySettings.OwnerPassword = "xyz"
+        pdfDoc.SecuritySettings.PermitModifyDocument = False
+        pdfDoc.SecuritySettings.PermitPrint = True
+        pdfDoc.SecuritySettings.PermitExtractContent = False
+        pdfDoc.SecuritySettings.PermitFullQualityPrint = False
+        pdfDoc.SecuritySettings.PermitFormsFill = False
+        pdfDoc.SecuritySettings.PermitAssembleDocument = False
+        pdfDoc.SecuritySettings.PermitAccessibilityExtractContent = False
+
+
+        Dim pdfStream As New System.IO.MemoryStream
+        pdfDoc.Save(pdfStream, False)
+        Response.Clear()
+        Response.ContentType = "application/pdf"
+        Response.AddHeader("content-length", pdfStream.Length.ToString())
+        Response.BinaryWrite(pdfStream.ToArray())
+        Response.Flush()
+        Response.Close()
+        Response.End()
+
+        'Dim filename As String = "c:\HelloWorld.pdf"
+        'pdfDoc.Save(filename)
+
+    End Sub
+
+    Protected Sub Print_Titles(gfx As PdfSharp.Drawing.XGraphics, pen As PdfSharp.Drawing.XPen)
+
+        'Add Logo
+        If System.IO.File.Exists(Server.MapPath("/HRApps/images/SSC_Tag_Horiz_RGB.png")) Then
+            Dim xLogo As PdfSharp.Drawing.XImage = PdfSharp.Drawing.XImage.FromFile(Server.MapPath("/HRApps/images/SSC_Tag_Horiz_RGB.png"))
+            gfx.DrawImage(xLogo, PDF_Point(8), PDF_Point(6), PDF_Point(49), 20)
+        Else
+            Response.Write("can't find png")
+        End If
+        Dim fontSmall As New PdfSharp.Drawing.XFont("Times New Roman", 4, PdfSharp.Drawing.XFontStyle.Bold)
+        gfx.DrawString("P.O.Box 26234, Richmond, Virginia 23260", fontSmall, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XPoint(PDF_Point(16), PDF_Point(13)))
+        gfx.DrawString("www.SouthernStates.com", fontSmall, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XPoint(PDF_Point(16), PDF_Point(14.3)))
+
+        'Get summary data
+        Dim dvCheckOther As System.Data.DataView = Me.sdsCheckOther.Select(System.Web.UI.DataSourceSelectArguments.Empty)
+
+        'Create Fonts
+        Dim fontT As New PdfSharp.Drawing.XFont("Times New Roman", 14, PdfSharp.Drawing.XFontStyle.Regular)
+        Dim fontTBold As New PdfSharp.Drawing.XFont("Times New Roman", 14, PdfSharp.Drawing.XFontStyle.Bold)
+        Dim fontT1 As New PdfSharp.Drawing.XFont("Times New Roman", 12, PdfSharp.Drawing.XFontStyle.Regular)
+        Dim fontT1Bold As New PdfSharp.Drawing.XFont("Times New Roman", 12, PdfSharp.Drawing.XFontStyle.Bold)
+        Dim font As New PdfSharp.Drawing.XFont("Times New Roman", 9, PdfSharp.Drawing.XFontStyle.Regular)
+        Dim fontBold As New PdfSharp.Drawing.XFont("Times New Roman", 9, PdfSharp.Drawing.XFontStyle.Bold)
+        Dim font2 As New PdfSharp.Drawing.XFont("Times New Roman", 8, PdfSharp.Drawing.XFontStyle.Regular)
+        Dim font2Bold As New PdfSharp.Drawing.XFont("Times New Roman", 8, PdfSharp.Drawing.XFontStyle.Bold)
+        Dim fontColor As PdfSharp.Drawing.XBrush = PdfSharp.Drawing.XBrushes.Black
+
+        Dim pdfTF As New PdfSharp.Drawing.Layout.XTextFormatter(gfx)
+
+
+        Dim recTitle1 As New PdfSharp.Drawing.XRect(New PdfSharp.Drawing.XPoint(PDF_Point(114), PDF_Point(6)), New PdfSharp.Drawing.XSize(PDF_Point(70), 14))
+        gfx.DrawRectangle(PdfSharp.Drawing.XBrushes.White, recTitle1)
+        pdfTF.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Left
+        pdfTF.DrawString("Farmer owned since 1923.", fontTBold, fontColor, recTitle1)
+
+        Dim recTitle2 As New PdfSharp.Drawing.XRect(New PdfSharp.Drawing.XPoint(PDF_Point(78), PDF_Point(16)), New PdfSharp.Drawing.XSize(PDF_Point(70), 14))
+        gfx.DrawRectangle(PdfSharp.Drawing.XBrushes.White, recTitle2)
+        pdfTF.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Left
+        pdfTF.DrawString("Earnings Statement", fontT1Bold, fontColor, recTitle2)
+
+
+
+        'Period
+        Dim recBeginTitle As New PdfSharp.Drawing.XRect(New PdfSharp.Drawing.XPoint(PDF_Point(14), PDF_Point(20)), New PdfSharp.Drawing.XSize(PDF_Point(29), 10))
+        gfx.DrawRectangle(PdfSharp.Drawing.XBrushes.White, recBeginTitle)
+        pdfTF.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Left
+        pdfTF.DrawString("Period Begin Date:", font, fontColor, recBeginTitle)
+
+        Dim recBeginData As New PdfSharp.Drawing.XRect(New PdfSharp.Drawing.XPoint(PDF_Point(14) + PDF_Point(30), PDF_Point(20)), New PdfSharp.Drawing.XSize(PDF_Point(22), 10))
+        gfx.DrawRectangle(PdfSharp.Drawing.XBrushes.White, recBeginData)
+        pdfTF.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Right
+        pdfTF.DrawString(Format(CDate(dvCheckOther(0)("pay_pd_begin_date")), "MM/dd/yyyy"), font, fontColor, recBeginData)
+
+
+        Dim recEndTitle As New PdfSharp.Drawing.XRect(New PdfSharp.Drawing.XPoint(PDF_Point(14), PDF_Point(24)), New PdfSharp.Drawing.XSize(PDF_Point(29), 10))
+        gfx.DrawRectangle(PdfSharp.Drawing.XBrushes.White, recEndTitle)
+        pdfTF.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Left
+        pdfTF.DrawString("Period End Date:", font, fontColor, recEndTitle)
+
+        Dim recEndData As New PdfSharp.Drawing.XRect(New PdfSharp.Drawing.XPoint(PDF_Point(14) + PDF_Point(30), PDF_Point(24)), New PdfSharp.Drawing.XSize(PDF_Point(22), 10))
+        gfx.DrawRectangle(PdfSharp.Drawing.XBrushes.White, recEndData)
+        pdfTF.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Right
+        pdfTF.DrawString(Format(CDate(dvCheckOther(0)("pay_pd_end_date")), "MM/dd/yyyy"), font, fontColor, recEndData)
+
+
+        Dim recNumberTitle As New PdfSharp.Drawing.XRect(New PdfSharp.Drawing.XPoint(PDF_Point(14), PDF_Point(28)), New PdfSharp.Drawing.XSize(PDF_Point(29), 10))
+        gfx.DrawRectangle(PdfSharp.Drawing.XBrushes.White, recNumberTitle)
+        pdfTF.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Left
+        pdfTF.DrawString("Number:", font, fontColor, recNumberTitle)
+
+        Dim recNumberData As New PdfSharp.Drawing.XRect(New PdfSharp.Drawing.XPoint(PDF_Point(14) + PDF_Point(30), PDF_Point(28)), New PdfSharp.Drawing.XSize(PDF_Point(22), 10))
+        gfx.DrawRectangle(PdfSharp.Drawing.XBrushes.White, recNumberData)
+        pdfTF.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Right
+        pdfTF.DrawString("REPRINT", font, fontColor, recNumberData)
+
+
+        'Address
+        Dim recLoc_Code As New PdfSharp.Drawing.XRect(New PdfSharp.Drawing.XPoint(PDF_Point(30), PDF_Point(40)), New PdfSharp.Drawing.XSize(PDF_Point(50), 10))
+        gfx.DrawRectangle(PdfSharp.Drawing.XBrushes.White, recLoc_Code)
+        pdfTF.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Left
+        pdfTF.DrawString(dvCheckOther(0)("loc_code").ToString.ToUpper, fontBold, fontColor, recLoc_Code)
+
+        Dim recCheck As New PdfSharp.Drawing.XRect(New PdfSharp.Drawing.XPoint(PDF_Point(57), PDF_Point(40)), New PdfSharp.Drawing.XSize(PDF_Point(50), 10))
+        gfx.DrawRectangle(PdfSharp.Drawing.XBrushes.White, recCheck)
+        pdfTF.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Left
+        pdfTF.DrawString("REPRINT", fontBold, fontColor, recCheck)
+
+        Dim recName As New PdfSharp.Drawing.XRect(New PdfSharp.Drawing.XPoint(PDF_Point(30), PDF_Point(44)), New PdfSharp.Drawing.XSize(PDF_Point(50), 10))
+        gfx.DrawRectangle(PdfSharp.Drawing.XBrushes.White, recName)
+        pdfTF.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Left
+        pdfTF.DrawString(dvCheckOther(0)("pay_to_name").ToString.ToUpper, fontBold, fontColor, recName)
+
+        Dim recAddress As New PdfSharp.Drawing.XRect(New PdfSharp.Drawing.XPoint(PDF_Point(30), PDF_Point(48)), New PdfSharp.Drawing.XSize(PDF_Point(50), 10))
+        gfx.DrawRectangle(PdfSharp.Drawing.XBrushes.White, recAddress)
+        pdfTF.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Left
+        pdfTF.DrawString(dvCheckOther(0)("addr_1_street_or_pob_1").ToString.ToUpper, fontBold, fontColor, recAddress)
+
+        Dim recCity As New PdfSharp.Drawing.XRect(New PdfSharp.Drawing.XPoint(PDF_Point(30), PDF_Point(52)), New PdfSharp.Drawing.XSize(PDF_Point(50), 10))
+        gfx.DrawRectangle(PdfSharp.Drawing.XBrushes.White, recCity)
+        pdfTF.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Left
+        pdfTF.DrawString(dvCheckOther(0)("addr_1_city_name").ToString.ToUpper, fontBold, fontColor, recCity)
+
+        Dim recState As New PdfSharp.Drawing.XRect(New PdfSharp.Drawing.XPoint(PDF_Point(63.5), PDF_Point(52)), New PdfSharp.Drawing.XSize(PDF_Point(50), 10))
+        gfx.DrawRectangle(PdfSharp.Drawing.XBrushes.White, recState)
+        pdfTF.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Left
+        pdfTF.DrawString(dvCheckOther(0)("addr_1_country_sub_entity_code").ToString.ToUpper & " " & dvCheckOther(0)("addr_1_postal_code").ToString.ToUpper, fontBold, fontColor, recState)
+
+
+        'Federal
+        Dim rec1 As New PdfSharp.Drawing.XRect(New PdfSharp.Drawing.XPoint(PDF_Point(138), PDF_Point(13)), New PdfSharp.Drawing.XSize(PDF_Point(55), 8))
+        gfx.DrawRectangle(PdfSharp.Drawing.XBrushes.White, rec1)
+        pdfTF.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Left
+        pdfTF.DrawString("Your Current W-4 Tax Withholdings Are:", font2Bold, fontColor, rec1)
+
+        Dim recEmpTitle As New PdfSharp.Drawing.XRect(New PdfSharp.Drawing.XPoint(PDF_Point(140.5), PDF_Point(16)), New PdfSharp.Drawing.XSize(PDF_Point(55), 8))
+        gfx.DrawRectangle(PdfSharp.Drawing.XBrushes.White, recEmpTitle)
+        pdfTF.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Left
+        pdfTF.DrawString("Emplyee Number:", font2, fontColor, recEmpTitle)
+
+        Dim recEmpData As New PdfSharp.Drawing.XRect(New PdfSharp.Drawing.XPoint(PDF_Point(180), PDF_Point(16)), New PdfSharp.Drawing.XSize(PDF_Point(55), 8))
+        gfx.DrawRectangle(PdfSharp.Drawing.XBrushes.White, recEmpData)
+        pdfTF.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Left
+        pdfTF.DrawString(dvCheckOther(0)("individual_id").ToString, font2, fontColor, recEmpData)
+
+
+        Dim recSSNTitle As New PdfSharp.Drawing.XRect(New PdfSharp.Drawing.XPoint(PDF_Point(140.5), PDF_Point(19)), New PdfSharp.Drawing.XSize(PDF_Point(55), 8))
+        gfx.DrawRectangle(PdfSharp.Drawing.XBrushes.White, recSSNTitle)
+        pdfTF.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Left
+        pdfTF.DrawString("Social Security Number:", font2, fontColor, recSSNTitle)
+
+        Dim recSSNData As New PdfSharp.Drawing.XRect(New PdfSharp.Drawing.XPoint(PDF_Point(180), PDF_Point(19)), New PdfSharp.Drawing.XSize(PDF_Point(55), 8))
+        gfx.DrawRectangle(PdfSharp.Drawing.XBrushes.White, recSSNData)
+        pdfTF.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Left
+        pdfTF.DrawString(dvCheckOther(0)("emp_id").ToString, font2, fontColor, recSSNData)
+
+
+        Dim recMaritalTitle As New PdfSharp.Drawing.XRect(New PdfSharp.Drawing.XPoint(PDF_Point(140.5), PDF_Point(22)), New PdfSharp.Drawing.XSize(PDF_Point(55), 8))
+        gfx.DrawRectangle(PdfSharp.Drawing.XBrushes.White, recMaritalTitle)
+        pdfTF.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Left
+        pdfTF.DrawString("Federal Taxable Marital Status:", font2, fontColor, recMaritalTitle)
+
+        Dim recMaritalData As New PdfSharp.Drawing.XRect(New PdfSharp.Drawing.XPoint(PDF_Point(180), PDF_Point(22)), New PdfSharp.Drawing.XSize(PDF_Point(55), 8))
+        gfx.DrawRectangle(PdfSharp.Drawing.XBrushes.White, recMaritalData)
+        pdfTF.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Left
+        pdfTF.DrawString(Left(dvCheckOther(0)("tax_marital_status").ToString, 1), font2, fontColor, recMaritalData)
+
+
+        Dim recExemptionsTitle As New PdfSharp.Drawing.XRect(New PdfSharp.Drawing.XPoint(PDF_Point(140.5), PDF_Point(25)), New PdfSharp.Drawing.XSize(PDF_Point(55), 8))
+        gfx.DrawRectangle(PdfSharp.Drawing.XBrushes.White, recExemptionsTitle)
+        pdfTF.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Left
+        pdfTF.DrawString("Federal Exemptions:", font2, fontColor, recExemptionsTitle)
+
+        Dim recSExemptionsData As New PdfSharp.Drawing.XRect(New PdfSharp.Drawing.XPoint(PDF_Point(180), PDF_Point(25)), New PdfSharp.Drawing.XSize(PDF_Point(55), 8))
+        gfx.DrawRectangle(PdfSharp.Drawing.XBrushes.White, recSExemptionsData)
+        pdfTF.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Left
+        pdfTF.DrawString(dvCheckOther(0)("income_tax_nbr_of_exemps").ToString, font2, fontColor, recSExemptionsData)
+
+
+        Dim recAdjTitle As New PdfSharp.Drawing.XRect(New PdfSharp.Drawing.XPoint(PDF_Point(140.5), PDF_Point(28)), New PdfSharp.Drawing.XSize(PDF_Point(55), 8))
+        gfx.DrawRectangle(PdfSharp.Drawing.XBrushes.White, recAdjTitle)
+        pdfTF.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Left
+        pdfTF.DrawString("Federal Income Tax Adjustment:", font2, fontColor, recAdjTitle)
+
+        Dim recAdjData As New PdfSharp.Drawing.XRect(New PdfSharp.Drawing.XPoint(PDF_Point(180), PDF_Point(28)), New PdfSharp.Drawing.XSize(PDF_Point(55), 8))
+        gfx.DrawRectangle(PdfSharp.Drawing.XBrushes.White, recAdjData)
+        pdfTF.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Left
+        pdfTF.DrawString(FormatNumber(CDbl(dvCheckOther(0)("income_tax_personal_exemp_amt")), 2, TriState.True, TriState.False, TriState.True), font2, fontColor, recAdjData)
+
+
+        Dim rec2 As New PdfSharp.Drawing.XRect(New PdfSharp.Drawing.XPoint(PDF_Point(138), PDF_Point(31)), New PdfSharp.Drawing.XSize(PDF_Point(55), 8))
+        gfx.DrawRectangle(PdfSharp.Drawing.XBrushes.White, rec2)
+        pdfTF.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Left
+        pdfTF.DrawString("To Change, Go To StatesNet, Forms, W-4.", font2Bold, fontColor, rec2)
+
+        Dim rec3 As New PdfSharp.Drawing.XRect(New PdfSharp.Drawing.XPoint(PDF_Point(138), PDF_Point(34)), New PdfSharp.Drawing.XSize(PDF_Point(55), 8))
+        gfx.DrawRectangle(PdfSharp.Drawing.XBrushes.White, rec3)
+        pdfTF.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Left
+        pdfTF.DrawString("Complete Form and Send To Payroll.", font2Bold, fontColor, rec3)
+
+    End Sub
+
+    Protected Sub Print_Earnings(gfx As PdfSharp.Drawing.XGraphics, pen As PdfSharp.Drawing.XPen)
+
+        Dim x1 As Int32 = PDF_Point(8)    '11
+        Dim x2 As Int32 = PDF_Point(39.5) '100
+        Dim x3 As Int32 = PDF_Point(57.5) '155
+        Dim x4 As Int32 = PDF_Point(71)   '195
+        Dim x5 As Int32 = PDF_Point(92)   '257
+        Dim x6 As Int32 = PDF_Point(113)  '325
+        Dim y1 As Int32 = PDF_Point(70)   '190
+        Dim y2 As Int32 = PDF_Point(161)  '460
+
+
+        'Draw Earnings Box
+        gfx.DrawLine(pen, New PdfSharp.Drawing.XPoint(x1, y1), New PdfSharp.Drawing.XPoint(x6, y1))
+        gfx.DrawLine(pen, New PdfSharp.Drawing.XPoint(x1, y2), New PdfSharp.Drawing.XPoint(x6, y2))
+        gfx.DrawLine(pen, New PdfSharp.Drawing.XPoint(x1, y1), New PdfSharp.Drawing.XPoint(x1, y2))
+        gfx.DrawLine(pen, New PdfSharp.Drawing.XPoint(x2, y1), New PdfSharp.Drawing.XPoint(x2, y2))
+        gfx.DrawLine(pen, New PdfSharp.Drawing.XPoint(x3, y1), New PdfSharp.Drawing.XPoint(x3, y2))
+        gfx.DrawLine(pen, New PdfSharp.Drawing.XPoint(x4, y1), New PdfSharp.Drawing.XPoint(x4, y2))
+        gfx.DrawLine(pen, New PdfSharp.Drawing.XPoint(x5, y1), New PdfSharp.Drawing.XPoint(x5, y2))
+        gfx.DrawLine(pen, New PdfSharp.Drawing.XPoint(x6, y1), New PdfSharp.Drawing.XPoint(x6, y2))
+
+
+        'Create Fonts
+        Dim font As New PdfSharp.Drawing.XFont("Courier New", 9, PdfSharp.Drawing.XFontStyle.Regular)
+        Dim fontBold As New PdfSharp.Drawing.XFont("Times New Roman", 8, PdfSharp.Drawing.XFontStyle.Bold)
+        Dim fontColor As PdfSharp.Drawing.XBrush = PdfSharp.Drawing.XBrushes.Black
+
+        'Write Column Titles
+        gfx.DrawString("Earnings", fontBold, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XPoint(x1 + 15, y1 - 3))
+        gfx.DrawString("Rate", fontBold, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XPoint(x2 + 15, y1 - 3))
+        gfx.DrawString("Hours", fontBold, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XPoint(x3 + 5, y1 - 3))
+        gfx.DrawString("Current", fontBold, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XPoint(x4 + 15, y1 - 3))
+        gfx.DrawString("Year to Date", fontBold, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XPoint(x5 + 2, y1 - 3))
+
+
+        Dim pdfTF As New PdfSharp.Drawing.Layout.XTextFormatter(gfx)
+
+        dvReprint.RowFilter = "Sort > 0 AND Sort < 20"
+
+        ''************************
+        'Exit Sub
+
+        Dim intRow As Int32 = y1 + 5
+        For Each dvRow As Data.DataRowView In dvReprint
+
+            'Item
+            Dim recItem As New PdfSharp.Drawing.XRect(x1 + 2, intRow, x2 - x1 - 4, 10)
+            gfx.DrawRectangle(PdfSharp.Drawing.XBrushes.White, recItem)
+            pdfTF.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Left
+            pdfTF.DrawString(dvRow("Item").ToString, font, fontColor, recItem)
+
+            'Current
+            Dim recCurrent As New PdfSharp.Drawing.XRect(x4 + 2, intRow, x5 - x4 - 6, 10)
+            gfx.DrawRectangle(PdfSharp.Drawing.XBrushes.White, recCurrent)
+            pdfTF.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Right
+            pdfTF.DrawString(FormatNumber(CDbl(dvRow("Check")), 2, TriState.True, TriState.False, TriState.True), font, fontColor, recCurrent)
+            dicTotals("c_earnings") += CDbl(dvRow("Check"))
+
+            'YTD
+            Dim recYTD As New PdfSharp.Drawing.XRect(x5 + 2, intRow, x6 - x5 - 6, 10)
+            gfx.DrawRectangle(PdfSharp.Drawing.XBrushes.White, recYTD)
+            pdfTF.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Right
+            pdfTF.DrawString(FormatNumber(CDbl(dvRow("YTD")), 2, TriState.True, TriState.False, TriState.True), font, fontColor, recYTD)
+            dicTotals("y_earnings") += CDbl(dvRow("YTD"))
+
+            intRow += 10
+        Next dvRow
+
+    End Sub
+
+    Protected Sub Print_TaxDeductions(gfx As PdfSharp.Drawing.XGraphics, pen As PdfSharp.Drawing.XPen)
+
+        Dim x1 As Int32 = PDF_Point(132.5)
+        Dim x2 As Int32 = PDF_Point(165)
+        Dim x3 As Int32 = PDF_Point(189)
+        Dim x4 As Int32 = PDF_Point(210)
+        Dim y1 As Int32 = PDF_Point(43)
+        Dim y2 As Int32 = PDF_Point(145)
+
+        'Draw Tax/Deductions Box
+        gfx.DrawLine(pen, New PdfSharp.Drawing.XPoint(x1, y1), New PdfSharp.Drawing.XPoint(x4, y1))
+        gfx.DrawLine(pen, New PdfSharp.Drawing.XPoint(x1, y2), New PdfSharp.Drawing.XPoint(x4, y2))
+        gfx.DrawLine(pen, New PdfSharp.Drawing.XPoint(x1, y1), New PdfSharp.Drawing.XPoint(x1, y2))
+        gfx.DrawLine(pen, New PdfSharp.Drawing.XPoint(x2, y1), New PdfSharp.Drawing.XPoint(x2, y2))
+        gfx.DrawLine(pen, New PdfSharp.Drawing.XPoint(x3, y1), New PdfSharp.Drawing.XPoint(x3, y2))
+        gfx.DrawLine(pen, New PdfSharp.Drawing.XPoint(x4, y1), New PdfSharp.Drawing.XPoint(x4, y2))
+
+
+        'Create Fonts
+        Dim font As New PdfSharp.Drawing.XFont("Courier New", 9, PdfSharp.Drawing.XFontStyle.Regular)
+        Dim fontBold As New PdfSharp.Drawing.XFont("Times New Roman", 8, PdfSharp.Drawing.XFontStyle.Bold)
+        Dim fontColor As PdfSharp.Drawing.XBrush = PdfSharp.Drawing.XBrushes.Black
+
+        'Write Column Titles
+        gfx.DrawString("Earnings", fontBold, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XPoint(x1 + 15, y1 - 3))
+        gfx.DrawString("Rate", fontBold, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XPoint(x2 + 15, y1 - 3))
+        gfx.DrawString("Year to Date", fontBold, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XPoint(x3 + 2, y1 - 3))
+
+
+        Dim pdfTF As New PdfSharp.Drawing.Layout.XTextFormatter(gfx)
+
+        dvReprint.RowFilter = "Sort > 19 AND Sort < 30"
+
+        Dim intRow As Int32 = y1 + 5
+        For Each dvRow As Data.DataRowView In dvReprint
+            'Item
+            Dim recItem As New PdfSharp.Drawing.XRect(x1 + 2, intRow, x2 - x1 - 4, 10)
+            gfx.DrawRectangle(PdfSharp.Drawing.XBrushes.White, recItem)
+            pdfTF.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Left
+            pdfTF.DrawString(dvRow("Item").ToString, font, fontColor, recItem)
+
+            'Current
+            Dim recCurrent As New PdfSharp.Drawing.XRect(x2 + 2, intRow, x3 - x2 - 6, 10)
+            gfx.DrawRectangle(PdfSharp.Drawing.XBrushes.White, recCurrent)
+            pdfTF.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Right
+            pdfTF.DrawString(FormatNumber(CDbl(dvRow("Check")), 2, TriState.True, TriState.False, TriState.True), font, fontColor, recCurrent)
+            If CDbl(dvRow("Sort")) < 21 Then
+                dicTotals("c_taxes") += CDbl(dvRow("Check"))
+            Else
+                If CDbl(dvRow("Sort")) < 23 Then dicTotals("c_deductions") += CDbl(dvRow("Check"))
+            End If
+
+            'YTD
+            Dim recYTD As New PdfSharp.Drawing.XRect(x3 + 2, intRow, x4 - x3 - 6, 10)
+            gfx.DrawRectangle(PdfSharp.Drawing.XBrushes.White, recYTD)
+            pdfTF.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Right
+            pdfTF.DrawString(FormatNumber(CDbl(dvRow("YTD")), 2, TriState.True, TriState.False, TriState.True), font, fontColor, recYTD)
+            If CDbl(dvRow("Sort")) < 21 Then
+                dicTotals("y_taxes") += CDbl(dvRow("YTD"))
+            Else
+                If CDbl(dvRow("Sort")) < 23 Then dicTotals("y_deductions") += CDbl(dvRow("YTD"))
+            End If
+
+            intRow += 10
+
+        Next dvRow
+
+    End Sub
+
+    Protected Sub Print_SSC(gfx As PdfSharp.Drawing.XGraphics, pen As PdfSharp.Drawing.XPen)
+
+        Dim x1 As Int32 = PDF_Point(132.5)
+        Dim x2 As Int32 = PDF_Point(165)
+        Dim x3 As Int32 = PDF_Point(189)
+        Dim x4 As Int32 = PDF_Point(210)
+        Dim y1 As Int32 = PDF_Point(150.7)
+        Dim y2 As Int32 = PDF_Point(182.7)
+
+        'Draw Tax/Deductions Box
+        gfx.DrawLine(pen, New PdfSharp.Drawing.XPoint(x1, y1), New PdfSharp.Drawing.XPoint(x4, y1))
+        gfx.DrawLine(pen, New PdfSharp.Drawing.XPoint(x1, y2), New PdfSharp.Drawing.XPoint(x4, y2))
+        gfx.DrawLine(pen, New PdfSharp.Drawing.XPoint(x1, y1), New PdfSharp.Drawing.XPoint(x1, y2))
+        gfx.DrawLine(pen, New PdfSharp.Drawing.XPoint(x2, y1), New PdfSharp.Drawing.XPoint(x2, y2))
+        gfx.DrawLine(pen, New PdfSharp.Drawing.XPoint(x3, y1), New PdfSharp.Drawing.XPoint(x3, y2))
+        gfx.DrawLine(pen, New PdfSharp.Drawing.XPoint(x4, y1), New PdfSharp.Drawing.XPoint(x4, y2))
+
+
+        'Create Fonts
+        Dim font As New PdfSharp.Drawing.XFont("Courier New", 9, PdfSharp.Drawing.XFontStyle.Regular)
+        Dim fontBold As New PdfSharp.Drawing.XFont("Times New Roman", 8, PdfSharp.Drawing.XFontStyle.Bold)
+        Dim fontColor As PdfSharp.Drawing.XBrush = PdfSharp.Drawing.XBrushes.Black
+
+        'Write Column Titles
+        gfx.DrawString("Southern States Paid", fontBold, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XPoint(x1 + 3, y1 - 3))
+        gfx.DrawString("Rate", fontBold, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XPoint(x2 + 15, y1 - 3))
+        gfx.DrawString("Year to Date", fontBold, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XPoint(x3 + 2, y1 - 3))
+
+
+        Dim pdfTF As New PdfSharp.Drawing.Layout.XTextFormatter(gfx)
+
+        dvReprint.RowFilter = "Sort > 29 AND Sort < 40"
+
+        Dim intRow As Int32 = y1 + 5
+        For Each dvRow As Data.DataRowView In dvReprint
+            'Item
+            Dim recItem As New PdfSharp.Drawing.XRect(x1 + 2, intRow, x2 - x1 - 4, 10)
+            gfx.DrawRectangle(PdfSharp.Drawing.XBrushes.White, recItem)
+            pdfTF.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Left
+            pdfTF.DrawString(dvRow("Item").ToString, font, fontColor, recItem)
+
+            'Current
+            Dim recCurrent As New PdfSharp.Drawing.XRect(x2 + 2, intRow, x3 - x2 - 6, 10)
+            gfx.DrawRectangle(PdfSharp.Drawing.XBrushes.White, recCurrent)
+            pdfTF.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Right
+            pdfTF.DrawString(FormatNumber(CDbl(dvRow("Check")), 2, TriState.True, TriState.False, TriState.True), font, fontColor, recCurrent)
+
+            'YTD
+            Dim recYTD As New PdfSharp.Drawing.XRect(x3 + 2, intRow, x4 - x3 - 6, 10)
+            gfx.DrawRectangle(PdfSharp.Drawing.XBrushes.White, recYTD)
+            pdfTF.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Right
+            pdfTF.DrawString(FormatNumber(CDbl(dvRow("YTD")), 2, TriState.True, TriState.False, TriState.True), font, fontColor, recYTD)
+
+            intRow += 10
+
+        Next dvRow
+
+    End Sub
+
+    Protected Sub Print_Totals(gfx As PdfSharp.Drawing.XGraphics, pen As PdfSharp.Drawing.XPen)
+
+        Dim x1 As Int32 = PDF_Point(24)
+        Dim x2 As Int32 = PDF_Point(45.5)
+        Dim x3 As Int32 = PDF_Point(67)
+        Dim x4 As Int32 = PDF_Point(90.5)
+        Dim x5 As Int32 = PDF_Point(113)
+        Dim y1 As Int32 = PDF_Point(165)
+        Dim y2 As Int32 = PDF_Point(169.5)
+        Dim y3 As Int32 = PDF_Point(174)
+
+        'Draw Totals Box
+        gfx.DrawLine(pen, New PdfSharp.Drawing.XPoint(x1, y1), New PdfSharp.Drawing.XPoint(x5, y1))
+        gfx.DrawLine(pen, New PdfSharp.Drawing.XPoint(x1, y2), New PdfSharp.Drawing.XPoint(x5, y2))
+        gfx.DrawLine(pen, New PdfSharp.Drawing.XPoint(x1, y3), New PdfSharp.Drawing.XPoint(x5, y3))
+        gfx.DrawLine(pen, New PdfSharp.Drawing.XPoint(x1, y1), New PdfSharp.Drawing.XPoint(x1, y3))
+        gfx.DrawLine(pen, New PdfSharp.Drawing.XPoint(x2, y1), New PdfSharp.Drawing.XPoint(x2, y3))
+        gfx.DrawLine(pen, New PdfSharp.Drawing.XPoint(x3, y1), New PdfSharp.Drawing.XPoint(x3, y3))
+        gfx.DrawLine(pen, New PdfSharp.Drawing.XPoint(x4, y1), New PdfSharp.Drawing.XPoint(x4, y3))
+        gfx.DrawLine(pen, New PdfSharp.Drawing.XPoint(x5, y1), New PdfSharp.Drawing.XPoint(x5, y3))
+
+        'Create Fonts
+        Dim font As New PdfSharp.Drawing.XFont("Courier New", 9, PdfSharp.Drawing.XFontStyle.Regular)
+        Dim fontBold As New PdfSharp.Drawing.XFont("Times New Roman", 8, PdfSharp.Drawing.XFontStyle.Bold)
+        Dim fontColor As PdfSharp.Drawing.XBrush = PdfSharp.Drawing.XBrushes.Black
+
+        'Write Column Titles
+        gfx.DrawString("Earnings", fontBold, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XPoint(x1 + 15, y1 - 3))
+        gfx.DrawString("Taxes", fontBold, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XPoint(x2 + 20, y1 - 3))
+        gfx.DrawString("Deductions", fontBold, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XPoint(x3 + 12, y1 - 3))
+        gfx.DrawString("Net Pay", fontBold, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XPoint(x4 + 20, y1 - 3))
+
+        gfx.DrawString("Current", fontBold, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XPoint(8, y1 + 4 + (y2 - y1) / 2))
+        gfx.DrawString("Year to Date", fontBold, PdfSharp.Drawing.XBrushes.Black, New PdfSharp.Drawing.XPoint(8, y2 + 4 + (y3 - y2) / 2))
+
+
+        Dim pdfTF As New PdfSharp.Drawing.Layout.XTextFormatter(gfx)
+
+        'Current Earnings
+        Dim recCE As New PdfSharp.Drawing.XRect(x1 + 2, y1 + 2, x2 - x1 - 6, 10)
+        gfx.DrawRectangle(PdfSharp.Drawing.XBrushes.White, recCE)
+        pdfTF.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Right
+        pdfTF.DrawString(FormatNumber(dicTotals("c_earnings"), 2, TriState.True, TriState.False, TriState.True), font, fontColor, recCE)
+
+        'Current Tax
+        Dim recCT As New PdfSharp.Drawing.XRect(x2 + 2, y1 + 2, x3 - x2 - 6, 10)
+        gfx.DrawRectangle(PdfSharp.Drawing.XBrushes.White, recCT)
+        pdfTF.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Right
+        pdfTF.DrawString(FormatNumber(dicTotals("c_taxes"), 2, TriState.True, TriState.False, TriState.True), font, fontColor, recCT)
+
+        'Current Deductions
+        Dim recCD As New PdfSharp.Drawing.XRect(x3 + 2, y1 + 2, x4 - x3 - 6, 10)
+        gfx.DrawRectangle(PdfSharp.Drawing.XBrushes.White, recCD)
+        pdfTF.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Right
+        pdfTF.DrawString(FormatNumber(dicTotals("c_deductions"), 2, TriState.True, TriState.False, TriState.True), font, fontColor, recCD)
+
+        'Current Net Pay
+        Dim recCP As New PdfSharp.Drawing.XRect(x4 + 2, y1 + 2, x5 - x4 - 6, 10)
+        gfx.DrawRectangle(PdfSharp.Drawing.XBrushes.White, recCP)
+        pdfTF.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Right
+        pdfTF.DrawString(FormatNumber(dicTotals("c_earnings") - dicTotals("c_taxes") - dicTotals("c_deductions"), 2, TriState.True, TriState.False, TriState.True), font, fontColor, recCP)
+
+
+        'YTD Earnings
+        Dim recYE As New PdfSharp.Drawing.XRect(x1 + 2, y2 + 2, x2 - x1 - 6, 10)
+        gfx.DrawRectangle(PdfSharp.Drawing.XBrushes.White, recYE)
+        pdfTF.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Right
+        pdfTF.DrawString(FormatNumber(dicTotals("y_earnings"), 2, TriState.True, TriState.False, TriState.True), font, fontColor, recYE)
+
+        'YTD Tax
+        Dim recYT As New PdfSharp.Drawing.XRect(x2 + 2, y2 + 2, x3 - x2 - 6, 10)
+        gfx.DrawRectangle(PdfSharp.Drawing.XBrushes.White, recYT)
+        pdfTF.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Right
+        pdfTF.DrawString(FormatNumber(dicTotals("y_taxes"), 2, TriState.True, TriState.False, TriState.True), font, fontColor, recYT)
+
+        'YTD Deductions
+        Dim recYD As New PdfSharp.Drawing.XRect(x3 + 2, y2 + 2, x4 - x3 - 6, 10)
+        gfx.DrawRectangle(PdfSharp.Drawing.XBrushes.White, recYD)
+        pdfTF.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Right
+        pdfTF.DrawString(FormatNumber(dicTotals("y_deductions"), 2, TriState.True, TriState.False, TriState.True), font, fontColor, recYD)
+
+        'YTD Net Pay
+        Dim recYP As New PdfSharp.Drawing.XRect(x4 + 2, y2 + 2, x5 - x4 - 6, 10)
+        gfx.DrawRectangle(PdfSharp.Drawing.XBrushes.White, recYP)
+        pdfTF.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Right
+        pdfTF.DrawString(FormatNumber(dicTotals("y_earnings") - dicTotals("y_taxes") - dicTotals("y_deductions"), 2, TriState.True, TriState.False, TriState.True), font, fontColor, recYP)
+
+    End Sub
+
+    Protected Sub Print_Footer(gfx As PdfSharp.Drawing.XGraphics, pen As PdfSharp.Drawing.XPen)
+        Dim fontBold As New PdfSharp.Drawing.XFont("Times New Roman", 54, PdfSharp.Drawing.XFontStyle.Bold)
+        Dim fontColor As PdfSharp.Drawing.XBrush = PdfSharp.Drawing.XBrushes.Red
+
+        Dim pdfTF As New PdfSharp.Drawing.Layout.XTextFormatter(gfx)
+
+        Dim recFoot As New PdfSharp.Drawing.XRect(5.4, PDF_Point(192), PDF_Point(215), PDF_Point(87))
+        'Dim recFoot As New PdfSharp.Drawing.XRect(5.4, PDF_Point(192), 200, 200)
+        gfx.DrawRectangle(PdfSharp.Drawing.XBrushes.White, recFoot)
+        pdfTF.Alignment = PdfSharp.Drawing.Layout.XParagraphAlignment.Center
+        pdfTF.DrawString("THIS IS NOT A CHECK.  This is a REPRINT of a Payroll Advice.", fontBold, fontColor, recFoot)
+
+
+    End Sub
+
+    Protected Function PDF_Point(ByRef mm As Double) As Double
+        'PFD Point = ((Milimeters from paper's edge) - 5.4) / 0.34
+        Return (mm - 5.4) / 0.34
+    End Function
+
+    Public Function Decrypt(ByVal stringToDecrypt As String, ByVal sEncryptionKey As String) As String
+        Dim key() As Byte = {}
+        Dim IV() As Byte = {&H12, &H34, &H56, &H78, &H90, &HAB, &HCD, &HEF}
+
+        Dim inputByteArray(stringToDecrypt.Length) As Byte
+        Try
+            key = System.Text.Encoding.UTF8.GetBytes(Left(sEncryptionKey, 8))
+            Dim des As New System.Security.Cryptography.DESCryptoServiceProvider()
+            inputByteArray = Convert.FromBase64String(stringToDecrypt)
+            Dim ms As New IO.MemoryStream()
+            Dim cs As New System.Security.Cryptography.CryptoStream(ms, des.CreateDecryptor(key, IV), System.Security.Cryptography.CryptoStreamMode.Write)
+            cs.Write(inputByteArray, 0, inputByteArray.Length)
+            cs.FlushFinalBlock()
+            Dim encoding As System.Text.Encoding = System.Text.Encoding.UTF8
+            Return encoding.GetString(ms.ToArray())
+        Catch e As Exception
+            Return e.Message
+        End Try
+    End Function
+
+
+
+End Class

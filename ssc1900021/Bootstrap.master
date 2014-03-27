@@ -1,0 +1,70 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="Bootstrap.master.cs" Inherits="Bootstrap" %>
+
+<!DOCTYPE html />
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title>Dupont TruChoice Table Maintenance</title>
+    <link href="Styles/bootstrap/bootstrap.css" rel="Stylesheet" type="text/css" />
+    <link href="Styles/bootstrap/bootstrap-theme.min.css" rel="Stylesheet" type="text/css" />
+    <script src="Scripts/respond.min.js" type="text/javascript"></script>
+    <!--Mobile first-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+     <!--IE Compatibility modes-->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="msapplication-TileColor" content="#5bc0de"/>
+    <meta name="msapplication-TileImage" content="assets/img/metis-tile.png"/>
+
+    <!-- Font Awesome -->
+    <%--<link rel="stylesheet" href="assets/lib/Font-Awesome/css/font-awesome.min.css"/>--%>
+
+    <!-- Metis core stylesheet -->
+    <%--<link rel="stylesheet" href="assets/css/main.css"/>
+    <link rel="stylesheet" href="assets/css/theme.css"/>--%>
+
+    <!-- jQuery DataTables -->
+    <%--<link rel="Stylesheet" href="assets/lib/datatables/css/DT_bootstrap.css" />
+    <link rel="Stylesheet" href="assets/lib/datatables/css/jquery.dataTables.css" />--%>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+
+    <!--[if lt IE 9]>
+      <script src="assets/lib/html5shiv/html5shiv.js"></script>
+	      <script src="assets/lib/respond/respond.min.js"></script>
+	    <![endif]-->
+
+    <!--Modernizr 3.0-->
+   <%-- <script type="text/javascript" src="assets/lib/modernizr-build.min.js"></script>--%>
+
+   <style type="text/css">
+       .highlight
+       {
+           background-color:#9999FF;
+       }
+       td {cursor:pointer;}
+   </style>
+    
+   <%-- <link href="jtable.2.3.1/themes/lightcolor/blue/jtable.min.css" rel="Stylesheet" type="text/css" />--%>
+    <link href="AJAX/jtable.2.3.1/themes/lightcolor/blue/jtable.css" rel="Stylesheet" type="text/css" />
+    <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+    <form id="form1" runat="server">
+    <div>
+        <div class="container">
+        </div>
+    </div>
+    <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+    </asp:ContentPlaceHolder>
+    </form>
+    <script src="Scripts/bootstrap.min.js" type="text/javascript"></script>
+    <%--<script src="~/Scripts/bootstrap.min.js" type="text/javascript"></script>--%>
+    <script src="Scripts/jquery-ui-1.10.3.custom.js" type="text/javascript"></script>
+    <%--<script src="~/Scripts/jquery-ui-1.10.3.custom.js" type="text/javascript"></script>--%>
+    <%--<script src="~/Scripts/jquery-1.9.1.js" type="text/javascript"></script>--%>
+    <%--<script src="Scripts/jquery-1.9.1.js" type="text/javascript"></script>--%>
+</body>
+</html>

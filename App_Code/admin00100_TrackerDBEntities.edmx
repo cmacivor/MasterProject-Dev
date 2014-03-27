@@ -1,0 +1,237 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="ATSwebModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+        <EntityContainer Name="ATSwebModelStoreContainer">
+          <EntitySet Name="web_tracker_Activity" EntityType="ATSwebModel.Store.web_tracker_Activity" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="web_tracker_ActivityModHistory" EntityType="ATSwebModel.Store.web_tracker_ActivityModHistory" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="web_tracker_Programmer" EntityType="ATSwebModel.Store.web_tracker_Programmer" store:Type="Tables" Schema="dbo" />
+          <AssociationSet Name="FK__ActivityM__Activ__0CBAE877" Association="ATSwebModel.Store.FK__ActivityM__Activ__0CBAE877">
+            <End Role="web_tracker_Activity" EntitySet="web_tracker_Activity" />
+            <End Role="web_tracker_ActivityModHistory" EntitySet="web_tracker_ActivityModHistory" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="web_tracker_Activity">
+          <Key>
+            <PropertyRef Name="ActivityID" />
+          </Key>
+          <Property Name="ActivityID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="ActivityGroupName" Type="nvarchar" MaxLength="50" />
+          <Property Name="ActivityName" Type="nvarchar" MaxLength="75" />
+          <Property Name="OldActivityID" Type="nvarchar" MaxLength="20" />
+          <Property Name="OriginalProgrammer" Type="nvarchar" MaxLength="50" />
+          <Property Name="ASP" Type="nvarchar" MaxLength="10" />
+          <Property Name="VB" Type="nvarchar" MaxLength="10" />
+          <Property Name="C_" Type="nvarchar" MaxLength="10" />
+          <Property Name="C_NET" Type="nvarchar" MaxLength="10" />
+          <Property Name="AJAX" Type="nvarchar" MaxLength="10" />
+          <Property Name="Javascript" Type="nvarchar" MaxLength="10" />
+          <Property Name="Other" Type="nvarchar" MaxLength="50" />
+          <Property Name="LastModifiedBy" Type="nvarchar" MaxLength="30" />
+          <Property Name="ContainDataControls" Type="nvarchar" MaxLength="10" />
+          <Property Name="OSSecurityGroupAvailable" Type="nvarchar" MaxLength="10" />
+          <Property Name="OSSecurityDoc" Type="nvarchar" MaxLength="10" />
+          <Property Name="IPadEnabled" Type="nvarchar" MaxLength="10" />
+          <Property Name="HathorWebOpenssActivities" Type="nvarchar" MaxLength="10" />
+          <Property Name="HebeOpenssapps" Type="nvarchar" MaxLength="10" />
+          <Property Name="HebeOpenssapps2" Type="nvarchar" MaxLength="10" />
+          <Property Name="HebeOpenssapps4" Type="nvarchar" MaxLength="10" />
+          <Property Name="ActivityDiscontinued" Type="nvarchar" MaxLength="10" />
+          <Property Name="Deleted" Type="nchar" MaxLength="10" />
+          <Property Name="PopUpWindow" Type="nvarchar" MaxLength="10" />
+          <Property Name="Project" Type="nvarchar" MaxLength="50" />
+          <Property Name="ReconcileDate" Type="datetime" StoreGeneratedPattern="Computed" />
+          <Property Name="DocumentationLink" Type="nvarchar" MaxLength="100" />
+          <Property Name="Notes" Type="nvarchar" MaxLength="500" />
+        </EntityType>
+        <EntityType Name="web_tracker_ActivityModHistory">
+          <Key>
+            <PropertyRef Name="ActivityModID" />
+          </Key>
+          <Property Name="ActivityModID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="ActivityID" Type="int" />
+          <Property Name="ActivityName" Type="nvarchar" MaxLength="50" />
+          <Property Name="LastModifiedBy" Type="nvarchar" MaxLength="30" />
+          <Property Name="Date" Type="datetime" />
+          <Property Name="OldActivityID" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="web_tracker_Programmer">
+          <Key>
+            <PropertyRef Name="ProgrammerID" />
+          </Key>
+          <Property Name="ProgrammerID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <Association Name="FK__ActivityM__Activ__0CBAE877">
+          <End Role="web_tracker_Activity" Type="ATSwebModel.Store.web_tracker_Activity" Multiplicity="0..1" />
+          <End Role="web_tracker_ActivityModHistory" Type="ATSwebModel.Store.web_tracker_ActivityModHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="web_tracker_Activity">
+              <PropertyRef Name="ActivityID" />
+            </Principal>
+            <Dependent Role="web_tracker_ActivityModHistory">
+              <PropertyRef Name="ActivityID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="ATSwebModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+        <EntityContainer Name="admin00100_TrackerDBEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="web_tracker_Activity" EntityType="ATSwebModel.web_tracker_Activity" />
+          <EntitySet Name="web_tracker_ActivityModHistory" EntityType="ATSwebModel.web_tracker_ActivityModHistory" />
+          <EntitySet Name="web_tracker_Programmer" EntityType="ATSwebModel.web_tracker_Programmer" />
+          <AssociationSet Name="FK__ActivityM__Activ__0CBAE877" Association="ATSwebModel.FK__ActivityM__Activ__0CBAE877">
+            <End Role="web_tracker_Activity" EntitySet="web_tracker_Activity" />
+            <End Role="web_tracker_ActivityModHistory" EntitySet="web_tracker_ActivityModHistory" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="web_tracker_Activity">
+          <Key>
+            <PropertyRef Name="ActivityID" />
+          </Key>
+          <Property Name="ActivityID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ActivityGroupName" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="ActivityName" Type="String" MaxLength="75" Unicode="true" FixedLength="false" />
+          <Property Name="OldActivityID" Type="String" MaxLength="20" Unicode="true" FixedLength="false" />
+          <Property Name="OriginalProgrammer" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="ASP" Type="String" MaxLength="10" Unicode="true" FixedLength="false" />
+          <Property Name="VB" Type="String" MaxLength="10" Unicode="true" FixedLength="false" />
+          <Property Name="C_" Type="String" MaxLength="10" Unicode="true" FixedLength="false" />
+          <Property Name="C_NET" Type="String" MaxLength="10" Unicode="true" FixedLength="false" />
+          <Property Name="AJAX" Type="String" MaxLength="10" Unicode="true" FixedLength="false" />
+          <Property Name="Javascript" Type="String" MaxLength="10" Unicode="true" FixedLength="false" />
+          <Property Name="Other" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="LastModifiedBy" Type="String" MaxLength="30" Unicode="true" FixedLength="false" />
+          <Property Name="ContainDataControls" Type="String" MaxLength="10" Unicode="true" FixedLength="false" />
+          <Property Name="OSSecurityGroupAvailable" Type="String" MaxLength="10" Unicode="true" FixedLength="false" />
+          <Property Name="OSSecurityDoc" Type="String" MaxLength="10" Unicode="true" FixedLength="false" />
+          <Property Name="IPadEnabled" Type="String" MaxLength="10" Unicode="true" FixedLength="false" />
+          <Property Name="HathorWebOpenssActivities" Type="String" MaxLength="10" Unicode="true" FixedLength="false" />
+          <Property Name="HebeOpenssapps" Type="String" MaxLength="10" Unicode="true" FixedLength="false" />
+          <Property Name="HebeOpenssapps2" Type="String" MaxLength="10" Unicode="true" FixedLength="false" />
+          <Property Name="HebeOpenssapps4" Type="String" MaxLength="10" Unicode="true" FixedLength="false" />
+          <Property Name="ActivityDiscontinued" Type="String" MaxLength="10" Unicode="true" FixedLength="false" />
+          <Property Name="Deleted" Type="String" MaxLength="10" Unicode="true" FixedLength="true" />
+          <NavigationProperty Name="web_tracker_ActivityModHistory" Relationship="ATSwebModel.FK__ActivityM__Activ__0CBAE877" FromRole="web_tracker_Activity" ToRole="web_tracker_ActivityModHistory" />
+          <Property Type="String" Name="PopUpWindow" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="Project" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Type="DateTime" Name="ReconcileDate" annotation:StoreGeneratedPattern="Computed" />
+          <Property Type="String" Name="DocumentationLink" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="Notes" MaxLength="500" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="web_tracker_ActivityModHistory">
+          <Key>
+            <PropertyRef Name="ActivityModID" />
+          </Key>
+          <Property Name="ActivityModID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ActivityID" Type="Int32" />
+          <Property Name="ActivityName" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="LastModifiedBy" Type="String" MaxLength="30" Unicode="true" FixedLength="false" />
+          <Property Name="Date" Type="DateTime" />
+          <Property Name="OldActivityID" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+          <NavigationProperty Name="web_tracker_Activity" Relationship="ATSwebModel.FK__ActivityM__Activ__0CBAE877" FromRole="web_tracker_ActivityModHistory" ToRole="web_tracker_Activity" />
+        </EntityType>
+        <EntityType Name="web_tracker_Programmer">
+          <Key>
+            <PropertyRef Name="ProgrammerID" />
+          </Key>
+          <Property Name="ProgrammerID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+        </EntityType>
+        <Association Name="FK__ActivityM__Activ__0CBAE877">
+          <End Role="web_tracker_Activity" Type="ATSwebModel.web_tracker_Activity" Multiplicity="0..1" />
+          <End Role="web_tracker_ActivityModHistory" Type="ATSwebModel.web_tracker_ActivityModHistory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="web_tracker_Activity">
+              <PropertyRef Name="ActivityID" />
+            </Principal>
+            <Dependent Role="web_tracker_ActivityModHistory">
+              <PropertyRef Name="ActivityID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="ATSwebModelStoreContainer" CdmEntityContainer="admin00100_TrackerDBEntities">
+          <EntitySetMapping Name="web_tracker_Activity"><EntityTypeMapping TypeName="ATSwebModel.web_tracker_Activity"><MappingFragment StoreEntitySet="web_tracker_Activity">
+            <ScalarProperty Name="Notes" ColumnName="Notes" />
+                <ScalarProperty Name="DocumentationLink" ColumnName="DocumentationLink" />
+                <ScalarProperty Name="ReconcileDate" ColumnName="ReconcileDate" />
+                <ScalarProperty Name="Project" ColumnName="Project" />
+                <ScalarProperty Name="PopUpWindow" ColumnName="PopUpWindow" />
+                <ScalarProperty Name="ActivityID" ColumnName="ActivityID" />
+            <ScalarProperty Name="ActivityGroupName" ColumnName="ActivityGroupName" />
+            <ScalarProperty Name="ActivityName" ColumnName="ActivityName" />
+            <ScalarProperty Name="OldActivityID" ColumnName="OldActivityID" />
+            <ScalarProperty Name="OriginalProgrammer" ColumnName="OriginalProgrammer" />
+            <ScalarProperty Name="ASP" ColumnName="ASP" />
+            <ScalarProperty Name="VB" ColumnName="VB" />
+            <ScalarProperty Name="C_" ColumnName="C_" />
+            <ScalarProperty Name="C_NET" ColumnName="C_NET" />
+            <ScalarProperty Name="AJAX" ColumnName="AJAX" />
+            <ScalarProperty Name="Javascript" ColumnName="Javascript" />
+            <ScalarProperty Name="Other" ColumnName="Other" />
+            <ScalarProperty Name="LastModifiedBy" ColumnName="LastModifiedBy" />
+            <ScalarProperty Name="ContainDataControls" ColumnName="ContainDataControls" />
+            <ScalarProperty Name="OSSecurityGroupAvailable" ColumnName="OSSecurityGroupAvailable" />
+            <ScalarProperty Name="OSSecurityDoc" ColumnName="OSSecurityDoc" />
+            <ScalarProperty Name="IPadEnabled" ColumnName="IPadEnabled" />
+            <ScalarProperty Name="HathorWebOpenssActivities" ColumnName="HathorWebOpenssActivities" />
+            <ScalarProperty Name="HebeOpenssapps" ColumnName="HebeOpenssapps" />
+            <ScalarProperty Name="HebeOpenssapps2" ColumnName="HebeOpenssapps2" />
+            <ScalarProperty Name="HebeOpenssapps4" ColumnName="HebeOpenssapps4" />
+            <ScalarProperty Name="ActivityDiscontinued" ColumnName="ActivityDiscontinued" />
+            <ScalarProperty Name="Deleted" ColumnName="Deleted" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="web_tracker_ActivityModHistory"><EntityTypeMapping TypeName="ATSwebModel.web_tracker_ActivityModHistory"><MappingFragment StoreEntitySet="web_tracker_ActivityModHistory">
+            <ScalarProperty Name="ActivityModID" ColumnName="ActivityModID" />
+            <ScalarProperty Name="ActivityID" ColumnName="ActivityID" />
+            <ScalarProperty Name="ActivityName" ColumnName="ActivityName" />
+            <ScalarProperty Name="LastModifiedBy" ColumnName="LastModifiedBy" />
+            <ScalarProperty Name="Date" ColumnName="Date" />
+            <ScalarProperty Name="OldActivityID" ColumnName="OldActivityID" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="web_tracker_Programmer"><EntityTypeMapping TypeName="ATSwebModel.web_tracker_Programmer"><MappingFragment StoreEntitySet="web_tracker_Programmer">
+            <ScalarProperty Name="ProgrammerID" ColumnName="ProgrammerID" />
+            <ScalarProperty Name="Name" ColumnName="Name" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams>
+      <Diagram Name="admin00100_TrackerDBEntities" ZoomLevel="79">
+        <EntityTypeShape EntityType="ATSwebModel.web_tracker_Activity" Width="1.75" PointX="0.5" PointY="1.125" Height="5.634013671875" IsExpanded="true" />
+        <EntityTypeShape EntityType="ATSwebModel.web_tracker_ActivityModHistory" Width="1.5" PointX="3" PointY="2.75" Height="2.3648893229166674" IsExpanded="true" />
+        <EntityTypeShape EntityType="ATSwebModel.web_tracker_Programmer" Width="3.125" PointX="5.75" PointY="0.75" Height="1.4033821614583326" IsExpanded="true" />
+        <AssociationConnector Association="ATSwebModel.FK__ActivityM__Activ__0CBAE877" ManuallyRouted="false">
+          <ConnectorPoint PointX="2.25" PointY="3.9324446614583337" />
+          <ConnectorPoint PointX="3" PointY="3.9324446614583337" />
+        </AssociationConnector>
+      </Diagram>
+    </Diagrams>
+  </Designer>
+</edmx:Edmx>

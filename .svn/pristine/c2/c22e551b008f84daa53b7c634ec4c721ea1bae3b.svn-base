@@ -1,0 +1,428 @@
+﻿
+Partial Class sscUT00001_Payroll
+    Inherits HR_BasePage
+
+    Protected strEmp_ID As String = ""
+    Protected strIndividual_ID As String = ""
+    Protected strAsOfDate As String = Format(Now, "MM/dd/yyyy")
+
+    Protected strConString As String
+    Protected strConStringDNBProd3 As String
+    Protected dvPayPeriods As New Data.DataView
+    Protected strBenGroup As String = ""
+    Protected intBenGroup As Int32 = 0
+
+
+    Protected Sub Page_PreInit(sender As Object, e As System.EventArgs) Handles Me.PreInit
+        HR_BasePage.ShowPrint = True
+    End Sub
+
+    Protected Sub Page_Init(sender As Object, e As System.EventArgs) Handles Me.Init
+
+        Me.sdsPayPeriods.ConnectionString = HR_User.ConnectionStringJOVEII
+        Me.sdsPayroll.ConnectionString = HR_User.ConnectionStringJOVEII
+
+        Me.sdsEmployee.ConnectionString = HR_User.ConnectionStringJOVEII
+        Me.sdsLeave.ConnectionString = HR_User.ConnectionStringJOVEII
+        Me.sdsTimeKeeper.ConnectionString = HR_User.ConnectionStringDNBiiProd3
+        Me.sdsBenefits.ConnectionString = HR_User.ConnectionStringJOVEII
+        Me.sdsDependents.ConnectionString = HR_User.ConnectionStringJOVEII
+        Me.sdsPositions.ConnectionString = HR_User.ConnectionStringJOVEII
+
+    End Sub
+
+    Protected Sub Page_Load(sender As Object, e As System.EventArgs) Handles Me.Load
+        ' Me.tblTimeKeeper.Visible = False
+        If Not IsNothing(Request.QueryString("ID")) Then
+            Dim sdsEmpLookup As New SqlDataSource With {.ConnectionString = HR_User.ConnectionStringJOVEII}
+            sdsEmpLookup.SelectCommand = "" &
+                "SELECT [emp_id] " &
+                "     , [individual_id] " &
+                "     , [emp_display_name] " &
+                "  FROM [DBShrpn].[dbo].[employee] " &
+                " WHERE [emp_id] = @Input " &
+                "    OR [individual_id] = @Input"
+            sdsEmpLookup.SelectParameters.Add(New Parameter("Input", TypeCode.String, Request.QueryString("ID").ToString))
+            Dim dvEmpLookup As Data.DataView = sdsEmpLookup.Select(DataSourceSelectArguments.Empty)
+            If IsNothing(dvEmpLookup) OrElse dvEmpLookup.Count = 0 Then
+                Me.lblPageLabel.Text = "There are no employees with this ID or SSN."
+            Else
+                Me.lblPageLabel.Text = dvEmpLookup(0)("emp_display_name").ToString & " - " & dvEmpLookup(0)("individual_id").ToString
+                strEmp_ID = Trim(dvEmpLookup(0)("emp_id").ToString)
+                strIndividual_ID = Trim(dvEmpLookup(0)("individual_id").ToString)
+                Try
+                    s_PayChecks(strEmp_ID)
+                Catch ex As Exception
+                End Try
+            End If
+        Else
+            'strEmp_ID = "229118209"
+            's_PayChecks("229118209")
+            'strIndividual_ID = "50466"
+            strEmp_ID = "226042752"
+            s_PayChecks("226042752")
+            strIndividual_ID = "116085"
+        End If
+
+        Me.sdsEmployee.SelectParameters("emp_id").DefaultValue = strEmp_ID
+
+        Me.sdsLeave.SelectParameters("emp_id").DefaultValue = strEmp_ID
+        Me.sdsLeave.SelectParameters("cal_yr").DefaultValue = Format(Now, "yyyy")
+
+        Me.sdsTimeKeeper.SelectParameters("individual_id").DefaultValue = strIndividual_ID
+
+        Me.sdsBenefits.SelectParameters("AsOfDate").DefaultValue = strAsOfDate
+        Me.sdsBenefits.SelectParameters("Emp_ID").DefaultValue = strEmp_ID
+        Me.cbBenShowAll_CheckedChanged(Nothing, Nothing)
+
+        Me.sdsDependents.SelectParameters("individual_id").DefaultValue = strIndividual_ID
+
+        Me.sdsPositions.SelectParameters("AsOfDate").DefaultValue = strAsOfDate
+        Me.sdsPositions.SelectParameters("Emp_ID").DefaultValue = strEmp_ID
+        Me.cbPositionsShowAll_CheckedChanged(Nothing, Nothing)
+    End Sub
+
+    Protected Sub s_PayChecks(Emp_ID As String)
+        Dim dtPayChecks As New Data.DataTable
+        dtPayChecks.Columns.Add("Sort")
+        dtPayChecks.Columns.Add("Pay Element")
+        dtPayChecks.PrimaryKey = {dtPayChecks.Columns("Pay Element")}
+        dtPayChecks.Columns.Add("Description")
+
+        Me.sdsPayroll.SelectParameters("SSN").DefaultValue = Emp_ID
+        Dim dvPayRoll As Data.DataView = Me.sdsPayroll.Select(DataSourceSelectArguments.Empty)
+
+        Me.sdsPayPeriods.SelectParameters("SSN").DefaultValue = Emp_ID
+        dvPayPeriods = Me.sdsPayPeriods.Select(DataSourceSelectArguments.Empty)
+        If IsNothing(dvPayPeriods) OrElse dvPayPeriods.Count = 0 Then Exit Sub
+        dvPayPeriods.Sort = "seq_ctrl_yr, seq_ctrl_nbr"
+
+        For x = 0 To dvPayPeriods.Count - 1
+            dtPayChecks.Columns.Add(dvPayPeriods(x)("pay_pd_id"))
+            dvPayRoll.RowFilter = "pay_pd_id = '" & dvPayPeriods(x)("pay_pd_id") & "'"
+            For y = 0 To dvPayRoll.Count - 1
+                If x + y = 0 Then
+                    Dim newRow As Data.DataRow = dtPayChecks.NewRow
+                    newRow("Sort") = dvPayRoll(0)("Sort")
+                    newRow("Pay Element") = dvPayRoll(0)("pay_element_id")
+                    newRow("Description") = dvPayRoll(0)("short_descp")
+                    dtPayChecks.Rows.Add(newRow)
+                End If
+                If IsNothing(dtPayChecks.Rows.Find(dvPayRoll(y)("pay_element_id"))) Then
+                    Dim newRow As Data.DataRow = dtPayChecks.NewRow
+                    newRow("Sort") = dvPayRoll(y)("Sort")
+                    newRow("Pay Element") = dvPayRoll(y)("pay_element_id")
+                    newRow("Description") = dvPayRoll(y)("short_descp")
+                    newRow(dvPayPeriods(x)("pay_pd_id")) = FormatCurrency(dvPayRoll(y)("Amount"), 2, TriState.UseDefault, TriState.True, TriState.True)
+                    dtPayChecks.Rows.Add(newRow)
+                Else
+                    dtPayChecks.Rows.Find(dvPayRoll(y)("pay_element_id"))(dvPayPeriods(x)("pay_pd_id")) = FormatCurrency(dvPayRoll(y)("Amount"), 2, TriState.UseDefault, TriState.True, TriState.True)
+                End If
+            Next y
+        Next x
+
+        ''Add last column YTD
+        'dtPayChecks.Columns.Add("YTD")
+        'dvPayRoll.RowFilter = "pay_pd_id = '" & dvPayPeriods(dvPayPeriods.Count - 1)("pay_pd_id") & "'"
+        'For y = 0 To dvPayRoll.Count - 1
+
+        '    dtPayChecks.Rows.Find(dvPayRoll(y)("pay_element_id")).Item("YTD") = FormatCurrency(dvPayRoll(y)("YTD"), 2, TriState.UseDefault, TriState.True, TriState.True)
+        'Next y
+
+
+
+        'Earnings
+        Dim newRow18 As Data.DataRow = dtPayChecks.NewRow
+        newRow18("Sort") = 18
+        newRow18("Pay Element") = "18"
+        newRow18("Description") = "Sub Earnings"
+        For x = 3 To dtPayChecks.Columns.Count - 1
+            Dim dblSubTotal As Double = 0
+            For y = 0 To dtPayChecks.Rows.Count - 1
+                If dtPayChecks.Rows(y)("Sort") = 10 Then
+                    If Not IsDBNull(dtPayChecks.Rows(y)(x)) Then dblSubTotal += dtPayChecks.Rows(y)(x)
+                End If
+            Next y
+            newRow18(x) = FormatCurrency(dblSubTotal, 2, TriState.UseDefault, TriState.True, TriState.True)
+        Next x
+        dtPayChecks.Rows.Add(newRow18)
+        Dim newRow19 As Data.DataRow = dtPayChecks.NewRow
+        newRow19("Sort") = 19
+        newRow19("Pay Element") = "19"
+        dtPayChecks.Rows.Add(newRow19)
+
+        'Taxes
+        Dim newRow28 As Data.DataRow = dtPayChecks.NewRow
+        newRow28("Sort") = 28
+        newRow28("Pay Element") = "28"
+        newRow28("Description") = "Sub Taxes"
+        For x = 3 To dtPayChecks.Columns.Count - 1
+            Dim dblSubTotal As Double = 0
+            For y = 0 To dtPayChecks.Rows.Count - 1
+                If Int(dtPayChecks.Rows(y)("Sort") / 10) = 2 Then
+                    If Not IsDBNull(dtPayChecks.Rows(y)(x)) Then dblSubTotal += dtPayChecks.Rows(y)(x)
+                End If
+            Next y
+            newRow28(x) = FormatCurrency(dblSubTotal, 2, TriState.UseDefault, TriState.True, TriState.True)
+        Next x
+        dtPayChecks.Rows.Add(newRow28)
+        Dim newRow29 As Data.DataRow = dtPayChecks.NewRow
+        newRow29("Sort") = 29
+        newRow29("Pay Element") = "29"
+        dtPayChecks.Rows.Add(newRow29)
+
+        'Deductions
+        Dim newRow58 As Data.DataRow = dtPayChecks.NewRow
+        newRow58("Sort") = 58
+        newRow58("Pay Element") = "58"
+        newRow58("Description") = "Sub Deductions"
+        For x = 3 To dtPayChecks.Columns.Count - 1
+            Dim dblSubTotal As Double = 0
+            For y = 0 To dtPayChecks.Rows.Count - 1
+                If Int(dtPayChecks.Rows(y)("Sort") / 10) = 5 Then
+                    If Not IsDBNull(dtPayChecks.Rows(y)(x)) Then dblSubTotal += dtPayChecks.Rows(y)(x)
+                End If
+            Next y
+            newRow58(x) = FormatCurrency(dblSubTotal, 2, TriState.UseDefault, TriState.True, TriState.True)
+        Next x
+        dtPayChecks.Rows.Add(newRow58)
+        Dim newRow59 As Data.DataRow = dtPayChecks.NewRow
+        newRow59("Sort") = 59
+        newRow59("Pay Element") = "59"
+        dtPayChecks.Rows.Add(newRow59)
+
+        'SSC
+        Dim newRow98 As Data.DataRow = dtPayChecks.NewRow
+        newRow98("Sort") = 98
+        newRow98("Pay Element") = "98"
+        newRow98("Description") = "Sub SSC Paid"
+        For x = 3 To dtPayChecks.Columns.Count - 1
+            Dim dblSubTotal As Double = 0
+            For y = 0 To dtPayChecks.Rows.Count - 1
+                If Int(dtPayChecks.Rows(y)("Sort") / 10) = 9 Then
+                    If Not IsDBNull(dtPayChecks.Rows(y)(x)) Then dblSubTotal += dtPayChecks.Rows(y)(x)
+                End If
+            Next y
+            newRow98(x) = FormatCurrency(dblSubTotal, 2, TriState.UseDefault, TriState.True, TriState.True)
+        Next x
+        dtPayChecks.Rows.Add(newRow98)
+
+        Dim dvPayChecks As New Data.DataView(dtPayChecks)
+        dvPayChecks.Sort = "Sort, Pay Element"
+        Me.gvPayChecks.DataSource = dvPayChecks
+        Me.gvPayChecks.DataBind()
+    End Sub
+
+
+
+
+
+
+
+
+    Protected Sub gvPayChecks_RowCreated(sender As Object, e As System.Web.UI.WebControls.GridViewRowEventArgs) Handles gvPayChecks.RowCreated
+        e.Row.Cells.RemoveAt(0)
+        e.Row.Cells.RemoveAt(0)
+    End Sub
+
+    Protected Sub gvPayChecks_RowDataBound(sender As Object, e As System.Web.UI.WebControls.GridViewRowEventArgs) Handles gvPayChecks.RowDataBound
+        If e.Row.RowType = DataControlRowType.DataRow Then
+            If DataBinder.Eval(e.Row.DataItem, "Sort") - Int(DataBinder.Eval(e.Row.DataItem, "Sort") / 10) * 10 = 8 Then
+                For x = 0 To e.Row.Cells.Count - 1
+                    e.Row.Cells(x).Font.Bold = True
+                Next x
+            End If
+            e.Row.Cells(0).HorizontalAlign = HorizontalAlign.Left
+            e.Row.Cells(0).Wrap = False
+        ElseIf e.Row.RowType = DataControlRowType.Header Then
+            'Dim newRow As New GridViewRow(Nothing, Nothing, DataControlRowType.Header, DataControlRowState.Normal)
+            'newRow.Cells.Add(New TableCell With {.ColumnSpan = 11,
+            '                                     .HorizontalAlign = HorizontalAlign.Center,
+            '                                     .Text = "Last 10 Pay Runs"})
+            'CType(e.Row.Parent, Table).Rows.AddAt(gvPayChecks.Rows.Count, newRow)
+
+            dvPayPeriods.Sort = "pay_pd_id"
+            For x = 0 To e.Row.Cells.Count - 1
+                Dim intRow As Int32 = dvPayPeriods.Find(e.Row.Cells(x).Text)
+                If intRow <> -1 Then
+                    e.Row.Cells(x).VerticalAlign = VerticalAlign.Top
+                    e.Row.Cells(x).Text = Format(CDate(dvPayPeriods(intRow)("check_date")), "MM/dd/yyyy") &
+                                          "<br/><br/>" &
+                                          dvPayPeriods(intRow)("pay_pd_begin_date") &
+                                          "<br/>" &
+                                          dvPayPeriods(intRow)("pay_pd_end_date") &
+                                          "<br/>" &
+                                          "<a href='CheckImage.aspx?emp_id=" &
+                                          Encrypt(strEmp_ID, "!#$a54?3") &
+                                          "&pay_pd_id=" &
+                                          dvPayPeriods(intRow)("pay_pd_id") &
+                                          "' target='_blank'><img src='../images/cheque.png' /></a>"
+                ElseIf e.Row.Cells(x).Text = "YTD" Then
+                    e.Row.Cells(x).Text = "<br/><br/><br/>YTD"
+                Else
+                    e.Row.Cells(x).VerticalAlign = VerticalAlign.Top
+                    e.Row.Cells(x).Text = "Check Date<br/><br/>Pay Start<br/>Pay End"
+                End If
+            Next x
+        End If
+    End Sub
+
+
+
+    Protected Sub gvBen_DataBinding(sender As Object, e As System.EventArgs) Handles gvBenefits.DataBinding
+        intBenGroup = 1
+        strBenGroup = ""
+    End Sub
+
+    Protected Sub gvBenefits_RowDataBound(sender As Object, e As System.Web.UI.WebControls.GridViewRowEventArgs) Handles gvBenefits.RowDataBound
+        If e.Row.RowType = DataControlRowType.Header Then
+            Dim newRow As New GridViewRow(Nothing, Nothing, DataControlRowType.Header, DataControlRowState.Normal)
+            newRow.Cells.Add(New TableCell With {.ColumnSpan = Me.gvBenefits.Columns.Count - 4})
+            newRow.Cells.Add(New TableCell With {.ColumnSpan = 2,
+                                                 .Text = "Coverage",
+                                                 .HorizontalAlign = HorizontalAlign.Center
+                                                })
+            newRow.Cells.Add(New TableCell With {.ColumnSpan = 2,
+                                                 .Text = "Effective",
+                                                 .HorizontalAlign = HorizontalAlign.Center
+                                                })
+            CType(e.Row.Parent, Table).Rows.AddAt(0, newRow)
+            'Dim newRow2 As New GridViewRow(Nothing, Nothing, DataControlRowType.Header, DataControlRowState.Normal)
+            'newRow2.Cells.Add(New TableCell With {.ColumnSpan = gvBenefits.Columns.Count,
+            '                                      .HorizontalAlign = HorizontalAlign.Left,
+            '                                      .Text = "Benefits"
+            '                                     })
+            'CType(e.Row.Parent, Table).Rows.AddAt(0, newRow2)
+        ElseIf e.Row.RowType = DataControlRowType.DataRow Then
+            If Me.cbBenShowAll.Checked Then
+                If strBenGroup = "" Then strBenGroup = DataBinder.Eval(e.Row.DataItem, "Plan").ToString + DataBinder.Eval(e.Row.DataItem, "Option").ToString
+                If CDate(DataBinder.Eval(e.Row.DataItem, "[Effective Start]")) <= Now And CDate(DataBinder.Eval(e.Row.DataItem, "[Effective Stop]")) >= Now Then
+                    e.Row.Font.Bold = True
+                End If
+                If strBenGroup <> DataBinder.Eval(e.Row.DataItem, "Plan").ToString + DataBinder.Eval(e.Row.DataItem, "Option").ToString Then
+                    strBenGroup = DataBinder.Eval(e.Row.DataItem, "Plan").ToString + DataBinder.Eval(e.Row.DataItem, "Option").ToString
+                    Dim newRow As New GridViewRow(Nothing, Nothing, DataControlRowType.Footer, DataControlRowState.Normal)
+                    newRow.Cells.Add(New TableCell With {.ColumnSpan = Me.gvBenefits.Columns.Count})
+                    CType(e.Row.Parent, Table).Rows.AddAt(e.Row.RowIndex + 1 + intBenGroup, newRow)
+                    intBenGroup += 1
+                End If
+            End If
+        End If
+    End Sub
+
+    Protected Sub cbBenShowAll_CheckedChanged(sender As Object, e As System.EventArgs) Handles cbBenShowAll.CheckedChanged
+        If Me.cbBenShowAll.Checked Then
+            Me.sdsBenefits.FilterExpression = Nothing
+        Else
+            Dim sqlWhere As New System.Text.StringBuilder
+            sqlWhere.Append("((eff_date <= '" & strAsOfDate & "' AND next_eff_date > '" & strAsOfDate & "')")
+            sqlWhere.Append(" OR ")
+            sqlWhere.Append("(prior_eff_date = '12/31/2999' AND eff_date > '" & strAsOfDate & "'))")
+            sqlWhere.Append(" AND start_date <= '" & strAsOfDate & "'")
+            sqlWhere.Append(" AND stop_date >= '" & strAsOfDate & "'")
+            Me.sdsBenefits.FilterExpression = sqlWhere.ToString
+        End If
+        Me.gvBenefits.DataBind()
+    End Sub
+
+
+
+    Protected Sub gvDependants_RowDataBound(sender As Object, e As System.Web.UI.WebControls.GridViewRowEventArgs) Handles gvDependants.RowDataBound
+        If e.Row.RowType = DataControlRowType.Header Then
+            'Dim newRow2 As New GridViewRow(Nothing, Nothing, DataControlRowType.Header, DataControlRowState.Normal)
+            'newRow2.Cells.Add(New TableCell With {.ColumnSpan = gvPositions.Columns.Count,
+            '                                      .HorizontalAlign = HorizontalAlign.Left,
+            '                                      .Text = "Dependents"})
+            'CType(e.Row.Parent, Table).Rows.AddAt(0, newRow2)
+        ElseIf e.Row.RowType = DataControlRowType.DataRow Then
+            ' Dim cbShowAll As CheckBox = e.Row.FindControl("cbDepShowAll")
+            Dim sdsDepBen As SqlDataSource = e.Row.FindControl("sdsDepBen")
+            sdsDepBen.ConnectionString = HR_User.ConnectionStringJOVEII
+            sdsDepBen.SelectParameters("ptcp_associate_individual_id").DefaultValue = DataBinder.Eval(e.Row.DataItem, "dependent_individual_id").ToString
+
+            'If cbShowAll.Checked Then
+            '    sdsDepBen.FilterExpression = Nothing
+            'Else
+            Dim sqlWhere As New System.Text.StringBuilder
+            sqlWhere.Append("((eff_date <= '" & strAsOfDate & "' AND next_eff_date > '" & strAsOfDate & "')")
+            sqlWhere.Append(" OR ")
+            sqlWhere.Append("(prior_eff_date = '12/31/2999' AND eff_date > '" & strAsOfDate & "'))")
+            sdsDepBen.FilterExpression = sqlWhere.ToString
+            'End If
+
+
+            Dim gvDepBen As GridView = e.Row.FindControl("gvDepBen")
+            gvDepBen.DataBind()
+            'If gvDepBen.Rows.Count = 0 Then
+            'Dim tbl As HtmlTable = e.Row.FindControl("tblDepShowAll")
+            'tbl.Visible = False
+            'End If
+        End If
+    End Sub
+
+    Protected Sub cbDepShowAll_CheckedChanged(sender As Object, e As System.EventArgs)
+        'Dim cb As CheckBox = sender
+        'CType(CType(cb.Parent.Parent, Web.UI.HtmlControls.HtmlTableRow).FindControl("gvDepBen"), GridView).DataBind()
+        Me.gvDependants.DataBind()
+    End Sub
+
+    Protected Sub gvDepBen_Init(sender As Object, e As System.EventArgs)
+
+    End Sub
+
+
+
+    Protected Sub gvPositions_RowDataBound(sender As Object, e As System.Web.UI.WebControls.GridViewRowEventArgs) Handles gvPositions.RowDataBound
+        If e.Row.RowType = DataControlRowType.Header Then
+            Dim newRow As New GridViewRow(Nothing, Nothing, DataControlRowType.Header, DataControlRowState.Normal)
+            newRow.Cells.Add(New TableCell With {.ColumnSpan = Me.gvPositions.Columns.Count - 2})
+            'newRow.Cells.Add(New TableCell With {.ColumnSpan = 2, .Text = "Assignment",
+            '                                     .HorizontalAlign = HorizontalAlign.Center})
+            newRow.Cells.Add(New TableCell With {.ColumnSpan = 2, .Text = "Effective",
+                                                 .HorizontalAlign = HorizontalAlign.Center})
+            CType(e.Row.Parent, Table).Rows.AddAt(0, newRow)
+        ElseIf e.Row.RowType = DataControlRowType.DataRow Then
+            If Me.cbPositionsShowAll.Checked Then
+                If CDate(DataBinder.Eval(e.Row.DataItem, "eff_date")) <= Now And CDate(DataBinder.Eval(e.Row.DataItem, "[Effective Stop]")) >= Now Then
+                    e.Row.Font.Bold = True
+                End If
+            End If
+        End If
+    End Sub
+
+    Protected Sub cbPositionsShowAll_CheckedChanged(sender As Object, e As System.EventArgs) Handles cbPositionsShowAll.CheckedChanged
+        If Me.cbPositionsShowAll.Checked Then
+            Me.sdsPositions.FilterExpression = Nothing
+        Else
+            Dim sqlWhere As New System.Text.StringBuilder
+            sqlWhere.Append("((eff_date <= '" & strAsOfDate & "' AND next_eff_date > '" & strAsOfDate & "')")
+            sqlWhere.Append(" OR ")
+            sqlWhere.Append("(prior_eff_date = '12/31/2999' AND eff_date > '" & strAsOfDate & "'))")
+            sqlWhere.Append(" AND begin_date <= '" & strAsOfDate & "'")
+            sqlWhere.Append(" AND end_date >= '" & strAsOfDate & "'")
+            Me.sdsPositions.FilterExpression = sqlWhere.ToString
+        End If
+        Me.gvPositions.DataBind()
+    End Sub
+
+    Public Function Encrypt(ByVal stringToEncrypt As String, ByVal SEncryptionKey As String) As String
+        Try
+            Dim key() As Byte = {}
+            Dim IV() As Byte = {&H12, &H34, &H56, &H78, &H90, &HAB, &HCD, &HEF}
+
+            key = System.Text.Encoding.UTF8.GetBytes(Left(SEncryptionKey, 8))
+            Dim des As New System.Security.Cryptography.DESCryptoServiceProvider()
+            Dim inputByteArray() As Byte = Encoding.UTF8.GetBytes( _
+                stringToEncrypt)
+            Dim ms As New System.IO.MemoryStream()
+            Dim cs As New System.Security.Cryptography.CryptoStream(ms, des.CreateEncryptor(key, IV), System.Security.Cryptography.CryptoStreamMode.Write)
+            cs.Write(inputByteArray, 0, inputByteArray.Length)
+            cs.FlushFinalBlock()
+            Return Convert.ToBase64String(ms.ToArray())
+        Catch e As Exception
+            Return e.Message
+        End Try
+    End Function
+
+
+End Class

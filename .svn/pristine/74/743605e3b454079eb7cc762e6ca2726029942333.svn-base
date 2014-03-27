@@ -1,0 +1,442 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Data;
+using System.Data.SqlClient;
+using System.IO;
+using System.Text;
+
+
+public partial class ssc1900021OpenStreamSecurity : System.Web.UI.UserControl
+{
+    protected void Page_Load(object sender, EventArgs e)
+    {
+
+    }
+
+    
+/// <summary>
+/// Summary description for OpenStreamSecurity
+/// </summary>
+    public class OpenStreamSecurity
+    {
+        private string sUID = "";
+        private string _userID = String.Empty;
+        private string _pageName = String.Empty;
+        private string _groupID = String.Empty;
+
+        private string dw_globalConnectionString
+        {
+            get
+            {
+                //return System.Configuration.ConfigurationManager.ConnectionStrings["ATSweb"].ToString();
+                return "Data Source=DNBII\\PROD1;Password=webadmin;User ID=ATSWEB;Initial Catalog=ATSweb";
+            }
+        }
+
+
+        //properties that map to the tables
+
+        public string PageName
+        {
+            get { return _pageName; }
+            set
+            {
+                Page currentPage = (System.Web.UI.Page)System.Web.HttpContext.Current.Handler;
+                _pageName = Path.GetFileNameWithoutExtension(currentPage.AppRelativeVirtualPath);
+            }
+        }
+
+        public string UserID { get; set; }
+
+        //public string UserID
+        //{
+        //    get { return _userID; }
+        //    set
+        //    {
+        //        if (!string.IsNullOrEmpty(HttpContext.Current.Request.Cookies["OpenSS"]["UserID"].ToString()))
+        //        {
+        //            _userID = HttpContext.Current.Request.Cookies["OpenSS"]["UserID"].ToString();
+        //        }
+        //        else
+        //        {
+        //            _userID = String.Empty;
+        //        }
+        //    }
+
+        //}
+
+        public string GroupID { get; set; }
+
+        //public string GroupID
+        //{
+        //    get { return _groupID; }
+        //    set
+        //    {
+        //        if (!string.IsNullOrEmpty(HttpContext.Current.Request.Cookies["OpenSS"]["LGRP"].ToString()))
+        //        {
+        //            _groupID = HttpContext.Current.Request.Cookies["OpenSS"]["LGRP"].ToString();
+        //        }
+        //        //else if (HttpContext.Current.Server.MachineName == "CEM01WIN7D")
+        //        //{
+        //        //    HttpCookie cookie = new HttpCookie("OpenSS");
+        //        //    sUID = "cem01";
+        //        //    cookie["UserID"] = sUID;
+        //        //    cookie["LGRP"] = "ssc1900023_admin";
+        //        //    HttpContext.Current.Response.Cookies.Add(cookie);
+        //        //    _groupID = cookie.ToString();
+        //        //}
+        //        else
+        //        {
+        //            _groupID = String.Empty;
+        //        }
+        //    }
+        //}
+
+        public string GroupDescription { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+
+        //this recursively gets all the controls in the current page
+        private void GetControlList<T>(ControlCollection controlCollection, List<T> resultCollection)
+        where T : Control
+        {
+            foreach (Control control in controlCollection)
+            {
+                //if (control.GetType() == typeof(T))
+                if (control is T) // This is cleaner
+                    resultCollection.Add((T)control);
+
+                if (control.HasControls())
+                    GetControlList(control.Controls, resultCollection);
+            }
+        }
+
+        public void SetIndividualControlPermissions(WebControl control)
+        {
+            this.UserID = HttpContext.Current.Request.Cookies["OpenSS"]["UserID"].ToString();
+            this.GroupID = HttpContext.Current.Request.Cookies["OpenSS"]["LGRP"].ToString();
+
+            //for testing
+            //this.UserID = "cem01/test01";
+            //this.GroupID = "ssc1900021_admin";
+            //this.GroupID = "cem01/test01";
+
+            Page currentPage = (System.Web.UI.Page)System.Web.HttpContext.Current.Handler;
+            //if the activityID can be determined from the page name- need to handle if it's from the page or the parent folder
+            this.PageName = Path.GetFileNameWithoutExtension(currentPage.AppRelativeVirtualPath);
+            DataTable dtActivityAssignedToGroup = new DataTable();
+            DataTable dtUserInGroup = new DataTable();
+            string perms = String.Empty;
+            string groupid = String.Empty;
+
+
+            dtActivityAssignedToGroup = IsActivityAssignedToGroup(PageName, GroupID);
+            //if yes:
+            if (dtActivityAssignedToGroup.Rows.Count > 0)
+            {
+                dtUserInGroup = IsUserInGroup(UserID, GroupID);
+                //if (isUserInGroup.Any())
+                if (dtUserInGroup.Rows.Count > 0)
+                {
+                    //if yes, get the permissions
+                    groupid = dtActivityAssignedToGroup.Rows[0]["group_id"].ToString();
+                    if (!String.IsNullOrEmpty(groupid))
+                    {
+                        perms = GetActivityPermissionsByGroupIDAndActivityID(groupid, PageName);
+                        if (perms == "R")
+                        {
+                            if (control is GridView)
+                            {
+                                control.Enabled = true;
+                                control.Visible = true;
+                                //hide the command fields
+                                HideGridViewEditColumns(control);
+                            }
+                            else
+                            {
+                                control.Enabled = false;
+                                control.Visible = true;
+                            }
+                        }
+                        if (String.IsNullOrEmpty(perms) || perms == null)
+                        {
+                            control.Visible = false;
+                        }
+                        if (perms.Contains("U") || perms.Contains("D") || perms.Contains("F"))
+                        {
+                            control.Enabled = true;
+                            control.Visible = true;
+                        }
+                    }
+                }
+                //the user is not in this group
+                else
+                {
+                    if (control is GridView)
+                    {
+                        control.Enabled = true;
+                        HideGridViewEditColumns(control);
+                    }
+                    else
+                    {
+                        control.Enabled = false;
+                    }
+                }
+            }
+            //for when the activity is not assigned to any group
+            else
+            {
+                if (control is GridView)
+                {
+                    control.Enabled = true;
+                    HideGridViewEditColumns(control);
+                }
+                else
+                {
+                    control.Visible = false;
+                }
+            }
+        }
+
+        private void SetControlPermissions()
+        {
+            //get all dropdowns
+            List<WebControl> allControls = new List<WebControl>();
+            Page currentPage = (System.Web.UI.Page)System.Web.HttpContext.Current.Handler;
+            GetControlList<WebControl>(currentPage.Controls, allControls);
+
+            //get the page name- should be the activity ID
+            //string activityID = Path.GetFileNameWithoutExtension(currentPage.AppRelativeVirtualPath);
+            string perms = String.Empty;
+
+            //if the activityID can be determined from the page name- need to handle if it's from the page or the parent folder
+            this.PageName = Path.GetFileNameWithoutExtension(currentPage.AppRelativeVirtualPath);
+
+            this.UserID = HttpContext.Current.Request.Cookies["OpenSS"]["UserID"].ToString();
+            this.GroupID = HttpContext.Current.Request.Cookies["OpenSS"]["LGRP"].ToString();
+
+            DataTable dtActivityAssignedToGroup = new DataTable();
+            DataTable dtUserInGroup = new DataTable();
+            string groupid = String.Empty;
+
+            //for testing
+            //this.UserID = "cem01/test02";
+            //this.GroupID = "ssc1900021_admin";
+            //this.GroupID = "cem01/test02";
+
+            //if yes, get the permissions level for that group and set properties accordingly
+            dtActivityAssignedToGroup = IsActivityAssignedToGroup(PageName, GroupID);
+            if (dtActivityAssignedToGroup.Rows.Count > 0)
+            {
+                dtUserInGroup = IsUserInGroup(UserID, GroupID);
+                //if (isUserInGroup.Any())
+                if (dtUserInGroup.Rows.Count > 0)
+                {
+                    groupid = dtActivityAssignedToGroup.Rows[0]["group_id"].ToString();
+
+                    if (!String.IsNullOrEmpty(groupid))
+                    {
+                        perms = GetActivityPermissionsByGroupIDAndActivityID(groupid, PageName);
+                        if (!String.IsNullOrEmpty(perms))
+                        {
+                            foreach (WebControl c in allControls)
+                            {
+                                if (perms == "R")
+                                {
+                                    if (c is GridView)
+                                    {
+                                        c.Enabled = true;
+                                        c.Visible = true;
+                                        //hide the command fields
+                                        HideGridViewEditColumns(c);
+                                    }
+                                    else
+                                    {
+                                        c.Enabled = false;
+                                        c.Visible = true;
+                                    }
+                                }
+                                if (String.IsNullOrEmpty(perms) || perms == null)
+                                {
+                                    c.Visible = false;
+                                }
+                                if (perms.Contains("U") || perms.Contains("D") || perms.Contains("F"))
+                                {
+                                    c.Enabled = true;
+                                    c.Visible = true;
+                                }
+                            }
+                        }
+                    }
+                }
+                //the user is not in this group
+                else
+                {
+                    foreach (WebControl c in allControls)
+                    {
+                        //c.Visible = false;
+                        if (c is GridView)
+                        {
+                            c.Enabled = true;
+                            HideGridViewEditColumns(c);
+                        }
+                        else
+                        {
+                            c.Enabled = false;
+                        }
+                    }
+                }
+            }
+            //for when the activity is not assigned to any group
+            else
+            {
+                foreach (WebControl c in allControls)
+                {
+                    //c.Visible = false;
+                    if (c is GridView)
+                    {
+                        c.Enabled = true;
+                        HideGridViewEditColumns(c);
+                    }
+                    else
+                    {
+                        c.Enabled = false;
+                    }
+                }
+            }
+        }
+
+        private void HideGridViewEditColumns(WebControl wc)
+        {
+            GridView grid = new GridView();
+            grid = (GridView)wc;
+            IEnumerable<CommandField> editColumns = grid.Columns.OfType<CommandField>().AsEnumerable();
+            foreach (var e in editColumns)
+            {
+                //e.ShowDeleteButton = false;
+                //e.ShowSelectButton = false;
+                e.Visible = false;
+            }
+            IEnumerable<TemplateField> editColumns2 = grid.Columns.OfType<TemplateField>().AsEnumerable();
+            foreach (var c in editColumns2)
+            {
+                //e.ShowDeleteButton = false;
+                //e.ShowSelectButton = false;
+                c.Visible = false;
+            }
+        }
+
+
+
+        public string GetActivityPermissionsByGroupIDAndActivityID(string groupid, string activityid)
+        {
+            DataTable dtActivity = new DataTable();
+            string permissions = String.Empty;
+            using (SqlConnection conn = new SqlConnection(dw_globalConnectionString))
+            {
+                string sql = "select * from web_server_control_permissions wscp where wscp.activity_id = @activityid and wscp.group_id = @groupid";
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                {
+                    SqlParameter activityPRM = new SqlParameter("@activityid", activityid);
+                    SqlParameter groupPRM = new SqlParameter("@groupid", groupid);
+                    cmd.Parameters.Add(activityPRM);
+                    cmd.Parameters.Add(groupPRM);
+                    using (SqlDataAdapter ad = new SqlDataAdapter(cmd))
+                    {
+                        ad.Fill(dtActivity);
+                    }
+                }
+            }
+            permissions = dtActivity.Rows[0]["permissions"].ToString();
+            return permissions;
+        }
+
+
+        public DataTable IsPageNameInWebGroupActivities(string pagename)
+        {
+            DataTable dtActivity = new DataTable();
+            using (SqlConnection conn = new SqlConnection(dw_globalConnectionString))
+            {
+                string sql = "select * from web_group_activities wga where wga.activity_id =  @activityid";
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                {
+                    SqlParameter activityPRM = new SqlParameter("@activityid", pagename);
+                    cmd.Parameters.Add(activityPRM);
+                    using (SqlDataAdapter ad = new SqlDataAdapter(cmd))
+                    {
+                        ad.Fill(dtActivity);
+                    }
+                }
+            }
+            return dtActivity;
+        }
+
+
+        public DataTable IsActivityAssignedToGroup(string pagename, string group)
+        {
+            DataTable dtActivity = new DataTable();
+            using (SqlConnection conn = new SqlConnection(dw_globalConnectionString))
+            {
+                string sql = "select * from web_group_activities wga where wga.activity_id = @activityid and wga.group_id = @group";
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                {
+                    SqlParameter activityPRM = new SqlParameter("@activityid", pagename);
+                    SqlParameter groupPRM = new SqlParameter("@group", group);
+                    cmd.Parameters.Add(activityPRM);
+                    cmd.Parameters.Add(groupPRM);
+                    using (SqlDataAdapter ad = new SqlDataAdapter(cmd))
+                    {
+                        ad.Fill(dtActivity);
+                    }
+                }
+            }
+            return dtActivity;
+        }
+
+
+        public DataTable IsUserInGroup(string login, string groupid)
+        {
+            DataTable dtActivity = new DataTable();
+            using (SqlConnection conn = new SqlConnection(dw_globalConnectionString))
+            {
+                string sql = "select * from web_user_groups wug where wug.login = @login and group_id = @group ";
+                using (SqlCommand cmd = new SqlCommand(sql, conn))
+                {
+                    SqlParameter activityPRM = new SqlParameter("@login", login);
+                    SqlParameter groupPRM = new SqlParameter("@group", groupid);
+                    cmd.Parameters.Add(activityPRM);
+                    cmd.Parameters.Add(groupPRM);
+                    using (SqlDataAdapter ad = new SqlDataAdapter(cmd))
+                    {
+                        ad.Fill(dtActivity);
+                    }
+                }
+            }
+            return dtActivity;
+        }
+
+
+
+
+        /// <summary>
+        /// constructors
+        /// </summary>
+
+        public OpenStreamSecurity(bool setAll)
+        {
+            if (setAll == true)
+            {
+                SetControlPermissions();
+            }
+        }
+
+        public OpenStreamSecurity()
+        {
+
+        }
+    }
+}

@@ -1,0 +1,149 @@
+﻿Option Explicit On
+Option Strict On
+
+Partial Class EmpSearch
+    Inherits HR_BasePage
+
+    Protected gvMsg As New Label With {.Text = "Showing the First 100 Matches",
+                                       .ID = "gvMsg"}
+
+    Protected Sub Page_PreInit(sender As Object, e As System.EventArgs) Handles Me.PreInit
+        HR_BasePage.ShowPrint = False
+    End Sub
+
+    Protected Sub Page_Load(sender As Object, e As System.EventArgs) Handles Me.Load
+
+        Me.sdsComps.ConnectionString = Connect.ConnectionStringJOVEII
+        Me.sdsGrade.ConnectionString = Connect.ConnectionStringJOVEII
+        Me.sdsIndividual.ConnectionString = Connect.ConnectionStringJOVEII
+        Me.sdsStores.ConnectionString = Connect.ConnectionStringJOVEII
+
+        Dim strWhere As New Text.StringBuilder
+
+        If Me.tbLastName.Text.Trim.Length > 0 Then
+            If rbLastName.SelectedValue = "Is" Then
+                strWhere.Append("[individual].[last_name] = '" & Me.tbLastName.Text.ToUpper & "'")
+            Else
+                strWhere.Append("[individual].[last_name] LIKE '%" & Me.tbLastName.Text.ToUpper & "%'")
+            End If
+        End If
+
+        If Me.tbFirstName.Text.Trim.Length > 0 Then
+            If strWhere.Length > 0 Then strWhere.Append(" AND ")
+            If rbFirstName.SelectedValue = "Is" Then
+                strWhere.Append("[individual].[first_name] = '" & Me.tbFirstName.Text.ToUpper & "'")
+            Else
+                strWhere.Append("[individual].[first_name] LIKE '%" & Me.tbFirstName.Text.ToUpper & "%'")
+            End If
+        End If
+
+        If Me.tbID.Text.Trim.Length > 0 Then
+            If strWhere.Length > 0 Then strWhere.Append(" AND ")
+            strWhere.Append("([employee].[emp_id] = '" & Me.tbID.Text.Trim & "' OR [employee].[individual_id] = '" & Me.tbID.Text.Trim & "')")
+        End If
+
+        If Me.ddlStatus.SelectedIndex > 0 Then
+            If strWhere.Length > 0 Then strWhere.Append(" AND ")
+            strWhere.Append("[emp_status].[emp_status_code] = '" & Me.ddlStatus.SelectedValue.ToUpper & "'")
+        End If
+
+        If Me.ddlType.SelectedIndex > 0 Then
+            If strWhere.Length > 0 Then strWhere.Append(" AND ")
+            strWhere.Append("[emp_employment].[employment_type_code] = '" & Me.ddlType.SelectedValue.ToUpper & "'")
+        End If
+
+        If Me.tbHiredDate.Text.Trim.Length > 0 Then
+            If strWhere.Length > 0 Then strWhere.Append(" AND ")
+            If Me.ddlHiredCompare.SelectedIndex = 0 Then
+                strWhere.Append("[employee].[original_hire_date] = '" & Me.tbHiredDate.Text.TrimEnd & "'")
+            End If
+            If Me.ddlHiredCompare.SelectedIndex = 1 Then
+                strWhere.Append("[employee].[original_hire_date] >= '" & Me.tbHiredDate.Text.TrimEnd & "'")
+            End If
+            If Me.ddlHiredCompare.SelectedIndex = 2 Then
+                strWhere.Append("[employee].[original_hire_date] <= '" & Me.tbHiredDate.Text.TrimEnd & "'")
+            End If
+        End If
+
+        If Me.ddlStores.SelectedIndex > 0 Then
+            If strWhere.Length > 0 Then strWhere.Append(" AND ")
+            strWhere.Append("[emp_assignment].[loc_code] = '" & Me.ddlStores.SelectedValue & "'")
+        End If
+
+        If Me.ddlGrade.SelectedIndex > 0 Then
+            If Me.ddlGrade.SelectedIndex > 0 Then
+                If strWhere.Length > 0 Then strWhere.Append(" AND ")
+                If Me.ddlGradeCompare.SelectedIndex = 0 Then
+                    strWhere.Append("[emp_assignment].[pay_grade_code] = '" & Me.ddlGrade.SelectedValue & "'")
+                End If
+                If Me.ddlGradeCompare.SelectedIndex = 1 Then
+                    strWhere.Append("[emp_assignment].[pay_grade_code] >= '" & Me.ddlGrade.SelectedValue & "'")
+                End If
+                If Me.ddlGradeCompare.SelectedIndex = 2 Then
+                    strWhere.Append("[emp_assignment].[pay_grade_code] <= '" & Me.ddlGrade.SelectedValue & "'")
+                End If
+            End If
+        End If
+
+
+
+        If strWhere.Length <> 0 Then
+            Me.sdsIndividual.SelectCommand &= " WHERE " & strWhere.ToString & " ORDER BY [employee].[emp_display_name]"
+            Me.gvLastName.Visible = True
+            Me.gvLastName.DataBind()
+        Else
+            Me.gvLastName.Visible = False
+        End If
+
+
+    End Sub
+
+
+    Protected Sub btnClear_Click(sender As Object, e As System.EventArgs) Handles btnClear.Click
+        Me.rbLastName.SelectedIndex = 1
+        Me.tbLastName.Text = Nothing
+        Me.rbFirstName.SelectedIndex = 1
+        Me.tbFirstName.Text = Nothing
+        Me.tbID.Text = Nothing
+        Me.ddlStatus.SelectedIndex = 0
+        Me.ddlType.SelectedIndex = 0
+        Me.tbHiredDate.Text = Nothing
+        Me.ddlHiredCompare.SelectedIndex = 0
+        Me.ddlComps.SelectedIndex = 0
+        Me.sdsStores.FilterExpression = Nothing
+        Me.ddlStores.SelectedIndex = 0
+        Me.ddlGradeCompare.SelectedIndex = 0
+        Me.ddlGrade.SelectedIndex = 0
+
+        Me.gvLastName.Visible = False
+
+    End Sub
+
+    Protected Sub gvLastName_RowDataBound(sender As Object, e As System.Web.UI.WebControls.GridViewRowEventArgs) Handles gvLastName.RowDataBound
+        If e.Row.RowType = DataControlRowType.Header Then
+            Dim newRow As New GridViewRow(Nothing, Nothing, DataControlRowType.Header, DataControlRowState.Normal)
+            Dim newCell As New TableCell With {.ColumnSpan = Me.gvLastName.Columns.Count,
+                                               .HorizontalAlign = HorizontalAlign.Center}
+            newCell.Controls.Add(gvMsg)
+            newRow.Cells.Add(newCell)
+            CType(e.Row.Parent, Table).Rows.AddAt(0, newRow)
+        End If
+    End Sub
+
+    Protected Sub gvLastName_DataBound(sender As Object, e As System.EventArgs) Handles gvLastName.DataBound
+        Dim gv As GridView = CType(sender, GridView)
+        If gv.Rows.Count < 100 Then
+            gvMsg.Text = "Showing All Matches"
+        End If
+    End Sub
+
+    Protected Sub ddlComps_SelectedIndexChanged(sender As Object, e As System.EventArgs) Handles ddlComps.SelectedIndexChanged
+        Dim ddl As DropDownList = CType(sender, DropDownList)
+        If ddl.SelectedIndex = 0 Then
+            Me.sdsStores.FilterExpression = Nothing
+        Else
+            Me.sdsStores.FilterExpression = "comp = '" & ddl.SelectedValue & "'"
+            Me.sdsStores.DataBind()
+        End If
+    End Sub
+End Class

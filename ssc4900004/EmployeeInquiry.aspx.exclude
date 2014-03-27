@@ -1,0 +1,1000 @@
+﻿<%@ Page Language="VB" MasterPageFile="~/HRApps.master" AutoEventWireup="false" CodeFile="EmployeeInquiry.aspx.vb"
+    Inherits="sscUT00001_Payroll" %>
+
+<%@ Register Assembly="AjaxControlToolkit" Namespace="AjaxControlToolkit" TagPrefix="asp" %>
+<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
+    Employee Data
+</asp:Content>
+<asp:Content ID="Content3" runat="server" ContentPlaceHolderID="BodyTitle">
+    <asp:Label ID="lblPageLabel" runat="server" Text="Lookup Employee Data" />
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="contentBody" runat="Server">
+    <asp:ToolkitScriptManager ID="ToolkitScriptManager1" runat="server" />
+    <div id="divEmployee" style="left: 25px; position: relative;">
+        <table>
+            <tr>
+                <td style="vertical-align: top">
+                    <asp:DetailsView ID="dvEmployee" runat="server" AutoGenerateRows="False" HeaderText="Employment"
+                        Font-Size="Small" HorizontalAlign="Center" DataSourceID="sdsEmployee" CellPadding="3">
+                        <Fields>
+                            <asp:BoundField DataField="emp_id" HeaderText="Emp ID" ItemStyle-Wrap="False">
+                                <HeaderStyle Font-Bold="True" Wrap="False" />
+                            </asp:BoundField>
+                            <asp:BoundField DataField="individual_id" HeaderText="Indiv. ID" ItemStyle-Wrap="False">
+                                <HeaderStyle Font-Bold="True" Wrap="False" />
+                            </asp:BoundField>
+                            <asp:BoundField DataField="emp_display_name" HeaderText="Display Name" ItemStyle-Wrap="False">
+                                <HeaderStyle Font-Bold="True" Wrap="False" />
+                            </asp:BoundField>
+                            <asp:BoundField DataField="pay_to_name" HeaderText="Pay Name" ItemStyle-Wrap="False">
+                                <HeaderStyle Font-Bold="True" Wrap="False" />
+                            </asp:BoundField>
+                            <asp:BoundField DataField="Orig. Hire Date" HeaderText="Orig. Hire Date" ItemStyle-Wrap="False">
+                                <HeaderStyle Font-Bold="True" Wrap="False" />
+                            </asp:BoundField>
+                            <asp:BoundField DataField="Adj. Service Date" HeaderText="Adj. Service Date" ItemStyle-Wrap="False">
+                                <HeaderStyle Font-Bold="True" Wrap="False" />
+                            </asp:BoundField>
+                            <asp:BoundField DataField="Prior Yrs Service" HeaderText="Prior Yrs Service" ItemStyle-Wrap="False">
+                                <HeaderStyle Font-Bold="True" Wrap="False" />
+                            </asp:BoundField>
+                        </Fields>
+                        <AlternatingRowStyle BackColor="#DCDCDC" />
+                        <HeaderStyle BackColor="#5E1857" Font-Bold="True" Wrap="False" HorizontalAlign="Center"
+                            ForeColor="White" />
+                        <RowStyle Font-Bold="False" Wrap="False" BackColor="#EEEEEE" ForeColor="Black" />
+                    </asp:DetailsView>
+                </td>
+                <td>
+                    &nbsp;&nbsp;
+                </td>
+                <td style="vertical-align: top;">
+                    <asp:DetailsView ID="dvEmployee2" runat="server" AutoGenerateRows="False" HeaderText="Personal"
+                        Font-Size="Small" HorizontalAlign="Center" DataSourceID="sdsEmployee" CellPadding="3">
+                        <Fields>
+                            <asp:BoundField DataField="sex_code" HeaderText="Gender">
+                                <HeaderStyle Font-Bold="True" Wrap="False" />
+                            </asp:BoundField>
+                            <asp:BoundField DataField="marital_status_code_1" HeaderText="Marital">
+                                <HeaderStyle Font-Bold="True" Wrap="False" />
+                            </asp:BoundField>
+                            <asp:BoundField DataField="birth_date" HeaderText="Birth Date">
+                                <HeaderStyle Font-Bold="True" Wrap="False" />
+                            </asp:BoundField>
+                            <asp:BoundField DataField="first_name" HeaderText="First Name">
+                                <HeaderStyle Font-Bold="True" Wrap="False" />
+                            </asp:BoundField>
+                            <asp:BoundField DataField="first_middle_name" HeaderText="Middle Name">
+                                <HeaderStyle Font-Bold="True" Wrap="False" />
+                            </asp:BoundField>
+                            <asp:BoundField DataField="last_name" HeaderText="Last Name">
+                                <HeaderStyle Font-Bold="True" Wrap="False" />
+                            </asp:BoundField>
+                            <asp:BoundField DataField="name_suffix" HeaderText="Name Suffix">
+                                <HeaderStyle Font-Bold="True" Wrap="False" />
+                            </asp:BoundField>
+                            <asp:BoundField DataField="preferred_name" HeaderText="Preferred Name">
+                                <HeaderStyle Font-Bold="True" Wrap="False" />
+                            </asp:BoundField>
+                        </Fields>
+                        <AlternatingRowStyle BackColor="#DCDCDC" />
+                        <HeaderStyle BackColor="#5E1857" Font-Bold="True" Wrap="False" HorizontalAlign="Center"
+                            ForeColor="White" />
+                        <RowStyle Font-Bold="False" Wrap="False" BackColor="#EEEEEE" ForeColor="Black" />
+                    </asp:DetailsView>
+                </td>
+                <td>
+                    &nbsp;&nbsp;
+                </td>
+                <td style="vertical-align: top">
+                    <asp:DetailsView ID="dvEmployee3" runat="server" AutoGenerateRows="False" HeaderText="Contact"
+                        Font-Size="Small" HorizontalAlign="Center" DataSourceID="sdsEmployee" CellPadding="3">
+                        <Fields>
+                            <asp:BoundField DataField="electronic_mail_id" HeaderText="eMail">
+                                <HeaderStyle Font-Bold="True" Wrap="False" />
+                            </asp:BoundField>
+                            <asp:BoundField DataField="addr_1_street_or_pob_1" HeaderText="Address 1">
+                                <HeaderStyle Font-Bold="True" Wrap="False" />
+                            </asp:BoundField>
+                            <asp:BoundField DataField="addr_1_street_or_pob_2" HeaderText="Address 2">
+                                <HeaderStyle Font-Bold="True" Wrap="False" />
+                            </asp:BoundField>
+                            <asp:BoundField DataField="addr_1_street_or_pob_3" HeaderText="Address 3">
+                                <HeaderStyle Font-Bold="True" Wrap="False" />
+                            </asp:BoundField>
+                            <asp:BoundField DataField="addr_1_city_name" HeaderText="City">
+                                <HeaderStyle Font-Bold="True" Wrap="False" />
+                            </asp:BoundField>
+                            <asp:BoundField DataField="addr_1_country_sub_entity_code" HeaderText="State">
+                                <HeaderStyle Font-Bold="True" Wrap="False" />
+                            </asp:BoundField>
+                            <asp:BoundField DataField="addr_1_postal_code" HeaderText="Zip">
+                                <HeaderStyle Font-Bold="True" Wrap="False" />
+                            </asp:BoundField>
+                            <asp:TemplateField HeaderText="Phones" HeaderStyle-VerticalAlign="Top">
+                                <ItemTemplate>
+                                    <table>
+                                        <tr>
+                                            <td style="white-space: nowrap;">
+                                                Phone 1
+                                            </td>
+                                            <td>
+                                                &nbsp;
+                                            </td>
+                                            <td style="white-space: nowrap;">
+                                                Phone 2
+                                            </td>
+                                            <td>
+                                                &nbsp;
+                                            </td>
+                                            <td style="white-space: nowrap;">
+                                                Phone 3
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="white-space: nowrap;">
+                                                <asp:Label ID="lblP1Type" runat="server" Text='<%# Bind("phone_1_type_code") %>'></asp:Label>
+                                            </td>
+                                            <td>
+                                                &nbsp;
+                                            </td>
+                                            <td style="white-space: nowrap;">
+                                                <asp:Label ID="lblP2Type" runat="server" Text='<%# Bind("phone_2_type_code") %>'></asp:Label>
+                                            </td>
+                                            <td>
+                                                &nbsp;
+                                            </td>
+                                            <td style="white-space: nowrap;">
+                                                <asp:Label ID="lblP3Type" runat="server" Text='<%# Bind("phone_3_type_code") %>'></asp:Label>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="white-space: nowrap;">
+                                                <asp:Label ID="lblP1AreaCode" runat="server" Text='<%# Bind("Phone1") %>'></asp:Label>
+                                            </td>
+                                            <td>
+                                                &nbsp;
+                                            </td>
+                                            <td style="white-space: nowrap;">
+                                                <asp:Label ID="lblP2AreaCode" runat="server" Text='<%# Bind("Phone2") %>'></asp:Label>
+                                            </td>
+                                            <td>
+                                                &nbsp;
+                                            </td>
+                                            <td style="white-space: nowrap;">
+                                                <asp:Label ID="lblP3AreaCode" runat="server" Text='<%# Bind("Phone3") %>'></asp:Label>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </ItemTemplate>
+                                <HeaderStyle Font-Bold="True" Wrap="False" />
+                            </asp:TemplateField>
+                        </Fields>
+                        <AlternatingRowStyle BackColor="#DCDCDC" />
+                        <HeaderStyle BackColor="#5E1857" Font-Bold="True" Wrap="False" HorizontalAlign="Center"
+                            ForeColor="White" />
+                        <RowStyle Font-Bold="False" Wrap="False" BackColor="#EEEEEE" ForeColor="Black" />
+                    </asp:DetailsView>
+                </td>
+            </tr>
+        </table>
+        <asp:SqlDataSource ID="sdsEmployee" runat="server" SelectCommand="
+            SELECT 'XX-XXX-' + RIGHT(RTRIM([employee].[emp_id]),4) AS [emp_id]
+                 , RTRIM([employee].[emp_id]) AS [BenFilter] 
+                 , [employee].[individual_id] 
+                 , [employee].[emp_display_name] 
+                 , [individual].[pay_to_name] 
+                 , CONVERT(CHAR(10),[employee].[original_hire_date],101) AS [Orig. Hire Date] 
+                 , CONVERT(CHAR(10),[employee].[adjusted_service_date],101) AS [Adj. Service Date] 
+                 , CONVERT(CHAR(10),[employee].[first_date_worked],101) AS [First Date Worked] 
+                 , [employee].[user_amt_1] AS [Prior Yrs Service] 
+                 , [employee].[electronic_mail_id] 
+                 , CASE [individual_personal].[sex_code] WHEN 'M' THEN 'Male' 
+                                                         WHEN 'F' THEN 'Female' 
+                                                         ELSE 'OTHER' 
+                                                         END AS [sex_code]
+                 , CONVERT(CHAR(10),[individual_personal].[birth_date],101) AS [birth_date] 
+                 , CASE [individual_personal].[marital_status_code_1] WHEN 'M' THEN 'Married' 
+                                                                      WHEN 'S' THEN 'Single' 
+                                                                      ELSE 'OTHER' 
+                                                                      END AS [marital_status_code_1]
+                 , [individual].[first_name] 
+                 , [individual].[first_middle_name] 
+                 , [individual].[last_name] 
+                 , [individual].[preferred_name] 
+                 , [individual].[name_suffix] 
+                 , [individual].[addr_1_street_or_pob_1]
+                 , [individual].[addr_1_street_or_pob_2] 
+                 , [individual].[addr_1_street_or_pob_3] 
+                 , [individual].[addr_1_city_name] 
+                 , [individual].[addr_1_country_sub_entity_code] 
+                 , [individual].[addr_1_postal_code] 
+                 , [individual].[phone_1_type_code]
+                 , CASE WHEN LEN(RTRIM([phone_1_area_city_code])) = 0 THEN '' ELSE '(' + RTRIM([phone_1_area_city_code]) + ')' END + 
+                   CASE WHEN LEN(RTRIM([phone_1_area_city_code])) &lt;&gt; 0 OR LEN(RTRIM([phone_1_nbr])) &lt;&gt; 0 THEN ' ' ELSE '' END + 
+                   CASE WHEN LEN(RTRIM([phone_1_nbr])) = 7 THEN LEFT(RTRIM([phone_1_nbr]),3) + '-' + RIGHT(RTRIM([phone_1_nbr]),4) ELSE RTRIM([phone_1_nbr]) END AS Phone1 
+                 , [individual].[phone_2_type_code]
+                 , CASE WHEN LEN(RTRIM([phone_2_area_city_code])) = 0 THEN '' ELSE '(' + RTRIM([phone_2_area_city_code]) + ')' END + 
+                   CASE WHEN LEN(RTRIM([phone_2_area_city_code])) &lt;&gt; 0 OR LEN(RTRIM([phone_2_nbr])) &lt;&gt; 0 THEN ' ' ELSE '' END + 
+                   CASE WHEN LEN(RTRIM([phone_2_nbr])) = 7 THEN LEFT(RTRIM([phone_2_nbr]),3) + '-' + RIGHT(RTRIM([phone_2_nbr]),4) ELSE RTRIM([phone_2_nbr]) END AS Phone2 
+                 , [individual].[phone_3_type_code]
+                 , CASE WHEN LEN(RTRIM([phone_3_area_city_code])) = 0 THEN '' ELSE '(' + RTRIM([phone_3_area_city_code]) + ')' END + 
+                   CASE WHEN LEN(RTRIM([phone_3_area_city_code])) &lt;&gt; 0 OR LEN(RTRIM([phone_3_nbr])) &lt;&gt; 0 THEN ' ' ELSE '' END + 
+                   CASE WHEN LEN(RTRIM([phone_3_nbr])) = 7 THEN LEFT(RTRIM([phone_3_nbr]),3) + '-' + RIGHT(RTRIM([phone_3_nbr]),4) ELSE RTRIM([phone_3_nbr]) END AS Phone3 
+              FROM [DBShrpn].[dbo].[employee] [employee]
+              JOIN [DBShrpn].[dbo].[individual_personal] [individual_personal]
+                ON [employee].[individual_id] = [individual_personal].[individual_id] 
+              JOIN [DBShrpn].[dbo].[individual] [individual]
+                ON [employee].[individual_id] = [individual].[individual_id] 
+             WHERE [employee].[emp_id] = @emp_id 
+                OR [employee].[individual_id] = @emp_id
+
+            ">
+            <SelectParameters>
+                <asp:Parameter Name="emp_id" />
+            </SelectParameters>
+        </asp:SqlDataSource>
+    </div>
+    <br />
+    <br />
+    <div id="divLeave" style="left: 25px; position: relative;">
+        <table>
+            <tr>
+                <td style="vertical-align: top">
+                    <table style="background-color: #5E1857; color: #FFFFFF; border-collapse: collapse;">
+                        <tr style="border-bottom-style: inset">
+                            <td style="font-weight: bold">
+                                Leave Balances
+                            </td>
+                            <td style="text-align: right">
+                                &nbsp;
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <asp:GridView ID="gvLeave" runat="server" AutoGenerateColumns="False" BackColor="White"
+                                    CellPadding="3" GridLines="Vertical" HorizontalAlign="Center" Font-Size="Small"
+                                    DataSourceID="sdsLeave" BorderStyle="None">
+                                    <Columns>
+                                        <asp:BoundField DataField="Type" HeaderText="Type">
+                                            <HeaderStyle Font-Bold="True" Wrap="False" />
+                                        </asp:BoundField>
+                                        <asp:BoundField DataField="Accrued" HeaderText="Accrued" DataFormatString="{0:N2}"
+                                            NullDisplayText="0.00">
+                                            <HeaderStyle Font-Bold="True" Wrap="False" />
+                                            <ItemStyle HorizontalAlign="Right" />
+                                        </asp:BoundField>
+                                        <asp:BoundField DataField="Taken" HeaderText="Taken" DataFormatString="{0:N2}" NullDisplayText="0.00">
+                                            <HeaderStyle Font-Bold="True" Wrap="False" />
+                                            <ItemStyle HorizontalAlign="Right" />
+                                        </asp:BoundField>
+                                    </Columns>
+                                    <EmptyDataTemplate>
+                                        No Current Leave to Report
+                                    </EmptyDataTemplate>
+                                    <AlternatingRowStyle BackColor="#DCDCDC" />
+                                    <FooterStyle BackColor="#CCCCCC" ForeColor="Black" />
+                                    <HeaderStyle BackColor="#5E1857" Font-Bold="True" ForeColor="White" />
+                                    <RowStyle BackColor="#EEEEEE" ForeColor="Black" />
+                                </asp:GridView>
+                                <asp:SqlDataSource ID="sdsLeave" runat="server" SelectCommand="
+                                    SELECT *
+                                      FROM
+                                    (
+                                    SELECT 'PTO' AS [Type] 
+                                         , SUM(CASE WHEN [pay_element_id] = '1717' THEN [yr_to_date_tm_amt] ELSE 0 END) AS [Accrued] 
+                                         , SUM(CASE WHEN [pay_element_id] = '1700' THEN [yr_to_date_tm_amt] ELSE 0 END) AS [Taken] 
+                                      FROM [DBShrpy].[dbo].[emp_pay_element_accum] 
+                                     WHERE emp_id = @emp_id 
+                                       AND [pay_element_id] IN ('1717','1700') 
+                                       AND cal_yr = @cal_yr 
+                                     UNION 
+                                    SELECT 'VTO Individual' AS [Type] 
+                                         , SUM(CASE WHEN [pay_element_id] = '1515' THEN [yr_to_date_tm_amt] ELSE 0 END) AS [Accrued] 
+                                         , SUM(CASE WHEN [pay_element_id] = '1502' THEN [yr_to_date_tm_amt] ELSE 0 END) AS [Taken] 
+                                      FROM [DBShrpy].[dbo].[emp_pay_element_accum] 
+                                     WHERE emp_id = @emp_id 
+                                       AND [pay_element_id] IN ('1515','1502') 
+                                       AND cal_yr = @cal_yr 
+                                     UNION 
+                                    SELECT 'VTO Group' AS [Type] 
+                                         , SUM(CASE WHEN [pay_element_id] = '1516' THEN [yr_to_date_tm_amt] ELSE 0 END) AS [Accrued] 
+                                         , SUM(CASE WHEN [pay_element_id] = '1504' THEN [yr_to_date_tm_amt] ELSE 0 END) AS [Taken] 
+                                      FROM [DBShrpy].[dbo].[emp_pay_element_accum] 
+                                     WHERE emp_id = @emp_id 
+                                       AND [pay_element_id] IN ('1516','1504') 
+                                       AND cal_yr = @cal_yr 
+                                     UNION 
+                                    SELECT 'Parental Leave' AS [Type] 
+                                         , SUM(CASE WHEN [pay_element_id] = '1617' THEN [yr_to_date_tm_amt] ELSE 0 END) AS [Accrued] 
+                                         , SUM(CASE WHEN [pay_element_id] = '1604' THEN [yr_to_date_tm_amt] ELSE 0 END) AS [Taken] 
+                                      FROM [DBShrpy].[dbo].[emp_pay_element_accum] 
+                                     WHERE emp_id = @emp_id 
+                                       AND [pay_element_id] IN ('1617','1604') 
+                                       AND cal_yr = @cal_yr 
+                                     UNION 
+                                    SELECT 'Wellness Time Off' AS [Type] 
+                                         , SUM(CASE WHEN [pay_element_id] = '1618' THEN [yr_to_date_tm_amt] ELSE 0 END) AS [Accrued] 
+                                         , SUM(CASE WHEN [pay_element_id] = '1605' THEN [yr_to_date_tm_amt] ELSE 0 END) AS [Taken] 
+                                      FROM [DBShrpy].[dbo].[emp_pay_element_accum] 
+                                     WHERE emp_id = @emp_id 
+                                       AND [pay_element_id] IN ('1618','1605') 
+                                       AND cal_yr = @cal_yr 
+                                     UNION 
+                                    SELECT 'STD @ 80%' AS [Type] 
+                                         , SUM(CASE WHEN [pay_element_id] = '1719' THEN [yr_to_date_tm_amt] ELSE 0 END) AS [Accrued] 
+                                         , SUM(CASE WHEN [pay_element_id] = '1751' THEN [yr_to_date_tm_amt] ELSE 0 END) AS [Taken] 
+                                      FROM [DBShrpy].[dbo].[emp_pay_element_accum] 
+                                     WHERE emp_id = @emp_id 
+                                       AND [pay_element_id] IN ('1719','1751') 
+                                       AND cal_yr = @cal_yr 
+                                     UNION 
+                                    SELECT 'STD @ 60%' AS [Type] 
+                                         , SUM(CASE WHEN [pay_element_id] = '1720' THEN [yr_to_date_tm_amt] ELSE 0 END) AS [Accrued] 
+                                         , SUM(CASE WHEN [pay_element_id] = '1752' THEN [yr_to_date_tm_amt] ELSE 0 END) AS [Taken] 
+                                      FROM [DBShrpy].[dbo].[emp_pay_element_accum] 
+                                     WHERE emp_id = @emp_id 
+                                       AND [pay_element_id] IN ('1720','1752') 
+                                       AND cal_yr = @cal_yr 
+                                     UNION 
+                                    SELECT 'STD @ 100%' AS [Type] 
+                                         , SUM(CASE WHEN [pay_element_id] = '1718' THEN [yr_to_date_tm_amt] ELSE 0 END) AS [Accrued] 
+                                         , SUM(CASE WHEN [pay_element_id] = '1750' THEN [yr_to_date_tm_amt] ELSE 0 END) AS [Taken] 
+                                      FROM [DBShrpy].[dbo].[emp_pay_element_accum] 
+                                     WHERE emp_id = @emp_id 
+                                       AND [pay_element_id] IN ('1718','1750') 
+                                       AND cal_yr = @cal_yr 
+                                     UNION 
+                                    SELECT 'Holiday' AS [Type] 
+                                         , SUM(CASE WHEN [pay_element_id] = '0000' THEN [yr_to_date_tm_amt] ELSE 0 END) AS [Accrued] 
+                                         , SUM(CASE WHEN [pay_element_id] = '1300' THEN [yr_to_date_tm_amt] ELSE 0 END) AS [Taken] 
+                                      FROM [DBShrpy].[dbo].[emp_pay_element_accum] 
+                                     WHERE emp_id = @emp_id 
+                                       AND [pay_element_id] IN ('0000','1300') 
+                                       AND cal_yr = @cal_yr 
+                                     UNION 
+                                    SELECT 'Bereavement' AS [Type] 
+                                         , SUM(CASE WHEN [pay_element_id] = '0000' THEN [yr_to_date_tm_amt] ELSE 0 END) AS [Accrued] 
+                                         , SUM(CASE WHEN [pay_element_id] = '1602' THEN [yr_to_date_tm_amt] ELSE 0 END) AS [Taken] 
+                                      FROM [DBShrpy].[dbo].[emp_pay_element_accum] 
+                                     WHERE emp_id = @emp_id 
+                                       AND [pay_element_id] IN ('0000','1602') 
+                                       AND cal_yr = @cal_yr 
+                                     UNION 
+                                    SELECT 'Jury' AS [Type] 
+                                         , SUM(CASE WHEN [pay_element_id] = '0000' THEN [yr_to_date_tm_amt] ELSE 0 END) AS [Accrued] 
+                                         , SUM(CASE WHEN [pay_element_id] = '1603' THEN [yr_to_date_tm_amt] ELSE 0 END) AS [Taken] 
+                                      FROM [DBShrpy].[dbo].[emp_pay_element_accum] 
+                                     WHERE emp_id = @emp_id 
+                                       AND [pay_element_id] IN ('0000','1603') 
+                                       AND cal_yr = @cal_yr 
+                                    )   AS [leave]
+
+                                     ORDER
+                                        BY CASE [Type]
+                                                WHEN 'PTO' THEN 0
+                                                WHEN 'VTO Group' THEN 1
+                                                WHEN 'VTO Individual' THEN 2
+                                                WHEN 'Wellness Time Off' THEN 3
+                                                WHEN 'Parental Leave' THEN 4
+                                                WHEN 'Jury' THEN 5
+                                                WHEN 'Holiday' THEN 6
+                                                WHEN 'Bereavement' THEN 7
+                                                WHEN 'STD @ 60%' THEN 8
+                                                WHEN 'STD @ 80%' THEN 9
+                                                WHEN 'STD @ 100%' THEN 10
+                                            ELSE 15
+                                            END
+                                    ">
+                                    <SelectParameters>
+                                        <asp:Parameter Name="emp_id" />
+                                        <asp:Parameter Name="cal_yr" />
+                                    </SelectParameters>
+                                </asp:SqlDataSource>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td style="width: 150px">
+                </td>
+                <td style="vertical-align: top">
+                    <table style="background-color: #5E1857; color: #FFFFFF; border-collapse: collapse;">
+                        <tr style="border-bottom-style: inset">
+                            <td style="font-weight: bold">
+                                TimeKeeper
+                            </td>
+                            <td style="text-align: right">
+                                &nbsp;
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <asp:UpdatePanel ID="upTimeKeeper" runat="server">
+                                    <ContentTemplate>
+                                        <asp:GridView ID="gvTimeKeeper" runat="server" AutoGenerateColumns="False" BackColor="White"
+                                            BorderColor="#999999" BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical"
+                                            HorizontalAlign="Center" Font-Size="Small" DataSourceID="sdsTimeKeeper" AllowPaging="True"
+                                            PageSize="15">
+                                            <Columns>
+                                                <asp:BoundField DataField="Item" HeaderText="Item" />
+                                                <asp:BoundField DataField="Hours" HeaderText="Hours" ItemStyle-HorizontalAlign="Right" />
+                                                <asp:BoundField DataField="Date" HeaderText="Date" DataFormatString="{0:MM/dd/yyyy}" />
+                                            </Columns>
+                                            <AlternatingRowStyle BackColor="#DCDCDC" />
+                                            <FooterStyle BackColor="#CCCCCC" ForeColor="Black" />
+                                            <HeaderStyle BackColor="#5E1857" Font-Bold="True" ForeColor="White" />
+                                            <RowStyle BackColor="#EEEEEE" ForeColor="Black" />
+                                        </asp:GridView>
+                                        <asp:SqlDataSource ID="sdsTimeKeeper" runat="server" ProviderName="System.Data.SqlClient"
+                                            SelectCommand="
+                                            SELECT [PAYCODENAME] AS [Item] 
+                                                 , CAST(CAST([TIMEINSECONDS] AS DECIMAL)/3600  AS DECIMAL(10,2)) AS [Hours] 
+                                                 , [APPLYDATE] [Date] 
+                                              FROM [wfcdb].[dbo].[VP_TOTALS] 
+                                             WHERE RTRIM([PERSONNUM]) = @individual_id 
+                                               AND PAYCODETYPE &lt;&gt; 'G' 
+                                               AND [APPLYDATE] &gt;= DATEADD(YEAR,-1,GETDATE())
+                                             ORDER
+                                                BY [APPLYDATE] DESC
+                                            ">
+                                            <SelectParameters>
+                                                <asp:Parameter Name="individual_id" />
+                                            </SelectParameters>
+                                        </asp:SqlDataSource>
+                                    </ContentTemplate>
+                                </asp:UpdatePanel>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <br />
+    <br />
+    <div id="divBenefits" style="left: 25px; position: relative;">
+        <asp:UpdatePanel ID="upBenefits" runat="server">
+            <ContentTemplate>
+                <table style="background-color: #5E1857; color: #FFFFFF; border-collapse: collapse;">
+                    <tr style="border-bottom-style: inset">
+                        <td style="font-weight: bold">
+                            Benefits
+                        </td>
+                        <td style="text-align: right">
+                            <asp:CheckBox ID="cbBenShowAll" runat="server" Text="Show History" AutoPostBack="True"
+                                Font-Size="Small" />
+                            &nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <asp:GridView ID="gvBenefits" runat="server" AutoGenerateColumns="False" DataSourceID="sdsBenefits"
+                                BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px"
+                                CellPadding="3" GridLines="Vertical" HorizontalAlign="Center" Font-Size="Small">
+                                <Columns>
+                                    <asp:BoundField DataField="Plan" HeaderText="Plan" />
+                                    <asp:BoundField DataField="Option" HeaderText="Option" />
+                                    <asp:BoundField DataField="Description" HeaderText="Description" />
+                                    <asp:BoundField DataField="Start" HeaderText="Start" ItemStyle-HorizontalAlign="Center" />
+                                    <asp:BoundField DataField="Stop" HeaderText="Stop" ItemStyle-HorizontalAlign="Center" />
+                                    <asp:BoundField DataField="Effective Start" HeaderText="Start" ItemStyle-HorizontalAlign="Center" />
+                                    <asp:BoundField DataField="Effective Stop" HeaderText="Stop" ItemStyle-HorizontalAlign="Center" />
+                                </Columns>
+                                <AlternatingRowStyle BackColor="#DCDCDC" />
+                                <FooterStyle BackColor="#CCCCCC" ForeColor="Black" />
+                                <HeaderStyle BackColor="#5E1857" Font-Bold="True" ForeColor="White" />
+                                <RowStyle BackColor="#EEEEEE" ForeColor="Black" />
+                            </asp:GridView>
+                        </td>
+                    </tr>
+                </table>
+            </ContentTemplate>
+        </asp:UpdatePanel>
+        <asp:SqlDataSource ID="sdsBenefits" runat="server" SelectCommand="
+            SELECT RTRIM([ben_plan_ptcp_opt].[ben_plan_id]) [Plan]
+                 , RTRIM([ben_plan_ptcp_opt].[ben_plan_opt_id]) [Option]
+                 , RTRIM([ben_plan_opt].[descp]) [Description]
+                 , CONVERT(CHAR(10),[ben_plan_ptcp_opt].[start_date],101) [Start]
+                 , CONVERT(CHAR(10),[ben_plan_ptcp_opt].[stop_date],101) [Stop]
+                 , CONVERT(CHAR(10),[ben_plan_ptcp_opt].[eff_date],101) [Effective Start]
+                 , CONVERT(CHAR(10),
+                   CASE WHEN [ben_plan_ptcp_opt].[next_eff_date] = '12/31/2999'
+                        THEN [ben_plan_ptcp_opt].[stop_date]
+                        ELSE [ben_plan_ptcp_opt].[next_eff_date]
+                    END, 101) [Effective Stop]
+                 , [ben_plan_ptcp_opt].[eff_date]
+                 , [ben_plan_ptcp_opt].[next_eff_date]
+                 , [ben_plan_ptcp_opt].[prior_eff_date]
+                 , [ben_plan_ptcp_opt].[start_date]
+                 , [ben_plan_ptcp_opt].[stop_date]
+              FROM [DBShrpn].[dbo].[ben_plan_ptcp_opt] [ben_plan_ptcp_opt]
+              JOIN [DBShrpn].[dbo].[ben_plan_opt] [ben_plan_opt]
+                ON [ben_plan_ptcp_opt].[ben_plan_id] = [ben_plan_opt].[ben_plan_id]
+               AND [ben_plan_ptcp_opt].[ben_plan_opt_id] = [ben_plan_opt].[ben_plan_opt_id]
+               AND (([ben_plan_opt].[eff_date] &lt;= @AsOfDate AND [ben_plan_opt].[next_eff_date] &gt; @AsOfDate)
+                    OR
+                    ([ben_plan_opt].[prior_eff_date] = '12/31/2999' AND [ben_plan_opt].[eff_date] &gt; @AsOfDate))
+               AND [ben_plan_opt].[start_date] &lt;= @AsOfDate
+               AND [ben_plan_opt].[stop_date] &gt;= @AsOfDate
+             WHERE [ben_plan_ptcp_opt].[participant_id] = @Emp_ID
+             ORDER
+                BY [ben_plan_ptcp_opt].[ben_plan_id]
+                 , CASE [ben_plan_ptcp_opt].[ben_plan_id]
+                        WHEN 'PTO' THEN CASE [ben_plan_ptcp_opt].[ben_plan_opt_id]
+                                             WHEN 'PTO' THEN '01'
+                                             WHEN 'VTO-GRP' THEN '020'
+                                             WHEN 'VTO-IND' THEN '020'
+                                             ELSE [ben_plan_ptcp_opt].[ben_plan_opt_id]
+                                         END
+                        WHEN 'STD' THEN CASE [ben_plan_ptcp_opt].[ben_plan_opt_id]
+                                             WHEN 'STD60' THEN '060'
+                                             WHEN 'STD80' THEN '080'
+                                             ELSE '100'
+                                         END
+                        WHEN 'THRIFT' THEN CASE [ben_plan_ptcp_opt].[ben_plan_opt_id]
+                                             WHEN 'RSPRETAX' THEN '010'
+                                             WHEN 'RSPER1%' THEN '020'
+                                             ELSE [ben_plan_ptcp_opt].[ben_plan_opt_id]
+                                         END
+                        ELSE [ben_plan_ptcp_opt].[ben_plan_id]
+                    END
+                  , CASE WHEN [ben_plan_ptcp_opt].[next_eff_date] = '12/31/2999'
+                        THEN [ben_plan_ptcp_opt].[stop_date]
+                        ELSE [ben_plan_ptcp_opt].[next_eff_date]
+                    END
+            ">
+            <SelectParameters>
+                <asp:Parameter Name="AsOfDate" />
+                <asp:Parameter Name="Emp_ID" />
+            </SelectParameters>
+        </asp:SqlDataSource>
+    </div>
+    <br />
+    <br />
+    <div id="divDependents" style="left: 25px; position: relative;">
+        <asp:UpdatePanel ID="upDependents" runat="server">
+            <ContentTemplate>
+                <table style="background-color: #5E1857; color: #FFFFFF; border-collapse: collapse;">
+                    <tr style="border-bottom-style: inset">
+                        <td style="font-weight: bold">
+                            Contacts/Dependents
+                        </td>
+                        <td style="text-align: right">
+                            &nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <asp:GridView ID="gvDependants" runat="server" AutoGenerateColumns="False" DataSourceID="sdsDependents"
+                                BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px"
+                                CellPadding="3" GridLines="Vertical" Font-Size="Small">
+                                <Columns>
+                                    <asp:BoundField DataField="dependent_individual_id" HeaderText="ID" />
+                                    <asp:BoundField DataField="display_name" HeaderText="Name" ReadOnly="True" />
+                                    <asp:TemplateField HeaderText="Benefits">
+                                        <ItemTemplate>
+                                            <%--                                <table runat="server" style="color: #FFFFFF; font-weight: bold; background-color: #5E1857;
+                                    text-align: right; width: 100%;" id="tblDepShowAll">
+                                    <tr>
+                                        <td>
+                                            <asp:CheckBox ID="cbDepShowAll" runat="server" Text="Show History" OnCheckedChanged="cbDepShowAll_CheckedChanged"
+                                                AutoPostBack="True" />
+                                        </td>
+                                    </tr>
+                                </table>--%>
+                                            <asp:GridView ID="gvDepBen" runat="server" CellPadding="0" Font-Size="Small" BorderStyle="None"
+                                                AutoGenerateColumns="False" ShowHeader="False" GridLines="None" DataSourceID="sdsDepBen"
+                                                OnInit="gvDepBen_Init" Width="100%">
+                                                <Columns>
+                                                    <asp:BoundField DataField="ben_plan_id" HeaderText="Plan" ItemStyle-Width="65" />
+                                                    <asp:TemplateField>
+                                                        <ItemStyle Width="15px" />
+                                                    </asp:TemplateField>
+                                                    <asp:BoundField DataField="ben_assignment_type_code" />
+                                                    <asp:TemplateField>
+                                                        <ItemStyle Width="15px" />
+                                                    </asp:TemplateField>
+                                                    <asp:BoundField DataField="eff_date" DataFormatString="{0:MM/dd/yyyy}" ItemStyle-Width="55" />
+                                                    <asp:TemplateField>
+                                                        <ItemStyle Width="15px" />
+                                                    </asp:TemplateField>
+                                                    <asp:BoundField DataField="next_eff_date" DataFormatString="{0:MM/dd/yyyy}" ItemStyle-Width="55" />
+                                                </Columns>
+                                                <RowStyle VerticalAlign="Top" />
+                                            </asp:GridView>
+                                            <asp:SqlDataSource ID="sdsDepBen" runat="server" SelectCommand="
+                                                SELECT [ben_plan_ptcp_associate].[ben_plan_id] 
+                                                     , [ben_plan_ptcp_associate].[eff_date] 
+                                                     , [ben_plan_ptcp_associate].[prior_eff_date] 
+                                                     , [ben_plan_ptcp_associate].[next_eff_date] 
+                                                     , CASE [ben_plan_ptcp_associate].[ben_assignment_type_code] 
+                                                            WHEN 1 THEN 'Covered Dependent' 
+                                                            WHEN 2 THEN 'Beneficiary' 
+                                                            ELSE 'Self' END AS [ben_assignment_type_code] 
+                                                  FROM [DBShrpn].[dbo].[ben_plan_ptcp_associate] [ben_plan_ptcp_associate] 
+                                                 WHERE [ptcp_associate_individual_id] = @ptcp_associate_individual_id
+                                                 ORDER
+                                                    BY CASE [ben_plan_ptcp_associate].[ben_assignment_type_code] 
+                                                            WHEN 1 THEN 'Covered Dependent' 
+                                                            WHEN 2 THEN 'Beneficiary' 
+                                                            ELSE 'Self' END
+                                                     , [ben_plan_ptcp_associate].[ben_plan_id] 
+                                                ">
+                                                <SelectParameters>
+                                                    <asp:Parameter Name="ptcp_associate_individual_id" />
+                                                </SelectParameters>
+                                            </asp:SqlDataSource>
+                                        </ItemTemplate>
+                                    </asp:TemplateField>
+                                    <asp:BoundField DataField="relationship" HeaderText="Relationship" />
+                                    <asp:BoundField DataField="sex" HeaderText="Gender" />
+                                    <asp:BoundField DataField="birth_date" HeaderText="Birth" DataFormatString="{0:MM/dd/yyyy}" />
+                                    <asp:BoundField DataField="death_date" HeaderText="Death" DataFormatString="{0:MM/dd/yyyy}" />
+                                    <asp:BoundField DataField="student_status" HeaderText="Student" />
+                                    <asp:BoundField DataField="contact_in_emergency_ind" HeaderText="Contact" ItemStyle-HorizontalAlign="Center" />
+                                    <asp:TemplateField HeaderText="Phone">
+                                        <ItemTemplate>
+                                            <asp:Label ID="phone_1_type_code" runat="server" Text='<%# Bind("phone_1_type_code") %>' />
+                                            <br />
+                                            <asp:Label ID="phone_2_type_code" runat="server" Text='<%# Bind("phone_2_type_code") %>' />
+                                            <br />
+                                            <asp:Label ID="phone_3_type_code" runat="server" Text='<%# Bind("phone_3_type_code") %>' />
+                                        </ItemTemplate>
+                                    </asp:TemplateField>
+                                    <asp:TemplateField HeaderText="Phone Nbr">
+                                        <ItemTemplate>
+                                            <asp:Label ID="phone_1" runat="server" Text='<%# Bind("phone_1") %>'></asp:Label>
+                                            <br />
+                                            <asp:Label ID="phone_2" runat="server" Text='<%# Bind("phone_2") %>'></asp:Label>
+                                            <br />
+                                            <asp:Label ID="phone_3" runat="server" Text='<%# Bind("phone_3") %>'></asp:Label>
+                                        </ItemTemplate>
+                                    </asp:TemplateField>
+                                    <asp:TemplateField HeaderText="Ext">
+                                        <ItemTemplate>
+                                            <asp:Label ID="phone_1_extension_nbr" runat="server" Text='<%# Bind("phone_1_extension_nbr") %>'></asp:Label>
+                                            <br />
+                                            <asp:Label ID="phone_2_extension_nbr" runat="server" Text='<%# Bind("phone_2_extension_nbr") %>'></asp:Label>
+                                            <br />
+                                            <asp:Label ID="phone_3_extension_nbr" runat="server" Text='<%# Bind("phone_3_extension_nbr") %>'></asp:Label>
+                                        </ItemTemplate>
+                                    </asp:TemplateField>
+                                </Columns>
+                                <AlternatingRowStyle BackColor="#DCDCDC" />
+                                <FooterStyle BackColor="#CCCCCC" ForeColor="Black" />
+                                <HeaderStyle BackColor="#5E1857" Font-Bold="True" ForeColor="White" />
+                                <RowStyle BackColor="#EEEEEE" ForeColor="Black" VerticalAlign="Top" />
+                            </asp:GridView>
+                        </td>
+                    </tr>
+                </table>
+            </ContentTemplate>
+        </asp:UpdatePanel>
+        <asp:SqlDataSource ID="sdsDependents" runat="server" SelectCommand="
+                    SELECT [individual_dependent].[dependent_individual_id]
+                         , [individual_dependent].[contact_in_emergency_ind]
+                         , RTRIM([individual_dependent].[display_name]) [display_name]
+                         , [relationship_code].[short_descp] [relationship]
+                         , CASE [individual_personal].[sex_code]
+                                WHEN 'F' THEN 'Female'
+                                WHEN 'M' THEN 'Male'
+                                WHEN 'U' THEN 'Unknown'
+                                ELSE NULL
+                            END AS [sex]
+                         , CASE WHEN [individual_personal].[birth_date] = '12/31/2999'
+                                THEN ''
+                                ELSE CONVERT(CHAR(10),[individual_personal].[birth_date],101)
+                            END AS [birth_date]
+                         , CASE WHEN [individual_personal].[death_date] = '12/31/2999'
+                                THEN ''
+                                ELSE CONVERT(CHAR(10),[individual_personal].[death_date],101)
+                            END AS [death_date]
+                         , CASE [individual_personal].[student_status_code]
+                                WHEN '1' THEN 'None'
+                                WHEN '2' THEN 'Part-Time'
+                                WHEN '3' THEN 'Full-Time'
+                                ELSE ''
+                            END AS [student_status]
+                         , RTRIM([individual].[phone_1_type_code]) [phone_1_type_code]
+                         , CASE WHEN RTRIM([individual].[phone_1_area_city_code]) &lt;&gt; ''
+                                THEN '(' + RTRIM([individual].[phone_1_area_city_code]) + ') '
+                                ELSE ''
+                            END
+                         + CASE WHEN LEN(RTRIM([individual].[phone_1_nbr])) = 7
+                                THEN LEFT(RTRIM([individual].[phone_1_nbr]),3) 
+                                   + '-'
+                                   + RIGHT(RTRIM([individual].[phone_1_nbr]),4)
+                                ELSE RTRIM([individual].[phone_1_nbr])
+                            END AS [phone_1]
+                         , [individual].[phone_1_extension_nbr]
+                         , RTRIM([individual].[phone_2_type_code]) [phone_2_type_code]
+                         , CASE WHEN RTRIM([individual].[phone_2_area_city_code]) &lt;&gt; ''
+                                THEN '(' + RTRIM([individual].[phone_2_area_city_code]) + ') '
+                                ELSE ''
+                            END
+                         + CASE WHEN LEN(RTRIM([individual].[phone_2_nbr])) = 7
+                                THEN LEFT(RTRIM([individual].[phone_2_nbr]),3) 
+                                   + '-'
+                                   + RIGHT(RTRIM([individual].[phone_2_nbr]),4)
+                                ELSE RTRIM([individual].[phone_2_nbr])
+                            END AS [phone_2]
+                         , [individual].[phone_2_extension_nbr]
+                         , RTRIM([individual].[phone_3_type_code]) [phone_3_type_code]
+                         , CASE WHEN RTRIM([individual].[phone_3_area_city_code]) &lt;&gt; ''
+                                THEN '(' + RTRIM([individual].[phone_3_area_city_code]) + ') '
+                                ELSE ''
+                            END
+                         + CASE WHEN LEN(RTRIM([individual].[phone_3_nbr])) = 7
+                                THEN LEFT(RTRIM([individual].[phone_3_nbr]),3) 
+                                   + '-'
+                                   + RIGHT(RTRIM([individual].[phone_3_nbr]),4)
+                                ELSE RTRIM([individual].[phone_3_nbr])
+                            END AS [phone_3]
+                         , [individual].[phone_3_extension_nbr]
+                      FROM [DBShrpn].[dbo].[individual_dependent] [individual_dependent]
+                      JOIN [DBShrpn].[dbo].[individual_personal] [individual_personal]
+                        ON [individual_dependent].[dependent_individual_id] = [individual_personal].[individual_id]
+                      JOIN [DBShrpn].[dbo].[individual] [individual]
+                        ON [individual_dependent].[dependent_individual_id] = [individual].[individual_id]
+                      LEFT
+                      JOIN [DBShrpn].[dbo].[code_entry_policy] [relationship_code]
+                        ON [relationship_code].[code_tbl_id] = '10084'
+                       AND [individual_dependent].[relationship_code] = [relationship_code].[code_value]
+
+
+                    where [individual_dependent].individual_id = @individual_id
+
+
+">
+            <SelectParameters>
+                <asp:Parameter Name="individual_id" />
+            </SelectParameters>
+        </asp:SqlDataSource>
+    </div>
+    <br />
+    <br />
+    <div id="divPositions" style="left: 25px; position: relative;">
+        <asp:UpdatePanel ID="upPositions" runat="server">
+            <ContentTemplate>
+                <table style="background-color: #5E1857; color: #FFFFFF; border-collapse: collapse;">
+                    <tr style="border-bottom-style: inset">
+                        <td style="font-weight: bold">
+                            Position/Job
+                        </td>
+                        <td style="text-align: right">
+                            <asp:CheckBox ID="cbPositionsShowAll" runat="server" Text="Show History" Font-Size="Small"
+                                AutoPostBack="True" />&nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <asp:GridView ID="gvPositions" runat="server" AutoGenerateColumns="False" DataSourceID="sdsPositions"
+                                BackColor="White" BorderColor="#999999" BorderStyle="None" BorderWidth="1px"
+                                CellPadding="3" GridLines="Vertical" Font-Size="Small">
+                                <Columns>
+                                    <asp:BoundField DataField="job_or_pos_id" HeaderText="ID" />
+                                    <asp:BoundField DataField="work_tm" HeaderText="Work" />
+                                    <asp:BoundField DataField="assigned_to" HeaderText="Type" />
+                                    <asp:BoundField DataField="title" HeaderText="Title" />
+                                    <asp:BoundField DataField="cntr_desc" HeaderText="Location" />
+                                    <asp:BoundField DataField="pay_grade_code" HeaderText="Pay Grade" ItemStyle-HorizontalAlign="Center" />
+                                    <asp:BoundField DataField="annual_salary_amt" HeaderText="Annual" DataFormatString="{0:C2}"
+                                        ItemStyle-HorizontalAlign="Right" />
+                                    <asp:BoundField DataField="pd_salary_amt" HeaderText="Paycheck" DataFormatString="{0:C2}"
+                                        ItemStyle-HorizontalAlign="Right" />
+                                    <asp:BoundField DataField="hourly_pay_rate" HeaderText="Hourly" DataFormatString="{0:C4}"
+                                        ItemStyle-HorizontalAlign="Right" />
+                                    <asp:BoundField DataField="salary_change_type" HeaderText="Salary Change" />
+                                    <%--                                    <asp:BoundField DataField="begin_date" HeaderText="Start" DataFormatString="{0:MM/dd/yyyy}" />
+                                    <asp:BoundField DataField="end_date" HeaderText="Stop" DataFormatString="{0:MM/dd/yyyy}" />
+                                    --%>
+                                    <asp:BoundField DataField="eff_date" HeaderText="Start" DataFormatString="{0:MM/dd/yyyy}" />
+                                    <asp:BoundField DataField="Effective Stop" HeaderText="Stop" DataFormatString="{0:MM/dd/yyyy}" />
+                                </Columns>
+                                <AlternatingRowStyle BackColor="#DCDCDC" />
+                                <FooterStyle BackColor="#CCCCCC" ForeColor="Black" />
+                                <HeaderStyle BackColor="#5E1857" Font-Bold="True" ForeColor="White" />
+                                <RowStyle BackColor="#EEEEEE" ForeColor="Black" VerticalAlign="Top" />
+                            </asp:GridView>
+                        </td>
+                    </tr>
+                </table>
+            </ContentTemplate>
+        </asp:UpdatePanel>
+        <asp:SqlDataSource ID="sdsPositions" runat="server" SelectCommand="
+            SELECT [emp_assignment].[job_or_pos_id]
+                 , CASE [emp_assignment].[assigned_to_code]
+                        WHEN 'J' THEN 'Job'
+                        WHEN 'P' THEN 'Position'
+                        ELSE NULL
+                    END AS [assigned_to]
+                 , CASE [emp_assignment].[assigned_to_code]
+                        WHEN 'J' THEN [job_title].[title]
+                        WHEN 'P' THEN [pos_title].[title]
+                        ELSE NULL
+                    END AS [title]
+                 , [assignment_reason_code].[short_descp] [assignment_reason]
+                 , [salary_change_type_code].[short_descp] [salary_change_type]
+                 , [gl_cntr_data].[cntr_desc]
+                 , [emp_assignment].[pay_grade_code]
+                 , CASE [emp_assignment].[work_tm_code]
+                         WHEN 'F' THEN 'Full-Time'
+                         WHEN 'P' THEN 'Part-Time'
+                         WHEN 'U' THEN 'Unspecified'
+                         ELSE NULL
+                     END AS [work_tm]
+                 , [emp_assignment].[annual_salary_amt]
+                 , [emp_assignment].[pd_salary_amt]
+                 , [emp_assignment].[hourly_pay_rate]
+                 , [emp_assignment].[begin_date]
+                 , [emp_assignment].[end_date]
+                 , [emp_assignment].[eff_date]
+                 , [emp_assignment].[next_eff_date]
+                 , [emp_assignment].[prior_eff_date]
+                 , CASE WHEN [emp_assignment].[next_eff_date] = '12/31/2999'
+                        THEN [emp_assignment].[end_date]
+                        ELSE [emp_assignment].[next_eff_date]
+                    END AS [Effective Stop]
+              FROM [DBShrpn].[dbo].[emp_assignment] [emp_assignment]
+              LEFT
+              JOIN [DBShrpn].[dbo].[code_entry_policy] [assignment_reason_code]
+                ON [assignment_reason_code].[code_tbl_id] = '10090'
+               AND [emp_assignment].[assignment_reason_code] = [assignment_reason_code].[code_value]
+              LEFT
+              JOIN [DBShrpn].[dbo].[code_entry_policy] [salary_change_type_code]
+                ON [salary_change_type_code].[code_tbl_id] = '10141'
+               AND [emp_assignment].[salary_change_type_code] = [salary_change_type_code].[code_value]
+              LEFT
+              JOIN [ssc_gl].[dbo].[gl_cntr_data] [gl_cntr_data]
+                ON [emp_assignment].[loc_code] = [gl_cntr_data].[store_num]
+              LEFT
+              JOIN [DBShrpn].[dbo].[job_title] [job_title]
+                ON [emp_assignment].[assigned_to_code] = 'J'
+               AND [emp_assignment].[job_or_pos_id] = [job_title].[job_id]
+               AND [job_title].[eff_date] = 
+                   (SELECT MAX([A].[eff_date])
+                      FROM [DBShrpn].[dbo].[job_title] [A]
+                     WHERE [job_title].[job_id] = [A].[job_id]
+                       AND [job_title].[eff_date] &lt;= @AsOfDate)
+              LEFT
+              JOIN [DBShrpn].[dbo].[pos_title] [pos_title]
+                ON [emp_assignment].[assigned_to_code] = 'P'
+               AND [emp_assignment].[job_or_pos_id] = [pos_title].[pos_id]
+               AND [pos_title].[eff_date] = 
+                   (SELECT MAX([A].[eff_date])
+                      FROM [DBShrpn].[dbo].[pos_title] [A]
+                     WHERE [pos_title].[pos_id] = [A].[pos_id]
+                       AND [pos_title].[eff_date] &lt;=@AsOfDate)
+             WHERE emp_id=@emp_id
+             ORDER
+                BY CASE WHEN [emp_assignment].[next_eff_date] = '12/31/2999'
+                        THEN [emp_assignment].[end_date]
+                        ELSE [emp_assignment].[next_eff_date]
+                    END 
+                   DESC
+            ">
+            <SelectParameters>
+                <asp:Parameter Name="AsOfDate" />
+                <asp:Parameter Name="emp_id" />
+            </SelectParameters>
+        </asp:SqlDataSource>
+    </div>
+    <br />
+    <br />
+    <div id="divPaychecks" style="left: 25px; position: relative;">
+        <table style="background-color: #5E1857; color: #FFFFFF; border-collapse: collapse;">
+            <tr style="border-bottom-style: inset">
+                <td style="font-weight: bold">
+                    Last 10 Paychecks
+                </td>
+                <td style="text-align: right">
+                    &nbsp;
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <asp:HyperLink ID="HyperLink1" runat="server" Target="_blank">HyperLink</asp:HyperLink>
+                    <asp:GridView ID="gvPayChecks" runat="server" BackColor="White" BorderColor="#999999"
+                        BorderStyle="None" BorderWidth="1px" CellPadding="3" GridLines="Vertical" Font-Size="Small">
+                        <EmptyDataTemplate>
+                            No Pay Checks to Report
+                        </EmptyDataTemplate>
+                        <AlternatingRowStyle BackColor="#DCDCDC" />
+                        <FooterStyle BackColor="#CCCCCC" ForeColor="Black" />
+                        <HeaderStyle BackColor="#5E1857" Font-Bold="True" ForeColor="White" />
+                        <RowStyle BackColor="#EEEEEE" ForeColor="Black" VerticalAlign="Top" />
+                    </asp:GridView>
+                </td>
+            </tr>
+            
+        </table>
+        <asp:SqlDataSource ID="sdsPayroll" runat="server" SelectCommand="
+            SELECT B.pay_pd_id
+                 , B.Sort
+                 , B.pay_element_id
+                 , CASE WHEN [short_descp] IS NULL THEN B.[pay_element_id] ELSE [short_descp] END AS short_descp
+                 , B.[Earnings] AS [Amount] 
+                 , B.YTD
+              FROM
+            (       SELECT pay_pd_id
+                         , CASE WHEN pay_element_type_code = '1' THEN 10 WHEN pay_element_type_code = '2' THEN 50 ELSE 90 END AS Sort
+                         , pay_element_id
+                         , tot_current_monetary_amt AS Earnings
+                         , ytd_monetary_amt AS YTD
+                      FROM DBShrpy.dbo.emp_pmt_pay_element_detail
+                     WHERE (emp_id = @SSN) AND (pay_element_type_code IN ('1', '2', '3'))
+                     UNION
+                    SELECT pay_pd_id
+                         , 21 AS Sort
+                         , 'Federal' AS pay_element_id
+                         , fit_current_withheld_amt AS Earnings
+                         , fit_ytd_tot_empl_withheld_amt AS YTD
+                      FROM DBShrpy.dbo.emp_pmt_us_federal_tax_detail
+                     WHERE (emp_id = @SSN)
+                     UNION
+                    SELECT pay_pd_id
+                        , 22 AS Sort
+                        , 'OASDI' AS pay_element_id
+                        , emp_oasdi_current_withheld_amt AS Earnings
+                        , emp_oasdi_ytd_tot_empl_wh_amt AS YTD
+                     FROM DBShrpy.dbo.emp_pmt_us_federal_tax_detail AS emp_pmt_us_federal_tax_detail_2
+                    WHERE (emp_id = @SSN)
+                    UNION
+                   SELECT pay_pd_id
+                        , 23 AS Sort
+                        , 'Medicare' AS pay_element_id
+                        , emp_medicare_curr_withheld_amt AS Earnings
+                        , emp_med_ytd_tot_empl_wh_amt AS YTD
+                     FROM DBShrpy.dbo.emp_pmt_us_federal_tax_detail AS emp_pmt_us_federal_tax_detail_1
+                    WHERE (emp_id = @SSN)
+                    UNION
+                   SELECT pay_pd_id
+                       , 24 AS Sort
+                       , RTRIM(tax_authority_id) + ' State' AS pay_element_id
+                       , sit_current_withheld_amt AS Earnings
+                       , sit_ytd_tot_empl_withheld_amt AS YTD
+                    FROM DBShrpy.dbo.emp_pmt_us_st_tax_detail
+                   WHERE (emp_id = @SSN)
+            )   AS B
+              LEFT
+             OUTER
+              JOIN
+            (      SELECT pay_element_id
+                        , short_descp
+                    FROM DBShrpn.dbo.pay_element_descp AS AA
+                   WHERE (eff_date = (SELECT TOP (1) eff_date 
+                                        FROM DBShrpn.dbo.pay_element_descp AS BB
+                                        WHERE (AA.pay_element_id = pay_element_id)
+                                        ORDER
+                                           BY eff_date DESC))
+            )   AS C 
+                ON B.pay_element_id = C.pay_element_id 
+             ORDER
+                BY RIGHT ('0' + RTRIM(B.pay_pd_id), 7)
+                 , B.Sort
+                 , B.pay_element_id
+        ">
+            <SelectParameters>
+                <asp:Parameter Name="SSN" />
+            </SelectParameters>
+        </asp:SqlDataSource>
+        <asp:SqlDataSource ID="sdsPayPeriods" runat="server" SelectCommand="
+            SELECT TOP 10
+                   [payroll_run_type_id]
+                 , [pay_pd_id]
+                 , [check_date]
+                 , CONVERT(CHAR(10),[pay_pd_begin_date],101) AS [pay_pd_begin_date]
+                 , CONVERT(CHAR(10),[pay_pd_end_date],101) AS [pay_pd_end_date]
+                 , [seq_ctrl_yr] 
+                 , [seq_ctrl_nbr]
+              FROM [DBShrpy].[dbo].[emp_pmt]
+             WHERE [emp_id] = @SSN
+             ORDER
+                BY [check_date] DESC
+        ">
+            <SelectParameters>
+                <asp:Parameter Name="SSN" />
+            </SelectParameters>
+        </asp:SqlDataSource>
+    </div>
+</asp:Content>

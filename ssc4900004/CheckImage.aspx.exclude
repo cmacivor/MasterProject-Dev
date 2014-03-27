@@ -1,0 +1,428 @@
+﻿<%@ Page Language="VB" AutoEventWireup="false" CodeFile="CheckImage.aspx.vb" Inherits="CheckImage" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title></title>
+</head>
+<body>
+    <form id="form1" runat="server">
+    <asp:SqlDataSource ID="sdsReprint" runat="server" SelectCommand="
+        SELECT CASE WHEN [PayCheck].[Item] = '0001'
+                    THEN 10
+                    ELSE CASE WHEN [pay_element].[pay_element_type_code] IS NULL
+                              THEN [PayCheck].[Sort]
+                              ELSE [pay_element].[pay_element_type_code] * 10 
+                                 + [pay_element].[earn_type_code] 
+                                 + [pay_element].[deduction_type_code]
+                          END
+                END [Sort]
+             , CASE WHEN [pay_element_descp].[short_descp] IS NULL
+                    THEN [PayCheck].[Item]
+                    ELSE [pay_element_descp].[short_descp]
+                END [Item]
+             , CASE WHEN [PayCheck].[Check] IS NULL
+                    THEN 0
+                    ELSE [PayCheck].[Check]
+                END [Check]
+             , CASE WHEN [PayCheck].[YTD] IS NULL
+                    THEN[PayCheck].[Accum] 
+                       - CASE WHEN[PayCheck].[Prior] IS NULL
+                              THEN 0
+                              ELSE [PayCheck].[Prior]
+                          END
+                    ELSE [PayCheck].[YTD]
+                END [YTD]
+             , CASE WHEN [pay_element].[print_on_earn_statement_code] IS NULL
+                    THEN '02'
+                    ELSE [pay_element].[print_on_earn_statement_code]
+                END [Print In]
+             , CASE WHEN [pay_element].[pay_element_classn_code] IS NULL
+                    THEN 'TAX'
+                    ELSE [pay_element].[pay_element_classn_code]
+                END [Type]
+             , [pay_element].[pay_element_type_code]
+             , [pay_element].[earn_type_code]
+             , [pay_element].[deduction_type_code]
+          FROM
+
+        /*UNION parts of paycheck into one table*/
+        (
+        /*Federal Tax*/
+        SELECT [emp_us_federal_tax_accum].[emp_id]
+             , [emp_pmt_us_federal_tax_detail].[pay_pd_id]
+             , 20.1 AS [Sort]
+             , 'Federal' [Item]
+             , [emp_pmt_us_federal_tax_detail].[fit_current_withheld_amt] [Check]
+             , [emp_pmt_us_federal_tax_detail].[fit_ytd_tot_empl_withheld_amt] [YTD]
+             , [Prior].[fit_current_withheld_amt] [Prior]
+             , [emp_us_federal_tax_accum].[fit_tax_withheld_ytd_amt] [Accum]
+             , CASE WHEN [emp_pmt_us_federal_tax_detail].[fit_ytd_tot_empl_withheld_amt]
+                       + CASE WHEN [Prior].[fit_current_withheld_amt] IS NULL
+                              THEN 0
+                              ELSE [Prior].[fit_current_withheld_amt]
+                          END
+                       = [emp_us_federal_tax_accum].[fit_tax_withheld_ytd_amt]
+                    THEN 1
+                    ELSE 0
+                END [Balance]
+          FROM [DBShrpy].[dbo].[emp_us_federal_tax_accum] [emp_us_federal_tax_accum]
+          LEFT
+          JOIN [DBShrpy].[dbo].[emp_pmt_us_federal_tax_detail] [emp_pmt_us_federal_tax_detail]
+            ON [emp_us_federal_tax_accum].[emp_id] = [emp_pmt_us_federal_tax_detail].[emp_id]
+           AND [emp_pmt_us_federal_tax_detail].[pay_pd_id] = @pay_pd_id
+         CROSS
+          JOIN
+        (
+        SELECT SUM([emp_pmt_us_federal_tax_detail2].[fit_current_withheld_amt]) [fit_current_withheld_amt]
+          FROM [DBShrpy].[dbo].[emp_pmt_us_federal_tax_detail] [emp_pmt_us_federal_tax_detail2]
+         WHERE [emp_pmt_us_federal_tax_detail2].[emp_id] = @emp_id
+           AND [emp_pmt_us_federal_tax_detail2].[pay_pd_id] IN
+               (SELECT [emp_pmt].[pay_pd_id]
+                  FROM [DBShrpy].[dbo].[emp_pmt] [emp_pmt]
+                 WHERE [emp_pmt].[emp_id] = [emp_pmt_us_federal_tax_detail2].[emp_id]
+                   AND [emp_pmt].[check_date] &gt;
+                       (SELECT [A].[check_date]
+                          FROM [DBShrpy].[dbo].[emp_pmt] [A]
+                         WHERE [emp_pmt].[emp_id] = [A].[emp_id]
+                           AND [A].[pay_pd_id] = @pay_pd_id)) 
+        )   AS [Prior]
+         WHERE [emp_us_federal_tax_accum].[emp_id] = @emp_id
+           AND [emp_us_federal_tax_accum].[tax_yr] = RIGHT(RTRIM(@pay_pd_id),4)
+
+         UNION
+
+        /*OASDI Tax*/
+        SELECT [emp_us_federal_tax_accum].[emp_id]
+             , [emp_pmt_us_federal_tax_detail].[pay_pd_id]
+             , 20.2 AS [Sort]
+             , 'OASDI' [Item]
+             , [emp_pmt_us_federal_tax_detail].[emp_oasdi_current_withheld_amt] [Check]
+             , [emp_pmt_us_federal_tax_detail].[emp_oasdi_ytd_tot_empl_wh_amt] [YTD]
+             , [Prior].[fit_current_withheld_amt]
+             , [emp_us_federal_tax_accum].[emp_oasdi_tax_withheld_ytd_amt]
+             , CASE WHEN [emp_pmt_us_federal_tax_detail].[emp_oasdi_ytd_tot_empl_wh_amt]
+                       + CASE WHEN [Prior].[fit_current_withheld_amt] IS NULL
+                              THEN 0
+                              ELSE [Prior].[fit_current_withheld_amt]
+                          END
+                       = [emp_us_federal_tax_accum].[emp_oasdi_tax_withheld_ytd_amt]
+                    THEN 1
+                    ELSE 0
+                END [Balance]
+          FROM [DBShrpy].[dbo].[emp_us_federal_tax_accum] [emp_us_federal_tax_accum]
+          LEFT
+          JOIN [DBShrpy].[dbo].[emp_pmt_us_federal_tax_detail] [emp_pmt_us_federal_tax_detail]
+            ON [emp_us_federal_tax_accum].[emp_id] = [emp_pmt_us_federal_tax_detail].[emp_id]
+           AND [emp_pmt_us_federal_tax_detail].[pay_pd_id] = @pay_pd_id
+         CROSS
+          JOIN
+        (
+        SELECT SUM([emp_pmt_us_federal_tax_detail2].[emp_oasdi_current_withheld_amt]) [fit_current_withheld_amt]
+          FROM [DBShrpy].[dbo].[emp_pmt_us_federal_tax_detail] [emp_pmt_us_federal_tax_detail2]
+         WHERE [emp_pmt_us_federal_tax_detail2].[emp_id] = @emp_id
+           AND [emp_pmt_us_federal_tax_detail2].[pay_pd_id] IN
+               (SELECT [emp_pmt].[pay_pd_id]
+                  FROM [DBShrpy].[dbo].[emp_pmt] [emp_pmt]
+                 WHERE [emp_pmt].[emp_id] = [emp_pmt_us_federal_tax_detail2].[emp_id]
+                   AND [emp_pmt].[check_date] &gt;
+                       (SELECT [A].[check_date]
+                          FROM [DBShrpy].[dbo].[emp_pmt] [A]
+                         WHERE [emp_pmt].[emp_id] = [A].[emp_id]
+                           AND [A].[pay_pd_id] = @pay_pd_id)) 
+        )   AS [Prior]
+         WHERE [emp_us_federal_tax_accum].[emp_id] = @emp_id
+           AND [emp_us_federal_tax_accum].[tax_yr] = RIGHT(RTRIM(@pay_pd_id),4)
+
+        UNION
+
+        /*Medicare Tax*/
+        SELECT [emp_us_federal_tax_accum].[emp_id]
+             , [emp_pmt_us_federal_tax_detail].[pay_pd_id]
+             , 20.3 AS [Sort]
+             , 'Medicare' [Item]
+             , [emp_pmt_us_federal_tax_detail].[emp_medicare_curr_withheld_amt] [Check]
+             , [emp_pmt_us_federal_tax_detail].[emp_med_ytd_tot_empl_wh_amt] [YTD]
+             , [Prior].[fit_current_withheld_amt] [Prior]
+             , [emp_us_federal_tax_accum].[emp_med_tax_withheld_ytd_amt] [Accum]
+             , CASE WHEN [emp_pmt_us_federal_tax_detail].[emp_med_ytd_tot_empl_wh_amt]
+                       + CASE WHEN [Prior].[fit_current_withheld_amt] IS NULL
+                              THEN 0
+                              ELSE [Prior].[fit_current_withheld_amt]
+                          END
+                       = [emp_us_federal_tax_accum].[emp_med_tax_withheld_ytd_amt]
+                    THEN 1
+                    ELSE 0
+                END [Balance]
+        
+          FROM [DBShrpy].[dbo].[emp_us_federal_tax_accum] [emp_us_federal_tax_accum]
+          LEFT
+          JOIN [DBShrpy].[dbo].[emp_pmt_us_federal_tax_detail] [emp_pmt_us_federal_tax_detail]
+            ON [emp_us_federal_tax_accum].[emp_id] = [emp_pmt_us_federal_tax_detail].[emp_id]
+           AND [emp_pmt_us_federal_tax_detail].[pay_pd_id] = @pay_pd_id
+         CROSS
+          JOIN
+        (
+        SELECT SUM([emp_pmt_us_federal_tax_detail2].[emp_medicare_curr_withheld_amt]) [fit_current_withheld_amt]
+          FROM [DBShrpy].[dbo].[emp_pmt_us_federal_tax_detail] [emp_pmt_us_federal_tax_detail2]
+         WHERE [emp_pmt_us_federal_tax_detail2].[emp_id] = @emp_id
+           AND [emp_pmt_us_federal_tax_detail2].[pay_pd_id] IN
+               (SELECT [emp_pmt].[pay_pd_id]
+                  FROM [DBShrpy].[dbo].[emp_pmt] [emp_pmt]
+                 WHERE [emp_pmt].[emp_id] = [emp_pmt_us_federal_tax_detail2].[emp_id]
+                   AND [emp_pmt].[check_date] &gt;
+                       (SELECT [A].[check_date]
+                          FROM [DBShrpy].[dbo].[emp_pmt] [A]
+                         WHERE [emp_pmt].[emp_id] = [A].[emp_id]
+                           AND [A].[pay_pd_id] = @pay_pd_id)) 
+        )   AS [Prior]
+         WHERE [emp_us_federal_tax_accum].[emp_id] = @emp_id
+           AND [emp_us_federal_tax_accum].[tax_yr] = RIGHT(RTRIM(@pay_pd_id),4)
+
+        UNION
+
+        /*State Tax*/
+        SELECT [emp_us_st_tax_accum].[emp_id]
+             , [emp_pmt_us_st_tax_detail].[pay_pd_id]
+             , 20.4 [Sort]
+             , RTRIM([emp_pmt_us_st_tax_detail].[tax_authority_id]) + ' State' [Item]
+             , [emp_pmt_us_st_tax_detail].[sit_current_withheld_amt] [Check]
+             , [emp_pmt_us_st_tax_detail].[sit_ytd_tot_empl_withheld_amt] [YTD]
+             , [Prior].[fit_current_withheld_amt] [Prior]
+             , [emp_us_st_tax_accum].[sit_withheld_ytd_amt] [Accum]
+             , CASE WHEN [emp_pmt_us_st_tax_detail].[sit_ytd_tot_empl_withheld_amt]
+                       + CASE WHEN [Prior].[fit_current_withheld_amt] IS NULL
+                              THEN 0
+                              ELSE [Prior].[fit_current_withheld_amt]
+                          END
+                       = [emp_us_st_tax_accum].[sit_withheld_ytd_amt]
+                    THEN 1
+                    ELSE 0
+                END [Balance]
+          FROM [DBShrpy].[dbo].[emp_us_st_tax_accum] [emp_us_st_tax_accum]
+          LEFT
+          JOIN [DBShrpy].[dbo].[emp_pmt_us_st_tax_detail] [emp_pmt_us_st_tax_detail]
+            ON [emp_us_st_tax_accum].[emp_id] = [emp_pmt_us_st_tax_detail].[emp_id]
+           AND [emp_pmt_us_st_tax_detail].[pay_pd_id] = @pay_pd_id
+           AND [emp_us_st_tax_accum].[tax_authority_id] = [emp_pmt_us_st_tax_detail].[tax_authority_id]
+         CROSS
+          JOIN
+        (
+        SELECT SUM([emp_pmt_us_st_tax_detail2].[sit_current_withheld_amt]) [fit_current_withheld_amt]
+          FROM [DBShrpy].[dbo].[emp_pmt_us_st_tax_detail] [emp_pmt_us_st_tax_detail2]
+         WHERE [emp_pmt_us_st_tax_detail2].[emp_id] = @emp_id
+           AND [emp_pmt_us_st_tax_detail2].[pay_pd_id] IN
+               (SELECT [emp_pmt].[pay_pd_id]
+                  FROM [DBShrpy].[dbo].[emp_pmt] [emp_pmt]
+                 WHERE [emp_pmt].[emp_id] = [emp_pmt_us_st_tax_detail2].[emp_id]
+                   AND [emp_pmt].[check_date] &gt;
+                       (SELECT [A].[check_date]
+                          FROM [DBShrpy].[dbo].[emp_pmt] [A]
+                         WHERE [emp_pmt].[emp_id] = [A].[emp_id]
+                           AND [A].[pay_pd_id] = @pay_pd_id)) 
+        )   AS [Prior]
+         WHERE [emp_us_st_tax_accum].[emp_id] = @emp_id
+           AND [emp_us_st_tax_accum].[tax_yr] = RIGHT(RTRIM(@pay_pd_id),4)
+
+        UNION
+
+        /*Local Tax*/
+        SELECT [emp_us_local_tax_accum].[emp_id]
+             , [emp_pmt_us_local_tax_detail].[pay_pd_id]
+             , 20.5 [Sort]
+             , RTRIM([emp_pmt_us_local_tax_detail].[tax_authority_id]) [Item]
+             , [emp_pmt_us_local_tax_detail].[lit_current_withheld_amt] [Check]
+             , [emp_pmt_us_local_tax_detail].[lit_ytd_withheld_amt] [YTD]
+             , [Prior].[fit_current_withheld_amt] [Prior]
+             , [emp_us_local_tax_accum].[tax_withheld_ytd_amt] [Accum]
+             , CASE WHEN [emp_pmt_us_local_tax_detail].[lit_ytd_withheld_amt]
+                       + CASE WHEN [Prior].[fit_current_withheld_amt] IS NULL
+                              THEN 0
+                              ELSE [Prior].[fit_current_withheld_amt]
+                          END
+                       = [emp_us_local_tax_accum].[tax_withheld_ytd_amt]
+                    THEN 1
+                    ELSE 0
+                END [Balance]
+          FROM [DBShrpy].[dbo].[emp_us_local_tax_accum] [emp_us_local_tax_accum]
+          LEFT
+          JOIN [DBShrpy].[dbo].[emp_pmt_us_local_tax_detail] [emp_pmt_us_local_tax_detail]
+            ON [emp_us_local_tax_accum].[emp_id] = [emp_pmt_us_local_tax_detail].[emp_id]
+           AND [emp_pmt_us_local_tax_detail].[pay_pd_id] = @pay_pd_id
+           AND [emp_us_local_tax_accum].[tax_authority_id] = [emp_pmt_us_local_tax_detail].[tax_authority_id]
+         CROSS
+          JOIN
+        (
+        SELECT SUM([emp_pmt_us_local_tax_detail2].[lit_current_withheld_amt]) [fit_current_withheld_amt]
+          FROM [DBShrpy].[dbo].[emp_pmt_us_local_tax_detail] [emp_pmt_us_local_tax_detail2]
+         WHERE [emp_pmt_us_local_tax_detail2].[emp_id] = @emp_id
+           AND [emp_pmt_us_local_tax_detail2].[pay_pd_id] IN
+               (SELECT [emp_pmt].[pay_pd_id]
+                  FROM [DBShrpy].[dbo].[emp_pmt] [emp_pmt]
+                 WHERE [emp_pmt].[emp_id] = [emp_pmt_us_local_tax_detail2].[emp_id]
+                   AND [emp_pmt].[check_date] &gt;
+                       (SELECT [A].[check_date]
+                          FROM [DBShrpy].[dbo].[emp_pmt] [A]
+                         WHERE [emp_pmt].[emp_id] = [A].[emp_id]
+                           AND [A].[pay_pd_id] = @pay_pd_id)) 
+        )   AS [Prior]
+         WHERE [emp_us_local_tax_accum].[emp_id] = @emp_id
+           AND [emp_us_local_tax_accum].[tax_yr] = RIGHT(RTRIM(@pay_pd_id),4)
+
+        UNION
+
+        /*Deductions and SSC Paid*/
+        SELECT [emp_pay_element_accum].[emp_id]
+             , @pay_pd_id [pay_pd_id]
+             , 23 [Sort]
+             , [emp_pay_element_accum].[pay_element_id] [Item]
+             , [emp_pmt_pay_element_detail].[tot_current_monetary_amt] [Check]
+             , [emp_pmt_pay_element_detail].[ytd_monetary_amt] [YTD]
+             , [Prior].[fit_current_withheld_amt] [Prior]
+             , [emp_pay_element_accum].[yr_to_date_monetary_amt] [Accum]
+             , CASE WHEN [emp_pmt_pay_element_detail].[ytd_monetary_amt]
+                       + CASE WHEN [Prior].[fit_current_withheld_amt] IS NULL
+                              THEN 0
+                              ELSE [Prior].[fit_current_withheld_amt]
+                          END
+                       = [emp_pay_element_accum].[yr_to_date_monetary_amt]
+                    THEN 1
+                    ELSE CASE WHEN [emp_pmt_pay_element_detail].[tot_current_monetary_amt] IS NULL
+                              THEN 1
+                              ELSE 0
+                          END
+                END [Balance]
+          FROM [DBShrpy].[dbo].[emp_pay_element_accum] [emp_pay_element_accum]
+          LEFT
+          JOIN [DBShrpy].[dbo].[emp_pmt_pay_element_detail] [emp_pmt_pay_element_detail]
+            ON [emp_pay_element_accum].[emp_id] = [emp_pmt_pay_element_detail].[emp_id]
+           AND [emp_pay_element_accum].[pay_element_id] = [emp_pmt_pay_element_detail].[pay_element_id]
+           AND [emp_pmt_pay_element_detail].[pay_pd_id] = @pay_pd_id
+          LEFT
+          JOIN
+        (
+        SELECT [emp_pmt_pay_element_detail2].[pay_element_id]
+             , SUM([emp_pmt_pay_element_detail2].[tot_current_monetary_amt]) [fit_current_withheld_amt]
+          FROM [DBShrpy].[dbo].[emp_pmt_pay_element_detail] [emp_pmt_pay_element_detail2]
+         WHERE [emp_pmt_pay_element_detail2].[emp_id] = @emp_id
+           AND [emp_pmt_pay_element_detail2].[pay_pd_id] IN
+               (SELECT [emp_pmt].[pay_pd_id]
+                  FROM [DBShrpy].[dbo].[emp_pmt] [emp_pmt]
+                 WHERE [emp_pmt].[emp_id] = [emp_pmt_pay_element_detail2].[emp_id]
+                   AND [emp_pmt].[check_date] &gt;
+                       (SELECT [A].[check_date]
+                          FROM [DBShrpy].[dbo].[emp_pmt] [A]
+                         WHERE [emp_pmt].[emp_id] = [A].[emp_id]
+                           AND [A].[pay_pd_id] = @pay_pd_id)) 
+         GROUP
+            BY [emp_pmt_pay_element_detail2].[pay_element_id]
+        )   AS [Prior]
+            ON [emp_pay_element_accum].[pay_element_id] = [Prior].[pay_element_id]
+         WHERE [emp_pay_element_accum].[emp_id] = @emp_id
+           AND [emp_pay_element_accum].[cal_yr] = RIGHT(RTRIM(@pay_pd_id),4)
+           AND [emp_pay_element_accum].[yr_to_date_monetary_amt] &lt;&gt; 0
+        )   AS [PayCheck]
+        /*End of UNIONs to create Paycheck*/
+
+
+          LEFT
+          JOIN [DBShrpn].[dbo].[pay_element] [pay_element]
+            ON [PayCheck].[Item] = [pay_element].[pay_element_id]
+           AND (    
+                    (
+                     [pay_element].[eff_date] &lt;= GETDATE()
+                     AND
+                     [pay_element].[next_eff_date] &gt; GETDATE()
+                    )
+                 OR 
+                    (
+                     [pay_element].[prior_eff_date] = '12/31/2999'
+                     AND
+                     [pay_element].[eff_date] &gt;= GETDATE()
+                    )
+               ) 
+           AND [pay_element].[start_date] &lt;= GETDATE()
+           AND [pay_element].[stop_date] &gt;= GETDATE()
+          LEFT
+          JOIN [DBShrpn].[dbo].[pay_element_descp] [pay_element_descp]
+            ON [PayCheck].[Item] = [pay_element_descp].[pay_element_id]
+           AND [pay_element_descp].[eff_date] =
+               (SELECT MAX([A].[eff_date])
+                  FROM [DBShrpn].[dbo].[pay_element_descp] [A]
+                 WHERE [pay_element_descp].[pay_element_id] = [A].[pay_element_id])
+         WHERE ([pay_element].[print_on_earn_statement_code] &lt;&gt; '01' OR [pay_element].[print_on_earn_statement_code] IS NULL)
+           AND (NOT ([PayCheck].[Sort] = 23 AND [pay_element].[pay_element_id] IS NULL))
+
+        order by Sort, Item
+
+        ">
+        <SelectParameters>
+            <asp:Parameter Name="pay_pd_id" />
+            <asp:Parameter Name="emp_id" />
+        </SelectParameters>
+    </asp:SqlDataSource>
+    <asp:SqlDataSource ID="sdsCheckOther" runat="server" SelectCommand="
+        SELECT 'XXX-XX-' + RIGHT(RTRIM([employee].[emp_id]),4) [emp_id]
+             , [employee].[individual_id]
+             , CASE [emp_us_tax_authority].[tax_marital_status_code]
+                    WHEN '0' THEN 'Not Applicable'
+                    WHEN '1' THEN 'Single'
+                    WHEN '2' THEN 'Married'
+                    WHEN '3' THEN 'Head of Household'
+                    WHEN '4' THEN 'Married Filing Separately'
+                    WHEN '5' THEN 'Married Filing Jointly'
+                    WHEN '6' THEN 'Married Both Working, Filing Jointly'
+                    WHEN '7' THEN 'Qualifying Widower'
+                    WHEN '8' THEN 'Married One Working, Filing Separately'
+                    WHEN '9' THEN 'Civil Union'
+                    ELSE NULL
+                END [tax_marital_status]
+             , [emp_us_tax_authority].[income_tax_nbr_of_exemps]
+             , [emp_us_tax_authority].[income_tax_personal_exemp_amt]
+             , [emp_pmt].[check_date]
+             , [emp_pmt].[pay_pd_begin_date]
+             , [emp_pmt].[pay_pd_end_date]
+             , [emp_assignment].[loc_code]
+             , RTRIM([individual].[pay_to_name]) [pay_to_name]
+             , RTRIM([individual].[addr_1_street_or_pob_1]) [addr_1_street_or_pob_1]
+             , RTRIM([individual].[addr_1_street_or_pob_2]) [addr_1_street_or_pob_2]
+             , RTRIM([individual].[addr_1_street_or_pob_3]) [addr_1_street_or_pob_3]
+             , RTRIM([individual].[addr_1_city_name]) [addr_1_city_name]
+             , LTRIM(RTRIM([individual].[addr_1_country_sub_entity_code])) [addr_1_country_sub_entity_code]
+             , LTRIM(RTRIM([individual].[addr_1_postal_code])) [addr_1_postal_code]
+          FROM [DBShrpn].[dbo].[employee] [employee]
+          JOIN [DBShrpn].[dbo].[emp_us_tax_authority] [emp_us_tax_authority]
+            ON [employee].[emp_id] = [emp_us_tax_authority].[emp_id]
+           AND [emp_us_tax_authority].[tax_authority_id] = 'USFED'
+          JOIN [DBShrpy].[dbo].[emp_pmt] [emp_pmt]
+            ON [employee].[emp_id] = [emp_pmt].[emp_id]
+           AND [emp_pmt].[pay_pd_id] = @pay_pd_id
+          JOIN [DBShrpn].[dbo].[emp_assignment] [emp_assignment]
+            ON [employee].[emp_id] = [emp_assignment].[emp_id]
+           AND (   (
+                    [emp_assignment].[eff_date] &lt;= [emp_pmt].[check_date]
+                    AND
+                    [emp_assignment].[next_eff_date] &gt; [emp_pmt].[check_date]
+                   )
+                OR
+                   (
+                    [emp_assignment].[prior_eff_date] = '12/31/2999'
+                    AND
+                    [emp_assignment].[eff_date] &gt; [emp_pmt].[check_date]
+                   )
+               )
+           AND [emp_assignment].[begin_date] &lt;= [emp_pmt].[check_date]
+           AND [emp_assignment].[end_date] &gt;= [emp_pmt].[check_date]
+          JOIN [DBShrpn].[dbo].[individual] [individual]
+            ON [employee].[individual_id] = [individual].[individual_id]
+         WHERE [employee].[emp_id] = @emp_id
+
+        ">
+        <SelectParameters>
+            <asp:Parameter Name="pay_pd_id" />
+            <asp:Parameter Name="emp_id" />
+        </SelectParameters>
+    </asp:SqlDataSource>
+    </form>
+</body>
+</html>

@@ -1,0 +1,115 @@
+﻿<%@ Page Title="" Language="VB" MasterPageFile="~/HRApps.master" AutoEventWireup="false"
+    CodeFile="old_Emp_Lookup.aspx.vb" Inherits="ssc4900004_Emp_Lookup" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
+    Employee Lookup
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="contentBody" runat="Server">
+    <table runat="server" id="tblLookUp" style="margin-right: auto; margin-left: auto">
+        <tr>
+            <td style="text-align: center; font-weight: bold">
+                Lookup by Name
+            </td>
+            <td>
+                &nbsp;
+                &nbsp;
+                &nbsp;
+                &nbsp;
+            </td>
+            <td style="text-align: center; font-weight: bold">
+                Lookup by ID
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align: center;">
+                <asp:TextBox ID="tbName" runat="server" Width="318px"></asp:TextBox><br />
+            </td>
+            <td>
+                &nbsp;
+            </td>
+            <td style="text-align: center;">
+                <asp:TextBox ID="tbSSN" runat="server" TextMode="Password" Columns="9" MaxLength="9"></asp:TextBox><br />
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align: center;">
+                <asp:Button ID="btnSearch" runat="server" Text="Name Search" />
+            </td>
+            <td>
+                &nbsp;
+            </td>
+            <td style="text-align: center;">
+                <asp:Button ID="btnPayChecks" runat="server" Text="Number Search" />
+            </td>
+        </tr>
+    </table>
+    <asp:GridView ID="gvFindEmp" runat="server" AutoGenerateColumns="False" BackColor="LightGoldenrodYellow"
+        BorderColor="Tan" BorderWidth="1px" CellPadding="2" DataKeyNames="emp_id" DataSourceID="sdsFindEmp"
+        Font-Size="Small" ForeColor="Black" GridLines="Vertical" HorizontalAlign="Center"
+        Visible="False">
+        <Columns>
+            <asp:TemplateField HeaderText="Name">
+                <ItemTemplate>
+                    <a runat="server" href='<%# "EmployeeInquiry.aspx?ID=" & Eval("individual_id") %>'>
+                        <asp:Label ID="lblName" runat="server" Text='<%# Eval("emp_display_name") %>' />
+                    </a>
+                </ItemTemplate>
+            </asp:TemplateField>
+            <asp:BoundField DataField="emp_status_code" HeaderText="Status" ItemStyle-HorizontalAlign="Center">
+                <ItemStyle HorizontalAlign="Center" />
+            </asp:BoundField>
+            <asp:BoundField DataField="emp_id" HeaderText="EmpID" />
+            <asp:BoundField DataField="individual_id" HeaderText="IndivID" />
+            <asp:BoundField DataField="original_hire_date" HeaderText="Hired" ItemStyle-HorizontalAlign="Center">
+                <ItemStyle HorizontalAlign="Center"></ItemStyle>
+            </asp:BoundField>
+            <asp:BoundField DataField="adjusted_service_date" HeaderText="Adj Service" ItemStyle-HorizontalAlign="Center">
+                <ItemStyle HorizontalAlign="Center"></ItemStyle>
+            </asp:BoundField>
+            <asp:BoundField DataField="last_yr_paid" HeaderText="Last Paid" ItemStyle-HorizontalAlign="Center">
+                <ItemStyle HorizontalAlign="Center"></ItemStyle>
+            </asp:BoundField>
+            <asp:BoundField DataField="status_change_date" HeaderText="Status Change" ItemStyle-HorizontalAlign="Center">
+                <ItemStyle HorizontalAlign="Center"></ItemStyle>
+            </asp:BoundField>
+            <asp:BoundField DataField="comp" HeaderText="Co" />
+            <asp:BoundField DataField="cntr_desc" HeaderText="Location" />
+        </Columns>
+        <AlternatingRowStyle BackColor="PaleGoldenrod" />
+        <FooterStyle BackColor="Tan" />
+        <HeaderStyle BackColor="Tan" Font-Bold="True" />
+    </asp:GridView>
+    <asp:SqlDataSource ID="sdsFindEmp" runat="server" SelectCommand="
+                SELECT [employee].[emp_display_name]
+                     , [emp_status].[emp_status_code]
+                     , [employee].[emp_id]
+                     , [employee].[individual_id]
+                     , CONVERT(CHAR(10),[employee].[original_hire_date],101) AS [original_hire_date]
+                     , CONVERT(CHAR(10),[employee].[adjusted_service_date],101) AS [adjusted_service_date]
+                     , [employee].[last_yr_paid]
+                     , CONVERT(CHAR(10),[emp_status].[status_change_date],101) AS [status_change_date]
+                     , [gl_cntr_data].[comp]
+                     , [gl_cntr_data].[cntr_desc]
+                  FROM [DBShrpn].[dbo].[employee] [employee]
+                  JOIN [DBShrpn].[dbo].[emp_status] [emp_status]
+                    ON [employee].[emp_id] = [emp_status].[emp_id]
+                   AND [emp_status].[status_change_date] = (SELECT TOP 1 [A].[status_change_date]
+                                                              FROM [DBShrpn].[dbo].[emp_status] [A]
+                                                             WHERE [A].[emp_id] = [emp_status].[emp_id]
+                                                             ORDER
+                                                                BY [A].[status_change_date] DESC)
+                  JOIN [DBShrpn].[dbo].[emp_assignment] [emp_assignment]
+                    ON [employee].[emp_id] = [emp_assignment].[emp_id]
+                   AND [emp_assignment].[eff_date] = (SELECT TOP 1 [A].[eff_date]
+                                                        FROM [DBShrpn].[dbo].[emp_assignment] [A]
+                                                       WHERE [A].[emp_id] = [emp_status].[emp_id]
+                                                       ORDER
+                                                          BY [A].[eff_date] DESC)
+                  LEFT
+                  JOIN [ssc_gl].[dbo].[gl_cntr_data] [gl_cntr_data]
+                    ON [emp_assignment].[loc_code] = [gl_cntr_data].[store_num]
+            "></asp:SqlDataSource>
+</asp:Content>
+<asp:Content ID="Content3" runat="server" ContentPlaceHolderID="BodyTitle">
+    Employee Lookup
+</asp:Content>

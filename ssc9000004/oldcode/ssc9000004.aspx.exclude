@@ -1,0 +1,355 @@
+<%@ Page Language="C#" AutoEventWireup="true" CodeFile="ssc9000004.aspx.cs" Inherits="ssc9000004" theme="OpenStream"%>
+
+<%@ Register Assembly="System.Web.Extensions, Version=1.0.61025.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"
+  Namespace="System.Web.UI" TagPrefix="asp" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head runat="server">
+    <title>Untitled Page</title>
+</head>
+<body>
+    <form id="form1" runat="server">
+    <div>
+      <asp:ScriptManager ID="ScriptManager1" runat="server">
+      </asp:ScriptManager>
+  
+      <asp:Panel ID="Panel1" runat="server" Height="50px" Width="125px" Visible="false">
+        <table border="1">
+        <tr>
+          <td align="right"><asp:Label ID="lblEntity" runat="server" Text="Entity:" style="font-weight: bold;"></asp:Label></td>
+          <td>
+            <asp:DropDownList ID="ddlEntities" runat="server" AutoPostBack="True" OnSelectedIndexChanged="ddlEntities_SelectedIndexChanged">
+            <asp:ListItem>SSC</asp:ListItem>
+            <asp:ListItem>RSERV</asp:ListItem>
+            <asp:ListItem>RCOOP</asp:ListItem>
+            <asp:ListItem>TURF</asp:ListItem>
+            </asp:DropDownList>
+          </td>
+        </tr>
+        <tr>
+          <td align="right"><asp:Label ID="lblStore" runat="server" Text="Store:" style="font-weight: bold;"></asp:Label></td>
+          <td><asp:TextBox ID="txtCenter" runat="server" onblur="findCenterForDescPage()" MaxLength="5" Width="72px"></asp:TextBox></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <asp:DropDownList ID="ddlStores" runat="server" AutoPostBack="True" ></asp:DropDownList>
+          </td>
+        </tr>
+      </table>
+      </asp:Panel>
+      <asp:Label ID="Label3" runat="server" Style="font-weight: bold; font-size: 13pt"
+        Text="Estimated Writedown Query"></asp:Label><br />
+      
+      <table border="1">
+        <tr>
+          <td colspan="2">
+            <asp:Label ID="lblStoreSelection" runat="server" Style="font-weight: bold; font-size: 12pt"
+              Text="Store Selection"></asp:Label>
+            &nbsp; &nbsp;
+          </td>
+        </tr>
+        <tr>
+          <td align="center" colspan="2">
+            <asp:Label ID="Label4" runat="server" Style="color: teal" Text="Select locations below"></asp:Label></td>
+        </tr>
+        <tr>
+          <td valign="top">
+            &nbsp; &nbsp; &nbsp;</td>
+          <td>
+      <asp:UpdatePanel ID="UpdatePanel1" runat="server">
+        <ContentTemplate>
+          <asp:Label ID="lblDrillOrder" runat="server" Text="Drill Order:"></asp:Label><asp:DropDownList ID="ddlMHMStoreSelectionStoreSelectionOrder" runat="server" AutoPostBack="True"
+        OnSelectedIndexChanged="ddlMHMStoreSelectionStoreSelectionOrder_SelectedIndexChanged">
+        <asp:ListItem>Entity, District, Store</asp:ListItem>
+        <asp:ListItem>District, Entity, Store</asp:ListItem>
+        <asp:ListItem>Entity, Store</asp:ListItem>
+        <asp:ListItem>District, Store</asp:ListItem>
+        <asp:ListItem>Store</asp:ListItem>
+      </asp:DropDownList>
+          <asp:RadioButton ID="radStoreSelectionShow" runat="server" AutoPostBack="True" Checked="True"
+            GroupName="radStoreSelection" OnCheckedChanged="radStoreSelectionShow_CheckedChanged"
+            Text="Show" />
+          <asp:RadioButton ID="radStoreSelectionHide" runat="server" AutoPostBack="True" GroupName="radStoreSelection"
+            OnCheckedChanged="radStoreSelectionHide_CheckedChanged" Text="Hide" /><br />
+      
+      
+      <asp:GridView ID="MHMStoreSelectionGridView1" runat="server" 
+        OnRowDataBound="MHMStoreSelectionGridView1_RowDataBound"
+        AutoGenerateColumns="False" DataSourceID="sdsMHMStoreSelectionCommodities" ShowFooter="True" DataKeyNames="item" PageSize="12" AllowPaging="True" AllowSorting="True">
+        <Columns>
+          <asp:TemplateField HeaderText="Drill">
+            <ItemTemplate>
+              <asp:Button ID="cmdMHMStoreSelectionDrillDown" runat="server" CommandArgument='<%# Eval("item") + "|" + Eval("description") %>'
+                OnClick="cmdMHMStoreSelectionDrillDown_Click" Text="Drill Down" />
+            </ItemTemplate>
+            <FooterTemplate>
+              <asp:Button ID="cmdMHMStoreSelectionDrillUp" runat="server" OnClick="cmdMHMStoreSelectionDrillUp_Click" Text="Drill Up" />
+            </FooterTemplate>
+            <HeaderTemplate>
+              <asp:Button ID="cmdMHMStoreSelectionClear" runat="server" OnClick="cmdMHMStoreSelectionClear_Click" Text="Reset" />
+            </HeaderTemplate>
+            <FooterStyle HorizontalAlign="Center" />
+          </asp:TemplateField>
+          <asp:TemplateField HeaderText="Add to bucket">
+            <ItemTemplate>
+              <asp:CheckBox ID="cmdMHMStoreSelectionAdd" runat="server" />
+            </ItemTemplate>
+            <FooterTemplate>
+              <asp:Button ID="cmdMHMSelectionAddCommodity" runat="server" Text="Select" OnClick="cmdMHMSelectionAddCommodity_Click" />
+            </FooterTemplate>
+          </asp:TemplateField>
+          <asp:BoundField DataField="item" HeaderText="item" SortExpression="item" />
+          <asp:BoundField DataField="description" HeaderText="description" SortExpression="description" />
+        </Columns>
+      </asp:GridView>
+          &nbsp;
+      
+      </ContentTemplate>
+      </asp:UpdatePanel>
+          </td>
+        </tr>
+        <tr>
+          <td align="center" colspan="2">
+            <asp:Label ID="Label5" runat="server" Style="color: teal" Text="View the locations already selected below"></asp:Label></td>
+        </tr>
+        <tr>
+          <td valign="top">
+            &nbsp;</td>
+          <td>
+            Currently Selected<br />
+            <asp:UpdatePanel ID="UpdatePanel4" runat="server">
+              <ContentTemplate>
+              
+      <asp:CheckBoxList ID="chklstMHMStoreSelectionShowSelected" runat="server" RepeatDirection="Horizontal" AutoPostBack="True" OnSelectedIndexChanged="chklstMHMStoreSelectionShowSelected_SelectedIndexChanged">
+      </asp:CheckBoxList><asp:GridView ID="gvMHMStoreSelectionCommodities" runat="server" AllowSorting="True" AutoGenerateColumns="False" DataSourceID="sdsMHMStoreSelectionSelected" DataKeyNames="GroupType,Item,OpenSSUser,PageIdentifier,ActivityID">
+        <Columns>
+          <asp:CommandField ShowDeleteButton="True" />
+          <asp:BoundField DataField="GroupType" HeaderText="GroupType" SortExpression="GroupType" />
+          <asp:BoundField DataField="Item" HeaderText="Item" SortExpression="Item" />
+          <asp:BoundField DataField="ItemDesc" HeaderText="ItemDesc" SortExpression="ItemDesc" />
+          <asp:BoundField DataField="DateEntered" HeaderText="DateEntered" SortExpression="DateEntered"
+            Visible="False" />
+          <asp:BoundField DataField="OpenSSUser" HeaderText="OpenSSUser" SortExpression="OpenSSUser"
+            Visible="False" />
+          <asp:BoundField DataField="PageIdentifier" HeaderText="PageIdentifier" SortExpression="PageIdentifier"
+            Visible="False" />
+          <asp:BoundField DataField="ActivityID" HeaderText="ActivityID" SortExpression="ActivityID"
+            Visible="False" />
+        </Columns>
+        <EmptyDataTemplate>
+          &nbsp; &nbsp;
+          <asp:Label ID="lblNoRecords" runat="server" Style="font-weight: bold; color: teal;
+            font-style: italic">No records to display.</asp:Label>
+        </EmptyDataTemplate>
+      </asp:GridView>
+              </ContentTemplate>
+            </asp:UpdatePanel>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            &nbsp;</td>
+          <td>
+            &nbsp;</td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <asp:Label ID="lblProductSelection" runat="server" Style="font-weight: bold; font-size: 12pt"
+              Text="Product Selection"></asp:Label>&nbsp;<asp:RadioButton ID="radProductsShow"
+                runat="server" AutoPostBack="True" Checked="True" GroupName="radProducts" OnCheckedChanged="radProductsShow_CheckedChanged"
+                Text="Show" />
+            <asp:RadioButton ID="radProductsHide" runat="server" AutoPostBack="True" GroupName="radProducts"
+              OnCheckedChanged="radProductsHide_CheckedChanged" Text="Hide" /></td>
+        </tr>
+        <tr>
+          <td align="center" colspan="2">
+            <asp:Label ID="Label7" runat="server" Style="color: teal" Text="Select product below"></asp:Label></td>
+        </tr>
+        <tr>
+          <td>
+            &nbsp;</td>
+          <td>
+      <asp:UpdatePanel ID="UpdatePanel2" runat="server">
+        <ContentTemplate>
+      <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" DataKeyNames="item"
+        DataSourceID="sdsCommodities" OnRowDataBound="GridView1_RowDataBound"
+        PageSize="12" ShowFooter="True">
+        <Columns>
+          <asp:TemplateField HeaderText="Drill">
+            <ItemTemplate>
+              <asp:Button ID="cmdDrillDown" runat="server" CommandArgument='<%# Eval("item") + "|" + Eval("description") %>'
+                OnClick="cmdDrillDown_Click" Text="Drill Down" />
+            </ItemTemplate>
+            <FooterTemplate>
+              <asp:Button ID="cmdDrillUp" runat="server" OnClick="cmdDrillUp_Click" Text="Drill Up" />
+            </FooterTemplate>
+            <HeaderTemplate>
+              <asp:Button ID="cmdClear" runat="server" OnClick="cmdClear_Click" Text="Reset" />
+            </HeaderTemplate>
+            <FooterStyle HorizontalAlign="Center" />
+          </asp:TemplateField>
+          <asp:TemplateField HeaderText="Add to bucket">
+            <ItemTemplate>
+              <asp:CheckBox ID="chkAdd" runat="server" />
+            </ItemTemplate>
+            <FooterTemplate>
+              <asp:Button ID="cmdAddCommodity" runat="server" OnClick="cmdAddCommodity_Click" Text="Select" />
+            </FooterTemplate>
+          </asp:TemplateField>
+          <asp:BoundField DataField="item" HeaderText="item" SortExpression="item" />
+          <asp:BoundField DataField="description" HeaderText="description" SortExpression="description" />
+        </Columns>
+      </asp:GridView>
+          &nbsp;
+        </ContentTemplate>
+      </asp:UpdatePanel>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" align="center">
+            <asp:Label ID="Label6" runat="server" Style="color: teal" Text="View the product already selected below"></asp:Label></td>
+        </tr>
+        <tr>
+          <td>
+          </td>
+          <td>
+      <asp:UpdatePanel ID="UpdatePanel5" runat="server">
+      <ContentTemplate>
+      <asp:CheckBoxList ID="chklstShowSelected" runat="server" AutoPostBack="True" OnSelectedIndexChanged="chklstShowSelected_SelectedIndexChanged"
+        RepeatDirection="Horizontal">
+        <asp:ListItem Selected="True">Commidity</asp:ListItem>
+        <asp:ListItem Selected="True">Product</asp:ListItem>
+        <asp:ListItem Selected="True">Margin</asp:ListItem>
+        <asp:ListItem Selected="True">Sku</asp:ListItem>
+      </asp:CheckBoxList><asp:GridView ID="gvCommodities" runat="server" AllowSorting="True"
+        AutoGenerateColumns="False" DataKeyNames="GroupType,Item,OpenSSUser,PageIdentifier,ActivityID"
+        DataSourceID="sdsSelected">
+        <Columns>
+          <asp:CommandField ShowDeleteButton="True" />
+          <asp:BoundField DataField="GroupType" HeaderText="GroupType" SortExpression="GroupType" />
+          <asp:BoundField DataField="Item" HeaderText="Item" SortExpression="Item" />
+          <asp:BoundField DataField="ItemDesc" HeaderText="ItemDesc" SortExpression="ItemDesc" />
+          <asp:BoundField DataField="DateEntered" HeaderText="DateEntered" SortExpression="DateEntered"
+            Visible="False" />
+          <asp:BoundField DataField="OpenSSUser" HeaderText="OpenSSUser" SortExpression="OpenSSUser"
+            Visible="False" />
+          <asp:BoundField DataField="PageIdentifier" HeaderText="PageIdentifier" SortExpression="PageIdentifier"
+            Visible="False" />
+          <asp:BoundField DataField="ActivityID" HeaderText="ActivityID" SortExpression="ActivityID"
+            Visible="False" />
+        </Columns>
+        <EmptyDataTemplate>
+          &nbsp; &nbsp;
+          <asp:Label ID="lblNoRecords" runat="server" Style="font-weight: bold; color: teal;
+            font-style: italic">No records to display.</asp:Label>
+        </EmptyDataTemplate>
+      </asp:GridView>
+      </ContentTemplate></asp:UpdatePanel>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            &nbsp;<asp:Label ID="lblInventoryDate" runat="server" Style="font-weight: bold; font-size: 12pt" Text="Inventory Date"></asp:Label></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            Date:
+            <asp:TextBox ID="txtInventoryDate" runat="server" Width="72px"></asp:TextBox><asp:RequiredFieldValidator
+              ID="reqInventoryDate" runat="server" ControlToValidate="txtInventoryDate" Display="Dynamic"
+              ErrorMessage="Required" Font-Bold="True" ValidationGroup="Search"></asp:RequiredFieldValidator><asp:CompareValidator
+                ID="cmpInventoryDate" runat="server" ControlToValidate="txtInventoryDate" ErrorMessage="Invalid Date"
+                Font-Bold="True" Operator="DataTypeCheck" Type="Date" ValidationGroup="Search"></asp:CompareValidator></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td colspan="2">
+            <asp:Label ID="lblFreightFactor" runat="server" Style="font-weight: bold; font-size: 12pt"
+              Text="Freight Factor"></asp:Label></td>
+        </tr>
+        <tr>
+          <td>
+            &nbsp;</td>
+          <td nowrap>
+            <asp:Label ID="Label1" runat="server" Style="font-weight: bold; font-size: 10pt"
+              Text="For weighted items"></asp:Label>
+            <asp:TextBox ID="txtFreightPerPound" runat="server" Width="56px">0.00</asp:TextBox><asp:RequiredFieldValidator
+              ID="reqFreightPerPound" runat="server" ControlToValidate="txtFreightPerPound" Display="Dynamic"
+              ErrorMessage="Required" Font-Bold="True" ValidationGroup="Search"></asp:RequiredFieldValidator><asp:CompareValidator
+                ID="cmpFreightPerPound" runat="server" ControlToValidate="txtFreightPerPound" ErrorMessage="Number required"
+                Font-Bold="True" Operator="DataTypeCheck" Type="Double" ValidationGroup="Search"></asp:CompareValidator>
+            <asp:RadioButtonList ID="radFrtPer" runat="server" RepeatDirection="Horizontal">
+              <asp:ListItem Selected="True">Per pound</asp:ListItem>
+              <asp:ListItem>Per Ton</asp:ListItem>
+            </asp:RadioButtonList>
+          </td>
+        </tr>
+        <tr>
+          <td>
+          </td>
+          <td nowrap="nowrap">
+          </td>
+        </tr>
+        <tr>
+          <td>
+            &nbsp;</td>
+          <td>
+            <asp:Label ID="Label2" runat="server" Style="font-weight: bold; font-size: 10pt" Text="For non-weighted items (EA)"></asp:Label>
+            <asp:TextBox ID="txtFreightPerItem" runat="server" Width="56px">0.00</asp:TextBox><asp:RequiredFieldValidator ID="reqFreightPerItem" runat="server" ControlToValidate="txtFreightPerItem"
+              Display="Dynamic" ErrorMessage="Required" Font-Bold="True" ValidationGroup="Search"></asp:RequiredFieldValidator><asp:CompareValidator
+                ID="cmpFreightPerItem" runat="server" ControlToValidate="txtFreightPerItem" ErrorMessage="Number required"
+                Font-Bold="True" Operator="DataTypeCheck" Type="Double" ValidationGroup="Search"></asp:CompareValidator></td>
+        </tr>
+        <tr>
+          <td align="center" colspan="2">
+      <asp:Button ID="cmdSearch" runat="server" OnClick="cmdSearch_Click" Text="Search" ValidationGroup="Search" /></td>
+        </tr>
+      </table>
+      <asp:UpdatePanel ID="UpdatePanel3" runat="server">
+        <ContentTemplate>
+    
+    <asp:SqlDataSource ID="sdsCommodities" runat="server" ConnectionString="<%$ ConnectionStrings:MarketCostSku %>" SelectCommand="SELECT comm_key item, comm_desc description FROM dbo.d_SKU_Rollup_vw group by comm_key, comm_desc order by comm_key" OnSelecting="sdsCommodities_Selecting"></asp:SqlDataSource>
+      <asp:HiddenField ID="hdnCurrentSelectionType" runat="server" />
+      <asp:HiddenField ID="hdnCommDrill" runat="server" />
+      <asp:HiddenField ID="hdnProdDrill" runat="server" />
+      <asp:HiddenField ID="hdnMarginDrill" runat="server" />
+      <asp:SqlDataSource ID="sdsSelected" runat="server" ConnectionString="<%$ ConnectionStrings:MarketCostSku %>" SelectCommand="SELECT * FROM dw_work.dbo.ssc9000004_criteria" DeleteCommand="DELETE FROM dw_work.dbo.ssc9000004_criteria WHERE ActivityID = @ActivityID and PageIdentifier = @PageIdentifier and OpenSSUser = @OpenSSUser and Item = @Item and GroupType = @GroupType" OnSelecting="sdsSelected_Selecting">
+        <DeleteParameters>
+          <asp:Parameter Name="ActivityID" />
+          <asp:Parameter Name="PageIdentifier" />
+          <asp:Parameter Name="OpenSSUser" />
+          <asp:Parameter Name="Item" />
+          <asp:Parameter Name="GroupType" />
+        </DeleteParameters>
+      </asp:SqlDataSource>
+      
+    
+      <asp:SqlDataSource ID="sdsMHMStoreSelectionCommodities" runat="server" ConnectionString="<%$ ConnectionStrings:MarketCostSku %>" SelectCommand="SELECT comm_key item, comm_desc description FROM dbo.d_SKU_Rollup_vw group by comm_key, comm_desc order by comm_key" OnSelecting="sdsMHMStoreSelectionCommodities_Selecting"></asp:SqlDataSource>
+      <asp:SqlDataSource ID="sdsMHMStoreSelectionSelected" runat="server" ConnectionString="<%$ ConnectionStrings:MarketCostSku %>" SelectCommand="SELECT * FROM dw_work.dbo.ssc9000004_criteria" DeleteCommand="DELETE FROM dw_work.dbo.ssc9000004_criteria WHERE ActivityID = @ActivityID and PageIdentifier = @PageIdentifier and OpenSSUser = @OpenSSUser and Item = @Item and GroupType = @GroupType" OnSelecting="sdsMHMStoreSelectionSelected_Selecting">
+        <DeleteParameters>
+          <asp:Parameter Name="ActivityID" />
+          <asp:Parameter Name="PageIdentifier" />
+          <asp:Parameter Name="OpenSSUser" />
+          <asp:Parameter Name="Item" />
+          <asp:Parameter Name="GroupType" />
+        </DeleteParameters>
+      </asp:SqlDataSource>
+      <asp:HiddenField ID="hdnMHMStoreSelectionPageIdentifier" runat="server" />
+      <asp:HiddenField ID="hdnMHMStoreSelectionSelectionField1Name" runat="server" />
+      <asp:HiddenField ID="hdnMHMStoreSelectionSelectionField2Name" runat="server" />
+      <asp:HiddenField ID="hdnMHMStoreSelectionSelectionField3Name" runat="server" />
+      <asp:HiddenField ID="hdnMHMStoreSelectionSelectionField1Value" runat="server" />
+      <asp:HiddenField ID="hdnMHMStoreSelectionSelectionField2Value" runat="server" />
+      <asp:HiddenField ID="hdnMHMStoreSelectionSelectionField3Value" runat="server" />
+        </ContentTemplate>
+      </asp:UpdatePanel>
+      </div>
+    </form>
+</body>
+</html>

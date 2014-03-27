@@ -1,0 +1,35 @@
+﻿Option Explicit On
+Option Strict On
+
+Partial Class ssc4900004_Emp_Lookup
+    Inherits System.Web.UI.Page
+
+    Protected Sub btnSearch_Click(sender As Object, e As System.EventArgs) Handles btnSearch.Click
+        Me.sdsFindEmp.SelectCommand &= " WHERE [employee].[emp_display_name] LIKE '%" & Trim(UCase(Me.tbName.Text)) & "%' " &
+                                       " ORDER " &
+                                       "    BY [emp_status].[emp_status_code] " &
+                                       "     , [employee].[emp_display_name]"
+        Me.gvFindEmp.DataBind()
+        Me.gvFindEmp.Visible = True
+    End Sub
+
+    Protected Sub Page_Load(sender As Object, e As System.EventArgs) Handles Me.Load
+        Me.sdsFindEmp.ConnectionString = Connect.ConnectionStringJOVEII
+    End Sub
+
+    Protected Sub gvFindEmp_DataBound(sender As Object, e As System.EventArgs) Handles gvFindEmp.DataBound
+        If Me.gvFindEmp.Rows.Count > 0 Then
+            Me.tblLookUp.Visible = False
+        End If
+    End Sub
+
+    Protected Sub btnPayChecks_Click(sender As Object, e As System.EventArgs) Handles btnPayChecks.Click
+        Me.sdsFindEmp.SelectCommand &= " WHERE [employee].[emp_id] = " & Trim(UCase(Me.tbSSN.Text)) &
+                                       "    OR [employee].[individual_id] = " & Trim(UCase(Me.tbSSN.Text)) &
+                                       " ORDER " &
+                                       "    BY [emp_status].[emp_status_code] " &
+                                       "     , [employee].[emp_display_name]"
+        Me.gvFindEmp.DataBind()
+        Me.gvFindEmp.Visible = True
+    End Sub
+End Class

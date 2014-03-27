@@ -1,0 +1,99 @@
+﻿<%@ Page Title="Dupont TruChoice" Language="C#" MasterPageFile="~/ssc1900021/Bootstrap.master" 
+ AutoEventWireup="true" CodeFile="ssc1900021.aspx.cs" Inherits="ssc1900021" %>
+ <%@ Register Src="~/ssc1900021/ssc1900021OpenStreamSecurity.ascx" TagName="Security" TagPrefix="ss" %>
+ <%@ Register Src="~/ssc1900021/ssc1900021Utilities.ascx" TagName="Utilities" TagPrefix="util" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="head" Runat="Server">
+    <script language="javascript" type="text/javascript">
+
+        function Button1_onclick() {
+            //$('#divEditFields').fadeIn();
+            document.getElementById('divEditFields').style.display = 'block';
+            return false;
+        }
+
+    </script>
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" Runat="Server">
+<ss:Security ID="Security1" runat="server" />
+<util:Utilities ID="Utilities" runat="server" />
+    <div class="container">
+        <div>
+            <br />
+            <br />
+            <%--UserID: <asp:Label ID="lblUserID" runat="server" Text="Label"></asp:Label>
+               <br />
+              LGRP Cookie: <asp:Label ID="lblLGRP" runat="server" Text="Label"></asp:Label>--%>
+            <p>
+                <asp:Label ID="lblError" runat="server" ForeColor="Red" Text=""></asp:Label>
+            </p>
+            <div class="col-md-4" id="Container">
+                <asp:GridView ID="GridView1" AllowPaging="True" AllowSorting="True" ClientIDMode="Static"
+                    runat="server" CssClass="table table-striped table-hover table-bordered table-condensed"
+                    OnSorting="GridView1_Sorting" OnPageIndexChanging="GridView1_PageIndexChanging"
+                    OnRowDeleting="OnRowDeleting" AutoGenerateColumns="False" DataKeyNames="Merch_Nbr"
+                    OnSelectedIndexChanging="GridView1_SelectedIndexChanging" Font-Bold="True">
+                    <Columns>
+                        <asp:BoundField DataField="RSS_Location_Nbr" HeaderText="RSS Location Nbr" SortExpression="RSS_Location_Nbr" />
+                        <asp:BoundField DataField="Merch_Nbr" HeaderText="Merch Nbr" SortExpression="Merch_Nbr" />
+                        <asp:CommandField ShowSelectButton="True" />
+                        <asp:CommandField ShowDeleteButton="True" />
+                    </Columns>
+                </asp:GridView>
+                <br />
+                <%--<asp:Button ID="btnShowFields" runat="server" CssClass="btn btn-primary" 
+                        Text="Add/Edit" OnClientClick="Button1_onclick(); return false;" />--%>
+                <%--<input id="Button1" type="button" value="button" class="btn btn-primary" onclick="return Button1_onclick()" />--%>
+            </div>
+            <asp:Panel ID="Panel1" runat="server">
+                <div id="divEditFields" class="col-md-7" style="border: 2px solid;>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-2 col-md-offset-1 ">
+                            <asp:Button ID="btnSave" runat="server" CssClass="btn btn-primary" ToolTip="Save changes to an existing record"
+                                Text="Save" OnClick="btnSave_Click" />
+                        </div>
+                        <div class="col-md-2">
+                            <asp:Button ID="btnAdd" runat="server" CssClass="btn btn-primary" ToolTip="Add a new record"
+                                Text="Add New" OnClick="btnAdd_Click" />
+                            <%--<input id="btnAdd" type="button"  class="btn btn-primary" runat="server"  value="Add" onclick="return btnAdd_onclick()" />--%>
+                        </div>
+                        <div class="col-md-1">
+                            <asp:Button ID="btnCancel" runat="server" Text="Cancel" CssClass="btn btn-primary"
+                                ToolTip="Clear the fields below" OnClick="btnCancel_Click" />
+                        </div>
+                    </div>
+                    <br />
+                    <br />
+                    <br />
+                    <div class="row">
+                        <div class="col-md-3">
+                            Merch Nbr:
+                        </div>
+                        <div class="col-md-4">
+                            <asp:TextBox ID="txtMerchNbr" ClientIDMode="Static" runat="server"></asp:TextBox>
+                        </div>
+                    </div>
+                    <br />
+                    <br />
+                    <div class="row">
+                        <div class="col-md-3">
+                            RSS Location Nbr:
+                        </div>
+                        <div class="col-md-4">
+                            <asp:TextBox ID="txtRSSLocationNbr" runat="server"></asp:TextBox>
+                        </div>
+                    </div>
+                    <br />
+                    <br />
+                </div>
+            </asp:Panel>
+            <%--<asp:HiddenField ID="hdfOldMerchNbr" ClientIDMode="Static" runat="server" />--%>
+            <input id="Hidden1" type="hidden" clientidmode="Static" runat="server" />
+        </div>
+    </div>
+    <script src="../ssc1900021/Scripts/jquery-1.9.1.js" type="text/javascript"></script>
+    <script src="../ssc1900021/Scripts/jquery-ui-1.10.3.custom.js" type="text/javascript"></script>
+    <script src="../ssc1900021/Scripts/respond.min.js" type="text/javascript"></script>
+</asp:Content>
+

@@ -1,0 +1,266 @@
+﻿<%@ Page Title="" Language="VB" MasterPageFile="~/HRApps.master" AutoEventWireup="false"
+    CodeFile="EmpSearch.aspx.vb" Inherits="EmpSearch" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="BodyTitle" runat="Server">
+    <p>
+        Employee Lookup</p>
+</asp:Content>
+<asp:Content ID="Content3" ContentPlaceHolderID="contentBody" runat="Server">
+    <br />
+    <table style="width: 95%; margin-right: auto; margin-left: auto;">
+        <tr>
+            <td style="vertical-align: top">
+                <table>
+                    <tr>
+                        <td style="background-color: #5e1857; color: #FFFFFF; font-weight: bold; padding-right: 2px;
+                            padding-left: 2px; white-space: nowrap; font-size: small; text-align: center;"
+                            colspan="3">
+                            Please Enter Your Search Criteria
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="background-color: #5e1857; color: #FFFFFF; font-weight: bold; padding-right: 2px;
+                            padding-left: 2px; white-space: nowrap; font-size: small;">
+                            Last Name
+                        </td>
+                        <td style="background-color: #EEEEEE; font-size: small; white-space: nowrap;">
+                            <asp:RadioButtonList ID="rbLastName" runat="server" RepeatDirection="Horizontal"
+                                RepeatLayout="Flow" AutoPostBack="True">
+                                <asp:ListItem>Is</asp:ListItem>
+                                <asp:ListItem Selected="True">Contains</asp:ListItem>
+                            </asp:RadioButtonList>
+                        </td>
+                        <td style="background-color: #DCDCDC; font-size: small;">
+                            <asp:TextBox ID="tbLastName" runat="server" AutoPostBack="True" Font-Size="Small" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="background-color: #5e1857; color: #FFFFFF; font-weight: bold; padding-right: 2px;
+                            padding-left: 2px; white-space: nowrap; font-size: small;">
+                            First Name
+                        </td>
+                        <td style="background-color: #EEEEEE; font-size: small;">
+                            <asp:RadioButtonList ID="rbFirstName" runat="server" RepeatDirection="Horizontal"
+                                RepeatLayout="Flow" AutoPostBack="True">
+                                <asp:ListItem>Is</asp:ListItem>
+                                <asp:ListItem Selected="True">Contains</asp:ListItem>
+                            </asp:RadioButtonList>
+                        </td>
+                        <td style="background-color: #DCDCDC; font-size: small;">
+                            <asp:TextBox ID="tbFirstName" runat="server" AutoPostBack="True" Font-Size="Small"></asp:TextBox>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="background-color: #5e1857; color: #FFFFFF; font-weight: bold; padding-right: 2px;
+                            padding-left: 2px; white-space: nowrap; font-size: small;">
+                            ID
+                        </td>
+                        <td style="background-color: #EEEEEE; font-size: small;">
+                            <asp:RadioButtonList ID="RadioButtonList6" runat="server" RepeatLayout="Flow">
+                                <asp:ListItem Selected="True">Is</asp:ListItem>
+                            </asp:RadioButtonList>
+                        </td>
+                        <td style="background-color: #DCDCDC; font-size: small;">
+                            <asp:TextBox ID="tbID" runat="server" AutoPostBack="True" Columns="9" Font-Size="Small" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="background-color: #5e1857; color: #FFFFFF; font-weight: bold; padding-right: 2px;
+                            padding-left: 2px; white-space: nowrap; font-size: small;">
+                            Status
+                        </td>
+                        <td style="background-color: #EEEEEE; font-size: small;">
+                            <asp:RadioButtonList ID="RadioButtonList7" runat="server" RepeatLayout="Flow">
+                                <asp:ListItem Selected="True">Is</asp:ListItem>
+                            </asp:RadioButtonList>
+                        </td>
+                        <td style="background-color: #DCDCDC; font-size: small;">
+                            <asp:DropDownList ID="ddlStatus" runat="server" AutoPostBack="True" Font-Size="Smaller">
+                                <asp:ListItem Selected="True" Value="0">All</asp:ListItem>
+                                <asp:ListItem Value="A">Active</asp:ListItem>
+                                <asp:ListItem Value="I">Inactive</asp:ListItem>
+                                <asp:ListItem Value="T">Terminated</asp:ListItem>
+                            </asp:DropDownList>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="background-color: #5e1857; color: #FFFFFF; font-weight: bold; padding-right: 2px;
+                            padding-left: 2px; white-space: nowrap; font-size: small;">
+                            Type
+                        </td>
+                        <td style="background-color: #EEEEEE; font-size: small;">
+                            <asp:RadioButtonList ID="RadioButtonList8" runat="server" RepeatLayout="Flow">
+                                <asp:ListItem Selected="True">Is</asp:ListItem>
+                            </asp:RadioButtonList>
+                        </td>
+                        <td style="background-color: #DCDCDC; font-size: small;">
+                            <asp:DropDownList ID="ddlType" runat="server" AutoPostBack="True" Font-Size="Smaller">
+                                <asp:ListItem Selected="True">All</asp:ListItem>
+                                <asp:ListItem>Reg</asp:ListItem>
+                                <asp:ListItem>ST</asp:ListItem>
+                            </asp:DropDownList>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="background-color: #5e1857; color: #FFFFFF; font-weight: bold; padding-right: 2px;
+                            padding-left: 2px; white-space: nowrap; font-size: small;">
+                            Hired
+                        </td>
+                        <td style="background-color: #EEEEEE; font-size: small;">
+                            <asp:DropDownList ID="ddlHiredCompare" runat="server" Font-Size="X-Small" AutoPostBack="True">
+                                <asp:ListItem Selected="True">Is</asp:ListItem>
+                                <asp:ListItem>&gt;=</asp:ListItem>
+                                <asp:ListItem>&lt;=</asp:ListItem>
+                            </asp:DropDownList>
+                        </td>
+                        <td style="background-color: #DCDCDC; font-size: small;">
+                            <asp:TextBox ID="tbHiredDate" runat="server" Columns="10" AutoPostBack="True" Font-Size="Small"></asp:TextBox>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="background-color: #5e1857; color: #FFFFFF; font-weight: bold; padding-right: 2px;
+                            padding-left: 2px; white-space: nowrap; font-size: small;">
+                            Location
+                        </td>
+                        <td style="background-color: #EEEEEE; font-size: small;">
+                            <asp:RadioButtonList ID="rbLocation" runat="server" RepeatDirection="Horizontal"
+                                RepeatLayout="Flow">
+                                <asp:ListItem Selected="True">Is</asp:ListItem>
+                            </asp:RadioButtonList>
+                        </td>
+                        <td style="background-color: #DCDCDC; font-size: small;">
+                            <asp:DropDownList ID="ddlComps" runat="server" Font-Size="X-Small" AutoPostBack="True"
+                                DataSourceID="sdsComps" DataTextField="comp" DataValueField="comp" />
+                            <br />
+                            <asp:DropDownList ID="ddlStores" runat="server" Font-Size="X-Small" AutoPostBack="True"
+                                DataSourceID="sdsStores" DataTextField="descr" DataValueField="store_num" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="background-color: #5e1857; color: #FFFFFF; font-weight: bold; padding-right: 2px;
+                            padding-left: 2px; white-space: nowrap; font-size: small;">
+                            Grade
+                        </td>
+                        <td style="background-color: #EEEEEE; font-size: small;">
+                            <asp:DropDownList ID="ddlGradeCompare" runat="server" Font-Size="X-Small" AutoPostBack="True">
+                                <asp:ListItem Selected="True">Is</asp:ListItem>
+                                <asp:ListItem>&gt;=</asp:ListItem>
+                                <asp:ListItem>&lt;=</asp:ListItem>
+                            </asp:DropDownList>
+                        </td>
+                        <td style="background-color: #DCDCDC; font-size: small;">
+                            <asp:DropDownList ID="ddlGrade" runat="server" DataSourceID="sdsGrade" DataTextField="pay_grade_code"
+                                DataValueField="pay_grade_code" Font-Size="X-Small" AutoPostBack="True">
+                            </asp:DropDownList>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="background-color: #EEEEEE; font-size: small; text-align: center;" colspan="3">
+                            <asp:Button ID="btnClear" runat="server" Text="Clear" Font-Size="X-Small" />&nbsp;&nbsp;<asp:Button
+                                ID="btnRefresh" runat="server" Text="Refresh" Font-Size="X-Small" />
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td style="vertical-align: top">
+                <asp:GridView ID="gvLastName" runat="server" AutoGenerateColumns="False" DataSourceID="sdsIndividual"
+                    Visible="False" BackColor="White" BorderColor="#999999" BorderStyle="Solid" BorderWidth="1px"
+                    CellPadding="3" GridLines="Vertical" HorizontalAlign="Center" Font-Size="Small"
+                    DataKeyNames="individual_id">
+                    <Columns>
+                        <asp:TemplateField>
+                            <ItemTemplate>
+                                <asp:ImageButton ID="ibSelect" runat="server" Height="16px" ImageUrl="~/images/eye.png"
+                                    ImageAlign="Middle" ToolTip="View Employee" PostBackUrl='<%# "EmployeeInquiry.aspx?ID=" & Eval("individual_id") %>' />
+                            </ItemTemplate>
+                            <ItemStyle HorizontalAlign="Center" VerticalAlign="Middle" />
+                        </asp:TemplateField>
+                        <asp:BoundField DataField="emp_display_name" HeaderText="Name" />
+                        <asp:BoundField DataField="emp_id" HeaderText="Emp. ID" />
+                        <asp:BoundField DataField="individual_id" HeaderText="Ind. ID" />
+                        <asp:BoundField DataField="emp_status_code" HeaderText="Status" />
+                        <asp:BoundField DataField="employment_type_code" HeaderText="Type" />
+                        <asp:BoundField DataField="original_hire_date" HeaderText="Hired" DataFormatString="{0:MM/dd/yyyy}" />
+                        <asp:BoundField DataField="adjusted_service_date" DataFormatString="{0:MM/dd/yyyy}"
+                            HeaderText="Adj Service" Visible="False" />
+                        <asp:BoundField DataField="loc_code" HeaderText="Loc" />
+                        <asp:BoundField DataField="pay_grade_code" HeaderText="Grade" />
+                    </Columns>
+                    <EmptyDataTemplate>
+                        No Rows
+                    </EmptyDataTemplate>
+                    <AlternatingRowStyle BackColor="#DCDCDC" />
+                    <FooterStyle BackColor="#CCCCCC" ForeColor="Black" />
+                    <HeaderStyle BackColor="#5E1857" Font-Bold="True" ForeColor="White" />
+                    <RowStyle BackColor="#EEEEEE" ForeColor="Black" Wrap="False" />
+                </asp:GridView>
+                <a href="EmployeeInquiry.aspx">
+                <span style="font-size: small; background-color: #FFFFFF">EmployeeInquiry.aspx</span></a></td>
+        </tr>
+    </table>
+    <asp:SqlDataSource ID="sdsIndividual" runat="server" SelectCommand="
+            SELECT TOP 100
+                   [employee].[emp_display_name]
+                 , '-' + RIGHT(RTRIM([employee].[emp_id]),4) AS [emp_id]
+                 , [employee].[individual_id]
+                 , [emp_status].[emp_status_code]
+                 , [emp_employment].[employment_type_code]
+                 , [employee].[original_hire_date]
+                 , [employee].[adjusted_service_date]
+                 , [emp_assignment].[loc_code]
+                 , [emp_assignment].[pay_grade_code]
+              FROM [DBShrpn].[dbo].[employee] [employee]
+              JOIN [DBShrpn].[dbo].[emp_employment] [emp_employment]
+                ON [employee].[emp_id] = [emp_employment].[emp_id]
+               AND [emp_employment].[next_eff_date] = '12/31/2999'
+              JOIN [DBShrpn].[dbo].[emp_status] [emp_status]
+                ON [employee].[emp_id] = [emp_status].[emp_id]
+               AND [emp_status].[next_change_date] = '12/31/2999'
+              JOIN [DBShrpn].[dbo].[emp_assignment] [emp_assignment]
+                ON [employee].[emp_id] = [emp_assignment].[emp_id]
+               AND [emp_assignment].[eff_date] = (SELECT MAX([A].[eff_date])
+                                                    FROM [DBShrpn].[dbo].[emp_assignment] [A]
+                                                   WHERE [emp_assignment].[emp_id] = [A].[emp_id])
+              JOIN [DBShrpn].[dbo].[individual] [individual]
+                ON [employee].[individual_id] = [individual].[individual_id]
+    
+        "></asp:SqlDataSource>
+    <asp:SqlDataSource ID="sdsGrade" runat="server" SelectCommand="
+            SELECT ' All' AS [pay_grade_code]
+             UNION
+            SELECT DISTINCT
+                   [pay_grade_code]
+              FROM [DBShrpn].[dbo].[emp_assignment] [emp_assignment]
+             WHERE CAST([pay_grade_code] AS INT) &gt;= 100
+             ORDER
+                BY [pay_grade_code]
+
+"></asp:SqlDataSource>
+    <asp:SqlDataSource ID="sdsComps" runat="server" SelectCommand="
+            SELECT ' All Comps' [comp]
+            UNION
+            SELECT DISTINCT
+                   [comp]
+              FROM [ssc_gl].[dbo].[gl_cntr_data]
+             WHERE [cntr_desc] NOT LIKE '%[CL]%' ESCAPE '[' 
+               AND [cntr_desc] NOT LIKE '%(CL)%'
+             ORDER
+                BY [comp]
+
+"></asp:SqlDataSource>
+    <asp:SqlDataSource ID="sdsStores" runat="server" SelectCommand="
+            SELECT '' AS [comp], '00000' AS [store_num], 'All Stores' AS [descr]
+            UNION
+            SELECT DISTINCT
+                   [comp]
+                  ,[store_num]
+                  ,[comp] + ' - ' + [store_num] + ' - ' + [cntr_desc] AS [descr]
+              FROM [ssc_gl].[dbo].[gl_cntr_data]
+             WHERE [cntr_desc] NOT LIKE '%[CL]%' ESCAPE '[' 
+               AND [cntr_desc] NOT LIKE '%(CL)%'
+             ORDER
+                BY [descr]
+"></asp:SqlDataSource>
+</asp:Content>

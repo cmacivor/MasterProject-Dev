@@ -1,0 +1,45 @@
+﻿Option Explicit On
+Option Strict On
+
+Partial Class HRApps
+    Inherits System.Web.UI.MasterPage
+
+    Protected Sub Page_Load(sender As Object, e As System.EventArgs) Handles Me.Load
+
+        Me.sdsATSWeb.ConnectionString = HR_User.ConnectionStringATSWeb
+
+        If Not Me.Page.IsPostBack Then
+            Dim dvATSWeb As Data.DataView = CType(Me.sdsATSWeb.Select(DataSourceSelectArguments.Empty), Data.DataView)
+            Dim strMenuRoot As String = ""
+            Dim tnRoot As New TreeNode
+            For x = 0 To dvATSWeb.Count - 1
+                If dvATSWeb(x)("MenuGroupDescription").ToString <> strMenuRoot Then
+                    tnRoot = New TreeNode
+                    strMenuRoot = dvATSWeb(x)("MenuGroupDescription").ToString
+                    tnRoot.Text = dvATSWeb(x)("MenuGroupDescription").ToString
+                    Me.tvMenu.Nodes.Add(tnRoot)
+                End If
+                tnRoot.ChildNodes.Add(New TreeNode With {.Text = dvATSWeb(x)("MenuItemsDescription").ToString,
+                                                         .NavigateUrl = dvATSWeb(x)("TargetURL").ToString,
+                                                         .Target = dvATSWeb(x)("TargetPage").ToString
+                                                        })
+            Next
+        End If
+    End Sub
+
+    Protected Sub ibPrint_Click(sender As Object, e As System.Web.UI.ImageClickEventArgs) Handles ibPrint.Click
+        Session("PrintMaster") = "~/PrintPage.master"
+        Response.Write("<script>")
+        Response.Write("window.open('" & HttpContext.Current.Request.Url.AbsolutePath & "?print=yes','_blank')")
+        Response.Write("</script>")
+        Response.End()
+        'Response.Flush()
+        'Response.Redirect(HttpContext.Current.Request.Url.AbsolutePath)
+    End Sub
+
+    Protected Sub ibLogoff_Click(sender As Object, e As System.Web.UI.ImageClickEventArgs) Handles ibLogoff.Click
+        Session.Remove("HR_User")
+        Response.Redirect("/HRApps/login.aspx")
+    End Sub
+End Class
+

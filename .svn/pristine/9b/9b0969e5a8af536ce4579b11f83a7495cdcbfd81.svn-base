@@ -1,0 +1,22 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+public partial class ssc1900021Utilities : System.Web.UI.UserControl
+{
+    public readonly string TCMasterConnectionString = "Data Source=DNBII\\PROD1;Password=DWADMIN;User ID=DWBATCH;Initial Catalog=TC_MASTER;";
+
+    protected void Page_Load(object sender, EventArgs e)
+    {
+
+    }
+
+    public class ConnectionStrings
+    {
+        public readonly string TCMasterConnectionString = "Data Source=DNBII\\PROD1;Password=DWADMIN;User ID=DWBATCH;Initial Catalog=TC_MASTER;";
+        public readonly string ATSWebConnectionString = "Data Source=DNBII\\PROD1;Password=webadmin;User ID=ATSWEB;Initial Catalog=ATSweb";
+    }
+}

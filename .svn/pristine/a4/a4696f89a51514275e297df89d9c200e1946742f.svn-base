@@ -1,0 +1,174 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="retail_receivablesModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2005" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+        <EntityContainer Name="retail_receivablesModelStoreContainer">
+          <EntitySet Name="rss_ar_customer_eom" EntityType="retail_receivablesModel.Store.rss_ar_customer_eom" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="web_credit_past_due_rates" EntityType="retail_receivablesModel.Store.web_credit_past_due_rates" store:Type="Tables" Schema="dbo" />
+        </EntityContainer>
+        <EntityType Name="rss_ar_customer_eom">
+          <Key>
+            <PropertyRef Name="store_nbr" />
+            <PropertyRef Name="acct_nbr" />
+            <PropertyRef Name="eff_date" />
+          </Key>
+          <Property Name="store_nbr" Type="char" Nullable="false" MaxLength="5" />
+          <Property Name="acct_nbr" Type="char" Nullable="false" MaxLength="6" />
+          <Property Name="eff_date" Type="datetime" Nullable="false" />
+          <Property Name="patron_name" Type="varchar" MaxLength="30" />
+          <Property Name="address_line1" Type="varchar" MaxLength="30" />
+          <Property Name="address_line2" Type="varchar" MaxLength="30" />
+          <Property Name="city" Type="varchar" MaxLength="20" />
+          <Property Name="state" Type="char" MaxLength="2" />
+          <Property Name="zip_code" Type="varchar" MaxLength="9" />
+          <Property Name="home_phone" Type="char" MaxLength="10" />
+          <Property Name="ssn" Type="char" MaxLength="9" />
+          <Property Name="stock_rec_patron_nbr" Type="char" MaxLength="9" />
+          <Property Name="member_status" Type="char" MaxLength="1" />
+          <Property Name="employee_indicator" Type="char" MaxLength="1" />
+          <Property Name="ytd_volume" Type="money" />
+          <Property Name="last_yr_volume" Type="money" />
+          <Property Name="aggregate_credit_limit" Type="money" />
+          <Property Name="crop_credit_limit" Type="money" />
+          <Property Name="customer_type" Type="char" MaxLength="2" />
+          <Property Name="batch_id" Type="datetime" />
+          <Property Name="chgstamp" Type="datetime" />
+          <Property Name="ROWID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="date_added" Type="datetime" />
+          <Property Name="tax_exempt_nbr" Type="varchar" MaxLength="15" />
+          <Property Name="last_activity" Type="datetime" />
+        </EntityType>
+        <EntityType Name="web_credit_past_due_rates">
+          <Key>
+            <PropertyRef Name="ROWID" />
+          </Key>
+          <Property Name="start_date" Type="datetime" />
+          <Property Name="end_date" Type="datetime" />
+          <Property Name="rate" Type="money" />
+          <Property Name="chgstamp" Type="datetime" />
+          <Property Name="ROWID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+        </EntityType>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="retail_receivablesModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+        <EntityContainer Name="ssc1900016_retail_receivablesEntities2" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="web_credit_past_due_rates" EntityType="retail_receivablesModel.web_credit_past_due_rates" />
+          <EntitySet Name="rss_ar_customer_eom" EntityType="retail_receivablesModel.rss_ar_customer_eom" />
+        </EntityContainer>
+        <EntityType Name="web_credit_past_due_rates">
+          <Key>
+            <PropertyRef Name="ROWID" />
+          </Key>
+          <Property Name="start_date" Type="DateTime" />
+          <Property Name="end_date" Type="DateTime" />
+          <Property Name="rate" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="chgstamp" Type="DateTime" />
+          <Property Name="ROWID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+        </EntityType>
+        <EntityType Name="rss_ar_customer_eom">
+          <Key>
+            <PropertyRef Name="store_nbr" />
+            <PropertyRef Name="acct_nbr" />
+            <PropertyRef Name="eff_date" />
+          </Key>
+          <Property Type="String" Name="store_nbr" Nullable="false" MaxLength="5" FixedLength="true" Unicode="false" />
+          <Property Type="String" Name="acct_nbr" Nullable="false" MaxLength="6" FixedLength="true" Unicode="false" />
+          <Property Type="DateTime" Name="eff_date" Nullable="false" />
+          <Property Type="String" Name="patron_name" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="address_line1" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="address_line2" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="city" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="state" MaxLength="2" FixedLength="true" Unicode="false" />
+          <Property Type="String" Name="zip_code" MaxLength="9" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="home_phone" MaxLength="10" FixedLength="true" Unicode="false" />
+          <Property Type="String" Name="ssn" MaxLength="9" FixedLength="true" Unicode="false" />
+          <Property Type="String" Name="stock_rec_patron_nbr" MaxLength="9" FixedLength="true" Unicode="false" />
+          <Property Type="String" Name="member_status" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Type="String" Name="employee_indicator" MaxLength="1" FixedLength="true" Unicode="false" />
+          <Property Type="Decimal" Name="ytd_volume" Precision="19" Scale="4" />
+          <Property Type="Decimal" Name="last_yr_volume" Precision="19" Scale="4" />
+          <Property Type="Decimal" Name="aggregate_credit_limit" Precision="19" Scale="4" />
+          <Property Type="Decimal" Name="crop_credit_limit" Precision="19" Scale="4" />
+          <Property Type="String" Name="customer_type" MaxLength="2" FixedLength="true" Unicode="false" />
+          <Property Type="DateTime" Name="batch_id" />
+          <Property Type="DateTime" Name="chgstamp" />
+          <Property Type="Int32" Name="ROWID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="DateTime" Name="date_added" />
+          <Property Type="String" Name="tax_exempt_nbr" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="last_activity" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="retail_receivablesModelStoreContainer" CdmEntityContainer="ssc1900016_retail_receivablesEntities2">
+          <EntitySetMapping Name="web_credit_past_due_rates"><EntityTypeMapping TypeName="retail_receivablesModel.web_credit_past_due_rates"><MappingFragment StoreEntitySet="web_credit_past_due_rates">
+            <ScalarProperty Name="start_date" ColumnName="start_date" />
+            <ScalarProperty Name="end_date" ColumnName="end_date" />
+            <ScalarProperty Name="rate" ColumnName="rate" />
+            <ScalarProperty Name="chgstamp" ColumnName="chgstamp" />
+            <ScalarProperty Name="ROWID" ColumnName="ROWID" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="rss_ar_customer_eom">
+            <EntityTypeMapping TypeName="retail_receivablesModel.rss_ar_customer_eom">
+              <MappingFragment StoreEntitySet="rss_ar_customer_eom">
+                <ScalarProperty Name="last_activity" ColumnName="last_activity" />
+                <ScalarProperty Name="tax_exempt_nbr" ColumnName="tax_exempt_nbr" />
+                <ScalarProperty Name="date_added" ColumnName="date_added" />
+                <ScalarProperty Name="ROWID" ColumnName="ROWID" />
+                <ScalarProperty Name="chgstamp" ColumnName="chgstamp" />
+                <ScalarProperty Name="batch_id" ColumnName="batch_id" />
+                <ScalarProperty Name="customer_type" ColumnName="customer_type" />
+                <ScalarProperty Name="crop_credit_limit" ColumnName="crop_credit_limit" />
+                <ScalarProperty Name="aggregate_credit_limit" ColumnName="aggregate_credit_limit" />
+                <ScalarProperty Name="last_yr_volume" ColumnName="last_yr_volume" />
+                <ScalarProperty Name="ytd_volume" ColumnName="ytd_volume" />
+                <ScalarProperty Name="employee_indicator" ColumnName="employee_indicator" />
+                <ScalarProperty Name="member_status" ColumnName="member_status" />
+                <ScalarProperty Name="stock_rec_patron_nbr" ColumnName="stock_rec_patron_nbr" />
+                <ScalarProperty Name="ssn" ColumnName="ssn" />
+                <ScalarProperty Name="home_phone" ColumnName="home_phone" />
+                <ScalarProperty Name="zip_code" ColumnName="zip_code" />
+                <ScalarProperty Name="state" ColumnName="state" />
+                <ScalarProperty Name="city" ColumnName="city" />
+                <ScalarProperty Name="address_line2" ColumnName="address_line2" />
+                <ScalarProperty Name="address_line1" ColumnName="address_line1" />
+                <ScalarProperty Name="patron_name" ColumnName="patron_name" />
+                <ScalarProperty Name="eff_date" ColumnName="eff_date" />
+                <ScalarProperty Name="acct_nbr" ColumnName="acct_nbr" />
+                <ScalarProperty Name="store_nbr" ColumnName="store_nbr" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams>
+      <Diagram Name="ssc1900016_RetailReceivables">
+        <EntityTypeShape EntityType="retail_receivablesModel.web_credit_past_due_rates" Width="1.875" PointX="0.75" PointY="0.75" Height="1.9802864583333331" IsExpanded="true" />
+        <EntityTypeShape EntityType="retail_receivablesModel.rss_ar_customer_eom" Width="1.5" PointX="3.375" PointY="0.75" Height="5.8263151041666656" />
+      </Diagram>
+    </Diagrams>
+  </Designer>
+</edmx:Edmx>

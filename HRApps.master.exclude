@@ -1,0 +1,109 @@
+﻿<%@ Master Language="VB" CodeFile="HRApps.master.vb" Inherits="HRApps" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <meta http-equiv="X-UA-Compatible" content="IE=100" />
+    <title>
+        <asp:ContentPlaceHolder ID="head" runat="server">
+            HR Web
+        </asp:ContentPlaceHolder>
+    </title>
+    <style type="text/css">
+        a img
+        {
+            border: none;
+        }
+    </style>
+    <link href="HRApps.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <form id="form1" runat="server">
+    <div id="divTitleBar" style="width: 100%; height: 70px; top: 0px; left: 0px; position: absolute;
+        background-color: #F0F0F0;">
+        <table style="height: 70px;">
+            <tr>
+                <td style="width: 5%; vertical-align: middle; text-align: center;">
+                </td>
+                <td style="font-size: 42px; font-weight: bold; text-align: center; width: 95%; color: #57004F;">
+                    HR Web
+                </td>
+                <td style="vertical-align: middle; text-align: right">
+                    <asp:ImageButton ID="ibLogoff" runat="server" AlternateText="Logout" Height="35px"
+                        ImageUrl="~/images/logout.png" Width="35px" />
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="divMenuBar" style="position: absolute; width: 200px; top: 0px; left: 0px;
+        background-color: #F0F0F0; bottom: 0px;">
+        <div style="height: 70px; position: relative; width: 100%; text-align: center;">
+        <br />
+            <asp:HyperLink ID="hlHome" runat="server" NavigateUrl="~/Home.aspx" Target="_self"
+                BorderStyle="None" BorderWidth="0px" ImageUrl="~/images/Home-icon2.png">
+            </asp:HyperLink>
+        </div>
+        <asp:TreeView ID="tvMenu" runat="server" ImageSet="Simple" NodeIndent="15" NodeWrap="True"
+            Width="100%">
+            <HoverNodeStyle Font-Underline="True" ForeColor="#6666AA" />
+            <LeafNodeStyle Font-Size="Small" />
+            <NodeStyle Font-Names="Tahoma" Font-Size="8pt" HorizontalPadding="2px" NodeSpacing="0px"
+                VerticalPadding="2px" ForeColor="#57004F" />
+            <ParentNodeStyle Font-Bold="False" />
+            <RootNodeStyle Font-Bold="True" Font-Size="Large" />
+            <SelectedNodeStyle BackColor="#B5B5B5" Font-Underline="False" HorizontalPadding="0px"
+                VerticalPadding="0px" />
+        </asp:TreeView>
+        <asp:SqlDataSource ID="sdsATSWeb" runat="server" SelectCommand="
+            SELECT DISTINCT
+                   [web_activities].[activity_id] AS [activity_id]
+                 , SUBSTRING([web_activities].[group_descp],13,50) AS [MenuGroupDescription]
+                 , SUBSTRING([web_activities].[group_descp],10,2) AS [MenuGroupSort]
+                 , SUBSTRING([web_activities].[descp],13,50) AS [MenuItemsDescription]
+                 , SUBSTRING([web_activities].[descp],10,2) AS [MenuItemsSort]
+                 , [web_activities_secure].[field_name] AS [TargetPage]
+                 , [web_activities_secure].[descp] AS [TargetURL]
+              FROM [ATSweb].[dbo].[web_activities] [web_activities]
+              JOIN [ATSweb].[dbo].[web_user_activities] [web_user_activities]
+                ON [web_activities].[activity_id] = [web_user_activities].[activity_id]
+              JOIN [ATSweb].[dbo].[web_activities_secure] [web_activities_secure]
+                ON [web_activities].[activity_id] = [web_activities_secure].[activity_id]
+             WHERE [web_activities].[activity_id] LIKE 'ssc49%'
+               AND [web_activities].[activity_id] &lt;&gt; 'ssc4900000'
+               AND [web_user_activities].[login] = CASE WHEN @UserID IN ('mea02','kmr03')
+                                                        THEN [web_user_activities].[login]
+                                                        ELSE @UserID
+                                                    END
+             ORDER
+                BY [MenuGroupSort]
+                 , [MenuItemsSort]
+            ">
+            <SelectParameters>
+                <asp:Parameter Name="UserID" DefaultValue="mea02" />
+            </SelectParameters>
+        </asp:SqlDataSource>
+    </div>
+    <div id="divBody" style="background-position: -1px -1px; background-color: #FFFFFF;
+        top: 70px; left: 200px; position: absolute; right: 0px; bottom: 0px; z-index: 0;
+        background-image: url('/HRApps/images/corner.png'); background-repeat: no-repeat;">
+        <div style="right: 0px; top: 10px; width: 32px; height: 32px; position: absolute;
+            z-index: 1;">
+            <asp:ImageButton ID="ibPrint" runat="server" ImageUrl="~/images/printer.png" Height="32"
+                Width="32" Visible="False" />
+        </div>
+        <div style="width: 100%; top: 10px; left: 0px; position: absolute; z-index: 0; font-size: 32px;
+            color: #57004F; font-weight: bold; text-align: center; height: 55px;">
+            <asp:ContentPlaceHolder ID="BodyTitle" runat="server">
+            </asp:ContentPlaceHolder>
+        </div>
+        <div style="width: 100%; top: 75px; left: 0px; position: absolute; z-index: 0; bottom: 0px;
+            right: 0px;">
+            <asp:Panel ID="Panel1" runat="server" Width="100%" Height="100%" ScrollBars="Auto">
+                <asp:ContentPlaceHolder ID="contentBody" runat="server">
+                </asp:ContentPlaceHolder>
+            </asp:Panel>
+        </div>
+    </div>
+    </form>
+</body>
+</html>

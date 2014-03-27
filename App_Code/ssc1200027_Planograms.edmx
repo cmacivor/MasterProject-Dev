@@ -1,0 +1,1676 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="ssc1200027_ssc_spacemanModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+        <EntityContainer Name="ssc1200027_ssc_spacemanModelStoreContainer">
+          <EntitySet Name="FIXEL" EntityType="ssc1200027_ssc_spacemanModel.Store.FIXEL" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="PLANO_KEY" EntityType="ssc1200027_ssc_spacemanModel.Store.PLANO_KEY" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="PLANOGRAM" EntityType="ssc1200027_ssc_spacemanModel.Store.PLANOGRAM" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="POSITION" EntityType="ssc1200027_ssc_spacemanModel.Store.POSITION" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="PRODUCT" EntityType="ssc1200027_ssc_spacemanModel.Store.PRODUCT" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="PRODUCT_LIST" EntityType="ssc1200027_ssc_spacemanModel.Store.PRODUCT_LIST" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="ssc_assortment_change_NewItemStrategy" EntityType="ssc1200027_ssc_spacemanModel.Store.ssc_assortment_change_NewItemStrategy" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="ssc_assortment_change_snapshot" EntityType="ssc1200027_ssc_spacemanModel.Store.ssc_assortment_change_snapshot" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="ssc_assortment_change_snapshot_detail" EntityType="ssc1200027_ssc_spacemanModel.Store.ssc_assortment_change_snapshot_detail" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="ssc_sku_status" EntityType="ssc1200027_ssc_spacemanModel.Store.ssc_sku_status" store:Type="Tables" Schema="dbo" />
+          <AssociationSet Name="FK_asst_chg_snap_id" Association="ssc1200027_ssc_spacemanModel.Store.FK_asst_chg_snap_id">
+            <End Role="ssc_assortment_change_snapshot" EntitySet="ssc_assortment_change_snapshot" />
+            <End Role="ssc_assortment_change_snapshot_detail" EntitySet="ssc_assortment_change_snapshot_detail" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="FIXEL">
+          <Key>
+            <PropertyRef Name="Key_id" />
+            <PropertyRef Name="fixel_id" />
+          </Key>
+          <Property Name="Key_id" Type="int" Nullable="false" />
+          <Property Name="fixel_id" Type="nvarchar" Nullable="false" MaxLength="15" />
+          <Property Name="name" Type="nvarchar" MaxLength="32" />
+          <Property Name="manufacturer" Type="nvarchar" MaxLength="32" />
+          <Property Name="type" Type="smallint" />
+          <Property Name="segment" Type="smallint" />
+          <Property Name="frame_element" Type="smallint" />
+          <Property Name="occupancy" Type="smallint" />
+          <Property Name="reserve" Type="smallint" />
+          <Property Name="fill_color" Type="smallint" />
+          <Property Name="rotation" Type="smallint" />
+          <Property Name="slope" Type="smallint" />
+          <Property Name="notch_position" Type="smallint" />
+          <Property Name="x" Type="float" />
+          <Property Name="y" Type="float" />
+          <Property Name="z" Type="float" />
+          <Property Name="height" Type="float" />
+          <Property Name="width" Type="float" />
+          <Property Name="depth" Type="float" />
+          <Property Name="thickness" Type="float" />
+          <Property Name="horiz_spacing" Type="float" />
+          <Property Name="vert_spacing" Type="float" />
+          <Property Name="dep_spacing" Type="float" />
+          <Property Name="horiz_start" Type="float" />
+          <Property Name="vert_start" Type="float" />
+          <Property Name="depth_start" Type="float" />
+          <Property Name="horiz_end" Type="float" />
+          <Property Name="vert_end" Type="float" />
+          <Property Name="depth_end" Type="float" />
+          <Property Name="horiz_direction" Type="smallint" />
+          <Property Name="vert_direction" Type="smallint" />
+          <Property Name="depth_direction" Type="smallint" />
+          <Property Name="support" Type="smallint" />
+          <Property Name="grill_height" Type="float" />
+          <Property Name="grill_slope" Type="float" />
+          <Property Name="max_merch" Type="float" />
+          <Property Name="cost" Type="float" />
+          <Property Name="quantity" Type="smallint" />
+          <Property Name="top" Type="float" />
+          <Property Name="front" Type="float" />
+          <Property Name="grid_type" Type="smallint" />
+          <Property Name="assembly" Type="nvarchar" MaxLength="32" />
+          <Property Name="attached_to" Type="nvarchar" MaxLength="15" />
+          <Property Name="horiz_gap" Type="float" />
+          <Property Name="spacer_thick" Type="float" />
+          <Property Name="finger_space" Type="float" />
+          <Property Name="available" Type="float" />
+          <Property Name="grill" Type="float" />
+          <Property Name="fill_mode" Type="smallint" />
+          <Property Name="basket_fill" Type="smallint" />
+          <Property Name="spread_products" Type="smallint" />
+          <Property Name="max_high" Type="smallint" />
+          <Property Name="max_deep" Type="smallint" />
+          <Property Name="min_high" Type="smallint" />
+          <Property Name="min_deep" Type="smallint" />
+          <Property Name="placement" Type="smallint" />
+          <Property Name="shelf_rise" Type="float" />
+          <Property Name="fit_type" Type="smallint" />
+          <Property Name="left_overhang" Type="float" />
+          <Property Name="right_overhang" Type="float" />
+          <Property Name="front_overhang" Type="float" />
+          <Property Name="back_overhang" Type="float" />
+          <Property Name="upper_overhang" Type="float" />
+          <Property Name="lower_overhang" Type="float" />
+          <Property Name="combine" Type="smallint" />
+          <Property Name="allow_overlap" Type="smallint" />
+          <Property Name="draw" Type="smallint" />
+          <Property Name="dim_width" Type="smallint" />
+          <Property Name="dim_elevation" Type="smallint" />
+          <Property Name="section_id" Type="nvarchar" MaxLength="15" />
+          <Property Name="textfield" Type="nvarchar" MaxLength="255" />
+          <Property Name="auto_crush" Type="smallint" />
+          <Property Name="flipped" Type="smallint" />
+          <Property Name="fontid" Type="nvarchar" MaxLength="15" />
+          <Property Name="Colour" Type="int" />
+          <Property Name="ColourIsClear" Type="smallint" />
+          <Property Name="Fill_Pattern" Type="smallint" />
+          <Property Name="Textbox_Word_Wrap" Type="smallint" />
+          <Property Name="Salary" Type="money" />
+          <Property Name="Textbox_Reduce_To_Fit" Type="smallint" />
+          <Property Name="HorizSlotStart" Type="float" />
+          <Property Name="HorizSlotSpacing" Type="float" />
+          <Property Name="DepthSlotStart" Type="float" />
+          <Property Name="DepthSlotSpacing" Type="float" />
+          <Property Name="LocalX" Type="float" />
+          <Property Name="LocalY" Type="float" />
+          <Property Name="LocalZ" Type="float" />
+          <Property Name="SnapToSlot" Type="smallint" />
+          <Property Name="SlotOrientation" Type="smallint" />
+          <Property Name="fixed" Type="smallint" />
+          <Property Name="fixturedistance" Type="float" />
+          <Property Name="treatassign" Type="smallint" />
+        </EntityType>
+        <EntityType Name="PLANO_KEY">
+          <Key>
+            <PropertyRef Name="Key_id" />
+          </Key>
+          <Property Name="Key_id" Type="int" Nullable="false" />
+          <Property Name="Market" Type="nvarchar" MaxLength="15" />
+          <Property Name="Period" Type="nvarchar" MaxLength="15" />
+          <Property Name="Planogram" Type="nvarchar" MaxLength="50" />
+          <Property Name="Status" Type="nvarchar" MaxLength="15" />
+          <Property Name="Owner" Type="nvarchar" MaxLength="15" />
+          <Property Name="ModifiedBy" Type="nvarchar" MaxLength="15" />
+          <Property Name="AccessedBy" Type="nvarchar" MaxLength="15" />
+          <Property Name="CreationDate" Type="smalldatetime" />
+          <Property Name="ModifiedDate" Type="smalldatetime" />
+          <Property Name="AccessedDate" Type="smalldatetime" />
+          <Property Name="Group1" Type="nvarchar" MaxLength="25" />
+          <Property Name="Category" Type="nvarchar" MaxLength="25" />
+          <Property Name="SubCategory" Type="nvarchar" MaxLength="25" />
+        </EntityType>
+        <EntityType Name="PLANOGRAM">
+          <Key>
+            <PropertyRef Name="Key_id" />
+          </Key>
+          <Property Name="Key_id" Type="int" Nullable="false" />
+          <Property Name="merch_dir" Type="smallint" />
+          <Property Name="spread_products" Type="smallint" />
+          <Property Name="fill_mode" Type="smallint" />
+          <Property Name="full_facings" Type="smallint" />
+          <Property Name="ros_basis" Type="smallint" />
+          <Property Name="min_facings" Type="smallint" />
+          <Property Name="max_facings" Type="smallint" />
+          <Property Name="xturns" Type="float" />
+          <Property Name="turns" Type="float" />
+          <Property Name="id_type" Type="smallint" />
+          <Property Name="alt_id_type" Type="smallint" />
+          <Property Name="reduce_to_fit" Type="smallint" />
+          <Property Name="best_fit" Type="smallint" />
+          <Property Name="wrap_text" Type="smallint" />
+          <Property Name="info_type" Type="smallint" />
+          <Property Name="alt_label" Type="nvarchar" MaxLength="200" />
+          <Property Name="manufacturer" Type="nvarchar" MaxLength="32" />
+          <Property Name="category" Type="nvarchar" MaxLength="32" />
+          <Property Name="desc_a" Type="nvarchar" MaxLength="32" />
+          <Property Name="desc_b" Type="nvarchar" MaxLength="32" />
+          <Property Name="desc_c" Type="nvarchar" MaxLength="32" />
+          <Property Name="desc_d" Type="nvarchar" MaxLength="32" />
+          <Property Name="desc_e" Type="nvarchar" MaxLength="32" />
+          <Property Name="desc_f" Type="nvarchar" MaxLength="32" />
+          <Property Name="desc_g" Type="nvarchar" MaxLength="32" />
+          <Property Name="desc_h" Type="nvarchar" MaxLength="32" />
+          <Property Name="desc_i" Type="nvarchar" MaxLength="32" />
+          <Property Name="desc_j" Type="nvarchar" MaxLength="32" />
+          <Property Name="promo_per" Type="float" />
+          <Property Name="horiz_gap" Type="float" />
+          <Property Name="vert_gap" Type="float" />
+          <Property Name="report_measure" Type="smallint" />
+          <Property Name="default_peg_id" Type="nvarchar" MaxLength="15" />
+          <Property Name="shelf_tags" Type="smallint" />
+          <Property Name="cap_style" Type="smallint" />
+          <Property Name="hang_prompt" Type="smallint" />
+          <Property Name="seg_split" Type="smallint" />
+          <Property Name="horiz_field" Type="smallint" />
+          <Property Name="vert_field" Type="smallint" />
+          <Property Name="horiz_method" Type="smallint" />
+          <Property Name="vert_method" Type="smallint" />
+          <Property Name="horiz_value" Type="float" />
+          <Property Name="vert_value" Type="float" />
+        </EntityType>
+        <EntityType Name="POSITION">
+          <Key>
+            <PropertyRef Name="Key_id" />
+            <PropertyRef Name="fixel_id" />
+            <PropertyRef Name="position_id" />
+          </Key>
+          <Property Name="Key_id" Type="int" Nullable="false" />
+          <Property Name="fixel_id" Type="nvarchar" Nullable="false" MaxLength="15" />
+          <Property Name="position_id" Type="nvarchar" Nullable="false" MaxLength="20" />
+          <Property Name="pos_order" Type="smallint" />
+          <Property Name="x" Type="float" />
+          <Property Name="y" Type="float" />
+          <Property Name="z" Type="float" />
+          <Property Name="fixed" Type="smallint" />
+          <Property Name="shelf_tags" Type="smallint" />
+          <Property Name="merch_style" Type="smallint" />
+          <Property Name="cap_style" Type="smallint" />
+          <Property Name="depth_fill" Type="smallint" />
+          <Property Name="peg_id" Type="nvarchar" MaxLength="15" />
+          <Property Name="vertical" Type="smallint" />
+          <Property Name="horizontal" Type="smallint" />
+          <Property Name="total_units" Type="smallint" />
+          <Property Name="shelf_loc" Type="smallint" />
+          <Property Name="vert_space" Type="float" />
+          <Property Name="horiz_space" Type="float" />
+          <Property Name="depth_space" Type="float" />
+          <Property Name="direction" Type="smallint" />
+          <Property Name="slope" Type="smallint" />
+          <Property Name="orientation" Type="smallint" />
+          <Property Name="req_inv" Type="smallint" />
+          <Property Name="h_remain" Type="smallint" />
+          <Property Name="v_remain" Type="smallint" />
+          <Property Name="d_remain" Type="smallint" />
+          <Property Name="fit_type" Type="smallint" />
+          <Property Name="location_id" Type="nvarchar" MaxLength="20" />
+          <Property Name="depth_facings" Type="smallint" />
+          <Property Name="product_id" Type="nvarchar" MaxLength="15" />
+          <Property Name="section_id" Type="nvarchar" MaxLength="15" />
+          <Property Name="vert_crush" Type="float" />
+          <Property Name="horiz_crush" Type="float" />
+          <Property Name="depth_crush" Type="float" />
+          <Property Name="Peg" Type="int" />
+          <Property Name="Horiz_Gap" Type="float" />
+          <Property Name="Vert_Gap" Type="float" />
+          <Property Name="Rotation" Type="smallint" />
+          <Property Name="PegSpread" Type="smallint" />
+          <Property Name="Complex" Type="smallint" />
+          <Property Name="LeftHorizontal" Type="smallint" />
+          <Property Name="LeftVertical" Type="smallint" />
+          <Property Name="LeftDepthFacings" Type="smallint" />
+          <Property Name="LeftHorizCrush" Type="float" />
+          <Property Name="LeftVertCrush" Type="float" />
+          <Property Name="LeftDepthCrush" Type="float" />
+          <Property Name="LeftOrientation" Type="smallint" />
+          <Property Name="LeftMerchStyle" Type="smallint" />
+          <Property Name="RightHorizontal" Type="smallint" />
+          <Property Name="RightVertical" Type="smallint" />
+          <Property Name="RightDepthFacings" Type="smallint" />
+          <Property Name="RightHorizCrush" Type="float" />
+          <Property Name="RightVertCrush" Type="float" />
+          <Property Name="RightDepthCrush" Type="float" />
+          <Property Name="RightOrientation" Type="smallint" />
+          <Property Name="RightMerchStyle" Type="smallint" />
+          <Property Name="TopHorizontal" Type="smallint" />
+          <Property Name="TopVertical" Type="smallint" />
+          <Property Name="TopDepthFacings" Type="smallint" />
+          <Property Name="TopHorizCrush" Type="float" />
+          <Property Name="TopVertCrush" Type="float" />
+          <Property Name="TopDepthCrush" Type="float" />
+          <Property Name="TopOrientation" Type="smallint" />
+          <Property Name="TopMerchStyle" Type="smallint" />
+          <Property Name="BackHorizontal" Type="smallint" />
+          <Property Name="BackVertical" Type="smallint" />
+          <Property Name="BackDepthFacings" Type="smallint" />
+          <Property Name="BackHorizCrush" Type="float" />
+          <Property Name="BackVertCrush" Type="float" />
+          <Property Name="BackDepthCrush" Type="float" />
+          <Property Name="BackOrientation" Type="smallint" />
+          <Property Name="BackMerchStyle" Type="smallint" />
+          <Property Name="ContainerPositionID" Type="varchar" MaxLength="32" />
+          <Property Name="SharedPegID" Type="varchar" MaxLength="32" />
+          <Property Name="PegRow" Type="smallint" />
+          <Property Name="PegCol" Type="smallint" />
+          <Property Name="AutoFillPeg" Type="smallint" />
+          <Property Name="RankX" Type="int" />
+          <Property Name="RankY" Type="int" />
+          <Property Name="RankZ" Type="int" />
+          <Property Name="PegsPerFacing" Type="smallint" />
+          <Property Name="TotalPegs" Type="smallint" />
+        </EntityType>
+        <EntityType Name="PRODUCT">
+          <Key>
+            <PropertyRef Name="product_id" />
+          </Key>
+          <Property Name="product_id" Type="nvarchar" Nullable="false" MaxLength="15" />
+          <Property Name="upc" Type="nvarchar" MaxLength="15" />
+          <Property Name="name" Type="nvarchar" MaxLength="40" />
+          <Property Name="size_val" Type="float" />
+          <Property Name="uom" Type="nvarchar" MaxLength="10" />
+          <Property Name="manufacturer" Type="nvarchar" MaxLength="40" />
+          <Property Name="category" Type="nvarchar" MaxLength="32" />
+          <Property Name="desc_a" Type="nvarchar" MaxLength="32" />
+          <Property Name="desc_b" Type="nvarchar" MaxLength="32" />
+          <Property Name="desc_c" Type="nvarchar" MaxLength="32" />
+          <Property Name="desc_d" Type="nvarchar" MaxLength="32" />
+          <Property Name="desc_e" Type="nvarchar" MaxLength="32" />
+          <Property Name="desc_f" Type="nvarchar" MaxLength="32" />
+          <Property Name="desc_g" Type="nvarchar" MaxLength="32" />
+          <Property Name="desc_h" Type="nvarchar" MaxLength="32" />
+          <Property Name="desc_i" Type="nvarchar" MaxLength="32" />
+          <Property Name="desc_j" Type="nvarchar" MaxLength="32" />
+          <Property Name="key_val" Type="nvarchar" MaxLength="15" />
+          <Property Name="fill_color" Type="smallint" />
+          <Property Name="fill_pattern" Type="smallint" />
+          <Property Name="package_type" Type="smallint" />
+          <Property Name="shape_id" Type="nvarchar" MaxLength="32" />
+          <Property Name="height" Type="float" />
+          <Property Name="width" Type="float" />
+          <Property Name="depth" Type="float" />
+          <Property Name="tray_height" Type="float" />
+          <Property Name="tray_width" Type="float" />
+          <Property Name="tray_depth" Type="float" />
+          <Property Name="units_case" Type="smallint" />
+          <Property Name="units_case_high" Type="smallint" />
+          <Property Name="units_case_wide" Type="smallint" />
+          <Property Name="units_case_deep" Type="smallint" />
+          <Property Name="units_tray" Type="smallint" />
+          <Property Name="units_tray_high" Type="smallint" />
+          <Property Name="units_tray_wide" Type="smallint" />
+          <Property Name="units_tray_deep" Type="smallint" />
+          <Property Name="peg_1_right" Type="float" />
+          <Property Name="peg_1_down" Type="float" />
+          <Property Name="vert_nest" Type="float" />
+          <Property Name="basket_factor" Type="smallint" />
+          <Property Name="merch_style" Type="smallint" />
+          <Property Name="cap_style" Type="smallint" />
+          <Property Name="depth_fill" Type="smallint" />
+          <Property Name="std_orient" Type="smallint" />
+          <Property Name="fit_type" Type="smallint" />
+          <Property Name="preferred_fixel" Type="nvarchar" MaxLength="15" />
+          <Property Name="rank" Type="nvarchar" MaxLength="6" />
+          <Property Name="hang" Type="smallint" />
+          <Property Name="std_peg" Type="nvarchar" MaxLength="15" />
+          <Property Name="front_0" Type="smallint" />
+          <Property Name="front_90" Type="smallint" />
+          <Property Name="front_180" Type="smallint" />
+          <Property Name="front_270" Type="smallint" />
+          <Property Name="back_0" Type="smallint" />
+          <Property Name="back_90" Type="smallint" />
+          <Property Name="back_180" Type="smallint" />
+          <Property Name="back_270" Type="smallint" />
+          <Property Name="left_0" Type="smallint" />
+          <Property Name="left_90" Type="smallint" />
+          <Property Name="left_180" Type="smallint" />
+          <Property Name="left_270" Type="smallint" />
+          <Property Name="right_0" Type="smallint" />
+          <Property Name="right_90" Type="smallint" />
+          <Property Name="right_180" Type="smallint" />
+          <Property Name="right_270" Type="smallint" />
+          <Property Name="top_0" Type="smallint" />
+          <Property Name="top_90" Type="smallint" />
+          <Property Name="top_180" Type="smallint" />
+          <Property Name="top_270" Type="smallint" />
+          <Property Name="bottom_0" Type="smallint" />
+          <Property Name="bottom_90" Type="smallint" />
+          <Property Name="bottom_180" Type="smallint" />
+          <Property Name="bottom_270" Type="smallint" />
+          <Property Name="cost_basis" Type="smallint" />
+          <Property Name="tax_code" Type="smallint" />
+          <Property Name="tax_per" Type="float" />
+          <Property Name="movement_basis" Type="smallint" />
+          <Property Name="discount" Type="float" />
+          <Property Name="discount_per" Type="float" />
+          <Property Name="net_discount_per" Type="float" />
+          <Property Name="Overhang" Type="float" />
+          <Property Name="max_vert_crush" Type="float" />
+          <Property Name="max_horiz_crush" Type="float" />
+          <Property Name="max_depth_crush" Type="float" />
+          <Property Name="Horiz_Nest" Type="float" />
+          <Property Name="Depth_Nest" Type="float" />
+          <Property Name="Case_Height" Type="float" />
+          <Property Name="Case_Width" Type="float" />
+          <Property Name="Case_Depth" Type="float" />
+          <Property Name="Price_Multiple" Type="smallint" />
+          <Property Name="Peg_Right" Type="float" />
+          <Property Name="Peg_Down" Type="float" />
+          <Property Name="Display_Height" Type="float" />
+          <Property Name="Display_Width" Type="float" />
+          <Property Name="Display_Depth" Type="float" />
+          <Property Name="Colour" Type="int" />
+          <Property Name="ColourIsClear" Type="smallint" />
+          <Property Name="Cost" Type="float" />
+          <Property Name="Price" Type="float" />
+          <Property Name="Promo_Movement" Type="float" />
+          <Property Name="Reg_Movement" Type="float" />
+          <Property Name="String1" Type="nvarchar" MaxLength="50" />
+          <Property Name="String2" Type="nvarchar" MaxLength="50" />
+          <Property Name="String3" Type="nvarchar" MaxLength="50" />
+          <Property Name="String4" Type="nvarchar" MaxLength="50" />
+          <Property Name="String5" Type="nvarchar" MaxLength="50" />
+          <Property Name="Integer1" Type="int" />
+          <Property Name="Integer2" Type="int" />
+          <Property Name="Integer3" Type="int" />
+          <Property Name="Integer4" Type="int" />
+          <Property Name="Integer5" Type="int" />
+          <Property Name="Long1" Type="int" />
+          <Property Name="Long2" Type="int" />
+          <Property Name="Long3" Type="int" />
+          <Property Name="Long4" Type="int" />
+          <Property Name="Long5" Type="int" />
+          <Property Name="Double1" Type="float" />
+          <Property Name="Double2" Type="float" />
+          <Property Name="Double3" Type="float" />
+          <Property Name="Double4" Type="float" />
+          <Property Name="Double5" Type="float" />
+          <Property Name="UseImageOverride" Type="int" />
+          <Property Name="UseUnitImageForTraysAndCases" Type="int" />
+          <Property Name="ImageOverride" Type="nvarchar" MaxLength="50" />
+          <Property Name="ContainHeight" Type="float" />
+          <Property Name="ContainWidth" Type="float" />
+          <Property Name="ContainDepth" Type="float" />
+          <Property Name="Peg_1_Depth" Type="float" />
+          <Property Name="PegsPerFacing" Type="smallint" />
+          <Property Name="GTIN" Type="varchar" MaxLength="14" />
+          <Property Name="Brand" Type="varchar" MaxLength="32" />
+          <Property Name="Subcategory" Type="varchar" MaxLength="32" />
+        </EntityType>
+        <EntityType Name="PRODUCT_LIST">
+          <Key>
+            <PropertyRef Name="Key_id" />
+            <PropertyRef Name="product_id" />
+          </Key>
+          <Property Name="Key_id" Type="int" Nullable="false" />
+          <Property Name="product_id" Type="nvarchar" Nullable="false" MaxLength="15" />
+          <Property Name="Areal_Space" Type="float" />
+          <Property Name="Cubic_Space" Type="float" />
+          <Property Name="DPC_1" Type="float" />
+          <Property Name="DPC_2" Type="float" />
+          <Property Name="Eff_Tax_Per" Type="float" />
+          <Property Name="Lineal_space" Type="float" />
+          <Property Name="Lost_GP" Type="float" />
+          <Property Name="Lost_Sales" Type="float" />
+          <Property Name="Lost_Units" Type="float" />
+          <Property Name="Markdown_Per" Type="float" />
+          <Property Name="Optimal_GP" Type="float" />
+          <Property Name="Optimal_Sales" Type="float" />
+          <Property Name="Optimal_Units" Type="float" />
+          <Property Name="Peak_Eff_Sl" Type="float" />
+          <Property Name="Period_Eff_Sl" Type="float" />
+          <Property Name="Profit" Type="float" />
+          <Property Name="Proj_GP_ROII" Type="float" />
+          <Property Name="Projected_gp" Type="float" />
+          <Property Name="Projected_Sales" Type="float" />
+          <Property Name="Projected_Units" Type="float" />
+          <Property Name="Sales" Type="float" />
+          <Property Name="Share_Val" Type="float" />
+          <Property Name="Shelf_Required" Type="float" />
+          <Property Name="Total_Facings" Type="float" />
+          <Property Name="Total_Positions" Type="float" />
+          <Property Name="Total_Units" Type="float" />
+          <Property Name="Unit_Cost" Type="float" />
+          <Property Name="Unit_Movement" Type="float" />
+          <Property Name="Unit_Price" Type="float" />
+          <Property Name="Unit_Profit" Type="float" />
+          <Property Name="Horizon_Gap" Type="float" />
+          <Property Name="Crush_Factor" Type="float" />
+          <Property Name="Finger_Space" Type="float" />
+          <Property Name="Vert_Gap" Type="float" />
+          <Property Name="Case_Cost" Type="float" />
+          <Property Name="Lineal_Space_Per" Type="float" />
+          <Property Name="Areal_Space_Per" Type="float" />
+          <Property Name="Cubic_Space_Per" Type="float" />
+          <Property Name="Mark_Up_Per" Type="float" />
+          <Property Name="Location_ID" Type="nvarchar" MaxLength="32" />
+          <Property Name="Manual_Inv" Type="smallint" />
+          <Property Name="Cost2" Type="float" />
+          <Property Name="Price2" Type="float" />
+          <Property Name="DPC_1_2" Type="float" />
+          <Property Name="DPC_2_2" Type="float" />
+          <Property Name="Days_Of_Supply" Type="float" />
+          <Property Name="Discount2" Type="float" />
+          <Property Name="Model_Sched" Type="nvarchar" MaxLength="32" />
+          <Property Name="Max_High" Type="smallint" />
+          <Property Name="Max_Deep" Type="smallint" />
+          <Property Name="Min_High" Type="smallint" />
+          <Property Name="Min_Deep" Type="smallint" />
+          <Property Name="full_facings" Type="smallint" />
+          <Property Name="Container" Type="smallint" />
+          <Property Name="String6" Type="varchar" MaxLength="32" />
+          <Property Name="String7" Type="varchar" MaxLength="32" />
+          <Property Name="String8" Type="varchar" MaxLength="32" />
+          <Property Name="String9" Type="varchar" MaxLength="32" />
+          <Property Name="String10" Type="varchar" MaxLength="32" />
+          <Property Name="Action" Type="smallint" />
+          <Property Name="TimeStamp" Type="float" />
+          <Property Name="LinkProductId" Type="varchar" MaxLength="15" />
+        </EntityType>
+        <EntityType Name="ssc_assortment_change_NewItemStrategy">
+          <Key>
+            <PropertyRef Name="StrategyID" />
+          </Key>
+          <Property Name="StrategyID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="New_Item_Strategy" Type="varchar" MaxLength="200" />
+        </EntityType>
+        <EntityType Name="ssc_assortment_change_snapshot">
+          <Key>
+            <PropertyRef Name="snapshot_id" />
+          </Key>
+          <Property Name="snapshot_id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="snapshot_nbr" Type="varchar" Nullable="false" MaxLength="255" />
+          <Property Name="snapshot_desc" Type="varchar" MaxLength="255" />
+          <Property Name="snapshot_keyid" Type="int" Nullable="false" />
+          <Property Name="snapshot_status" Type="varchar" Nullable="false" MaxLength="16" />
+          <Property Name="snapshot_size" Type="int" />
+          <Property Name="snapshot_season" Type="varchar" MaxLength="255" />
+          <Property Name="snapshot_year" Type="int" />
+          <Property Name="snapshot_location" Type="varchar" MaxLength="255" />
+          <Property Name="snapshot_buyer" Type="varchar" MaxLength="255" />
+          <Property Name="snapshot_date_added" Type="datetime" />
+          <Property Name="snapshot_chg_user" Type="varchar" MaxLength="16" />
+          <Property Name="snapshot_chg_date" Type="datetime" />
+        </EntityType>
+        <EntityType Name="ssc_assortment_change_snapshot_detail">
+          <Key>
+            <PropertyRef Name="detail_id" />
+          </Key>
+          <Property Name="detail_id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="snapshot_id" Type="int" Nullable="false" />
+          <Property Name="product_id" Type="varchar" Nullable="false" MaxLength="8" />
+          <Property Name="product_upc" Type="varchar" MaxLength="30" />
+          <Property Name="product_desc" Type="varchar" MaxLength="255" />
+          <Property Name="product_status" Type="varchar" MaxLength="255" />
+          <Property Name="product_strategy" Type="varchar" MaxLength="255" />
+          <Property Name="product_repl_prod" Type="varchar" MaxLength="8" />
+          <Property Name="product_repl_upc" Type="varchar" MaxLength="30" />
+          <Property Name="product_repl_prod_desc" Type="varchar" MaxLength="255" />
+          <Property Name="product_repl_status" Type="varchar" MaxLength="255" />
+          <Property Name="product_repl_strategy" Type="varchar" MaxLength="255" />
+          <Property Name="facing_change" Type="varchar" MaxLength="30" />
+          <Property Name="facing_quantity" Type="int" />
+          <Property Name="exit_strategy" Type="varchar" MaxLength="255" />
+          <Property Name="discontinued_comments" Type="varchar" MaxLength="500" />
+          <Property Name="discontinued_by" Type="char" MaxLength="10" />
+        </EntityType>
+        <EntityType Name="ssc_sku_status">
+          <Key>
+            <PropertyRef Name="ROWID" />
+          </Key>
+          <Property Name="sku" Type="varchar" MaxLength="30" />
+          <Property Name="sku_desc" Type="varchar" MaxLength="255" />
+          <Property Name="stk44" Type="varchar" MaxLength="16" />
+          <Property Name="sea44" Type="varchar" MaxLength="16" />
+          <Property Name="inv44" Type="int" />
+          <Property Name="stk47" Type="varchar" MaxLength="16" />
+          <Property Name="sea47" Type="varchar" MaxLength="16" />
+          <Property Name="inv47" Type="int" />
+          <Property Name="stk49" Type="varchar" MaxLength="16" />
+          <Property Name="sea49" Type="varchar" MaxLength="16" />
+          <Property Name="inv49" Type="int" />
+          <Property Name="stk41" Type="varchar" MaxLength="16" />
+          <Property Name="sea41" Type="varchar" MaxLength="16" />
+          <Property Name="dmn41" Type="money" />
+          <Property Name="wmn41" Type="money" />
+          <Property Name="chgstamp" Type="datetime" />
+          <Property Name="ROWID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+        </EntityType>
+        <Association Name="FK_asst_chg_snap_id">
+          <End Role="ssc_assortment_change_snapshot" Type="ssc1200027_ssc_spacemanModel.Store.ssc_assortment_change_snapshot" Multiplicity="1" />
+          <End Role="ssc_assortment_change_snapshot_detail" Type="ssc1200027_ssc_spacemanModel.Store.ssc_assortment_change_snapshot_detail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ssc_assortment_change_snapshot">
+              <PropertyRef Name="snapshot_id" />
+            </Principal>
+            <Dependent Role="ssc_assortment_change_snapshot_detail">
+              <PropertyRef Name="snapshot_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="ssc1200028_ssc_spacemanModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+        <EntityContainer Name="ssc1200028_ssc_spacemanEntities1" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="FIXELs" EntityType="ssc1200028_ssc_spacemanModel.FIXEL" />
+          <EntitySet Name="PLANO_KEY" EntityType="ssc1200028_ssc_spacemanModel.PLANO_KEY" />
+          <EntitySet Name="PLANOGRAMs" EntityType="ssc1200028_ssc_spacemanModel.PLANOGRAM" />
+          <EntitySet Name="POSITIONs" EntityType="ssc1200028_ssc_spacemanModel.POSITION" />
+          <EntitySet Name="PRODUCTs" EntityType="ssc1200028_ssc_spacemanModel.PRODUCT" />
+          <EntitySet Name="PRODUCT_LIST" EntityType="ssc1200028_ssc_spacemanModel.PRODUCT_LIST" />
+          <EntitySet Name="ssc_assortment_change_NewItemStrategy" EntityType="ssc1200028_ssc_spacemanModel.ssc_assortment_change_NewItemStrategy" />
+          <EntitySet Name="ssc_assortment_change_snapshot" EntityType="ssc1200028_ssc_spacemanModel.ssc_assortment_change_snapshot" />
+          <EntitySet Name="ssc_assortment_change_snapshot_detail" EntityType="ssc1200028_ssc_spacemanModel.ssc_assortment_change_snapshot_detail" />
+          <EntitySet Name="ssc_sku_status" EntityType="ssc1200028_ssc_spacemanModel.ssc_sku_status" />
+          <AssociationSet Name="FK_asst_chg_snap_id" Association="ssc1200028_ssc_spacemanModel.FK_asst_chg_snap_id">
+            <End Role="ssc_assortment_change_snapshot" EntitySet="ssc_assortment_change_snapshot" />
+            <End Role="ssc_assortment_change_snapshot_detail" EntitySet="ssc_assortment_change_snapshot_detail" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="FIXEL">
+          <Key>
+            <PropertyRef Name="Key_id" />
+            <PropertyRef Name="fixel_id" />
+          </Key>
+          <Property Name="Key_id" Type="Int32" Nullable="false" />
+          <Property Name="fixel_id" Type="String" Nullable="false" MaxLength="15" Unicode="true" FixedLength="false" />
+          <Property Name="name" Type="String" MaxLength="32" Unicode="true" FixedLength="false" />
+          <Property Name="manufacturer" Type="String" MaxLength="32" Unicode="true" FixedLength="false" />
+          <Property Name="type" Type="Int16" />
+          <Property Name="segment" Type="Int16" />
+          <Property Name="frame_element" Type="Int16" />
+          <Property Name="occupancy" Type="Int16" />
+          <Property Name="reserve" Type="Int16" />
+          <Property Name="fill_color" Type="Int16" />
+          <Property Name="rotation" Type="Int16" />
+          <Property Name="slope" Type="Int16" />
+          <Property Name="notch_position" Type="Int16" />
+          <Property Name="x" Type="Double" />
+          <Property Name="y" Type="Double" />
+          <Property Name="z" Type="Double" />
+          <Property Name="height" Type="Double" />
+          <Property Name="width" Type="Double" />
+          <Property Name="depth" Type="Double" />
+          <Property Name="thickness" Type="Double" />
+          <Property Name="horiz_spacing" Type="Double" />
+          <Property Name="vert_spacing" Type="Double" />
+          <Property Name="dep_spacing" Type="Double" />
+          <Property Name="horiz_start" Type="Double" />
+          <Property Name="vert_start" Type="Double" />
+          <Property Name="depth_start" Type="Double" />
+          <Property Name="horiz_end" Type="Double" />
+          <Property Name="vert_end" Type="Double" />
+          <Property Name="depth_end" Type="Double" />
+          <Property Name="horiz_direction" Type="Int16" />
+          <Property Name="vert_direction" Type="Int16" />
+          <Property Name="depth_direction" Type="Int16" />
+          <Property Name="support" Type="Int16" />
+          <Property Name="grill_height" Type="Double" />
+          <Property Name="grill_slope" Type="Double" />
+          <Property Name="max_merch" Type="Double" />
+          <Property Name="cost" Type="Double" />
+          <Property Name="quantity" Type="Int16" />
+          <Property Name="top" Type="Double" />
+          <Property Name="front" Type="Double" />
+          <Property Name="grid_type" Type="Int16" />
+          <Property Name="assembly" Type="String" MaxLength="32" Unicode="true" FixedLength="false" />
+          <Property Name="attached_to" Type="String" MaxLength="15" Unicode="true" FixedLength="false" />
+          <Property Name="horiz_gap" Type="Double" />
+          <Property Name="spacer_thick" Type="Double" />
+          <Property Name="finger_space" Type="Double" />
+          <Property Name="available" Type="Double" />
+          <Property Name="grill" Type="Double" />
+          <Property Name="fill_mode" Type="Int16" />
+          <Property Name="basket_fill" Type="Int16" />
+          <Property Name="spread_products" Type="Int16" />
+          <Property Name="max_high" Type="Int16" />
+          <Property Name="max_deep" Type="Int16" />
+          <Property Name="min_high" Type="Int16" />
+          <Property Name="min_deep" Type="Int16" />
+          <Property Name="placement" Type="Int16" />
+          <Property Name="shelf_rise" Type="Double" />
+          <Property Name="fit_type" Type="Int16" />
+          <Property Name="left_overhang" Type="Double" />
+          <Property Name="right_overhang" Type="Double" />
+          <Property Name="front_overhang" Type="Double" />
+          <Property Name="back_overhang" Type="Double" />
+          <Property Name="upper_overhang" Type="Double" />
+          <Property Name="lower_overhang" Type="Double" />
+          <Property Name="combine" Type="Int16" />
+          <Property Name="allow_overlap" Type="Int16" />
+          <Property Name="draw" Type="Int16" />
+          <Property Name="dim_width" Type="Int16" />
+          <Property Name="dim_elevation" Type="Int16" />
+          <Property Name="section_id" Type="String" MaxLength="15" Unicode="true" FixedLength="false" />
+          <Property Name="textfield" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
+          <Property Name="auto_crush" Type="Int16" />
+          <Property Name="flipped" Type="Int16" />
+          <Property Name="fontid" Type="String" MaxLength="15" Unicode="true" FixedLength="false" />
+          <Property Name="Colour" Type="Int32" />
+          <Property Name="ColourIsClear" Type="Int16" />
+          <Property Name="Fill_Pattern" Type="Int16" />
+          <Property Name="Textbox_Word_Wrap" Type="Int16" />
+          <Property Name="Salary" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="Textbox_Reduce_To_Fit" Type="Int16" />
+          <Property Name="HorizSlotStart" Type="Double" />
+          <Property Name="HorizSlotSpacing" Type="Double" />
+          <Property Name="DepthSlotStart" Type="Double" />
+          <Property Name="DepthSlotSpacing" Type="Double" />
+          <Property Name="LocalX" Type="Double" />
+          <Property Name="LocalY" Type="Double" />
+          <Property Name="LocalZ" Type="Double" />
+          <Property Name="SnapToSlot" Type="Int16" />
+          <Property Name="SlotOrientation" Type="Int16" />
+          <Property Name="fixed" Type="Int16" />
+          <Property Name="fixturedistance" Type="Double" />
+          <Property Name="treatassign" Type="Int16" />
+        </EntityType>
+        <EntityType Name="PLANO_KEY">
+          <Key>
+            <PropertyRef Name="Key_id" />
+          </Key>
+          <Property Name="Key_id" Type="Int32" Nullable="false" />
+          <Property Name="Market" Type="String" MaxLength="15" Unicode="true" FixedLength="false" />
+          <Property Name="Period" Type="String" MaxLength="15" Unicode="true" FixedLength="false" />
+          <Property Name="Planogram" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="Status" Type="String" MaxLength="15" Unicode="true" FixedLength="false" />
+          <Property Name="Owner" Type="String" MaxLength="15" Unicode="true" FixedLength="false" />
+          <Property Name="ModifiedBy" Type="String" MaxLength="15" Unicode="true" FixedLength="false" />
+          <Property Name="AccessedBy" Type="String" MaxLength="15" Unicode="true" FixedLength="false" />
+          <Property Name="CreationDate" Type="DateTime" />
+          <Property Name="ModifiedDate" Type="DateTime" />
+          <Property Name="AccessedDate" Type="DateTime" />
+          <Property Name="Group1" Type="String" MaxLength="25" Unicode="true" FixedLength="false" />
+          <Property Name="Category" Type="String" MaxLength="25" Unicode="true" FixedLength="false" />
+          <Property Name="SubCategory" Type="String" MaxLength="25" Unicode="true" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="PLANOGRAM">
+          <Key>
+            <PropertyRef Name="Key_id" />
+          </Key>
+          <Property Name="Key_id" Type="Int32" Nullable="false" />
+          <Property Name="merch_dir" Type="Int16" />
+          <Property Name="spread_products" Type="Int16" />
+          <Property Name="fill_mode" Type="Int16" />
+          <Property Name="full_facings" Type="Int16" />
+          <Property Name="ros_basis" Type="Int16" />
+          <Property Name="min_facings" Type="Int16" />
+          <Property Name="max_facings" Type="Int16" />
+          <Property Name="xturns" Type="Double" />
+          <Property Name="turns" Type="Double" />
+          <Property Name="id_type" Type="Int16" />
+          <Property Name="alt_id_type" Type="Int16" />
+          <Property Name="reduce_to_fit" Type="Int16" />
+          <Property Name="best_fit" Type="Int16" />
+          <Property Name="wrap_text" Type="Int16" />
+          <Property Name="info_type" Type="Int16" />
+          <Property Name="alt_label" Type="String" MaxLength="200" Unicode="true" FixedLength="false" />
+          <Property Name="manufacturer" Type="String" MaxLength="32" Unicode="true" FixedLength="false" />
+          <Property Name="category" Type="String" MaxLength="32" Unicode="true" FixedLength="false" />
+          <Property Name="desc_a" Type="String" MaxLength="32" Unicode="true" FixedLength="false" />
+          <Property Name="desc_b" Type="String" MaxLength="32" Unicode="true" FixedLength="false" />
+          <Property Name="desc_c" Type="String" MaxLength="32" Unicode="true" FixedLength="false" />
+          <Property Name="desc_d" Type="String" MaxLength="32" Unicode="true" FixedLength="false" />
+          <Property Name="desc_e" Type="String" MaxLength="32" Unicode="true" FixedLength="false" />
+          <Property Name="desc_f" Type="String" MaxLength="32" Unicode="true" FixedLength="false" />
+          <Property Name="desc_g" Type="String" MaxLength="32" Unicode="true" FixedLength="false" />
+          <Property Name="desc_h" Type="String" MaxLength="32" Unicode="true" FixedLength="false" />
+          <Property Name="desc_i" Type="String" MaxLength="32" Unicode="true" FixedLength="false" />
+          <Property Name="desc_j" Type="String" MaxLength="32" Unicode="true" FixedLength="false" />
+          <Property Name="promo_per" Type="Double" />
+          <Property Name="horiz_gap" Type="Double" />
+          <Property Name="vert_gap" Type="Double" />
+          <Property Name="report_measure" Type="Int16" />
+          <Property Name="default_peg_id" Type="String" MaxLength="15" Unicode="true" FixedLength="false" />
+          <Property Name="shelf_tags" Type="Int16" />
+          <Property Name="cap_style" Type="Int16" />
+          <Property Name="hang_prompt" Type="Int16" />
+          <Property Name="seg_split" Type="Int16" />
+          <Property Name="horiz_field" Type="Int16" />
+          <Property Name="vert_field" Type="Int16" />
+          <Property Name="horiz_method" Type="Int16" />
+          <Property Name="vert_method" Type="Int16" />
+          <Property Name="horiz_value" Type="Double" />
+          <Property Name="vert_value" Type="Double" />
+        </EntityType>
+        <EntityType Name="POSITION">
+          <Key>
+            <PropertyRef Name="Key_id" />
+            <PropertyRef Name="fixel_id" />
+            <PropertyRef Name="position_id" />
+          </Key>
+          <Property Name="Key_id" Type="Int32" Nullable="false" />
+          <Property Name="fixel_id" Type="String" Nullable="false" MaxLength="15" Unicode="true" FixedLength="false" />
+          <Property Name="position_id" Type="String" Nullable="false" MaxLength="20" Unicode="true" FixedLength="false" />
+          <Property Name="pos_order" Type="Int16" />
+          <Property Name="x" Type="Double" />
+          <Property Name="y" Type="Double" />
+          <Property Name="z" Type="Double" />
+          <Property Name="fixed" Type="Int16" />
+          <Property Name="shelf_tags" Type="Int16" />
+          <Property Name="merch_style" Type="Int16" />
+          <Property Name="cap_style" Type="Int16" />
+          <Property Name="depth_fill" Type="Int16" />
+          <Property Name="peg_id" Type="String" MaxLength="15" Unicode="true" FixedLength="false" />
+          <Property Name="vertical" Type="Int16" />
+          <Property Name="horizontal" Type="Int16" />
+          <Property Name="total_units" Type="Int16" />
+          <Property Name="shelf_loc" Type="Int16" />
+          <Property Name="vert_space" Type="Double" />
+          <Property Name="horiz_space" Type="Double" />
+          <Property Name="depth_space" Type="Double" />
+          <Property Name="direction" Type="Int16" />
+          <Property Name="slope" Type="Int16" />
+          <Property Name="orientation" Type="Int16" />
+          <Property Name="req_inv" Type="Int16" />
+          <Property Name="h_remain" Type="Int16" />
+          <Property Name="v_remain" Type="Int16" />
+          <Property Name="d_remain" Type="Int16" />
+          <Property Name="fit_type" Type="Int16" />
+          <Property Name="location_id" Type="String" MaxLength="20" Unicode="true" FixedLength="false" />
+          <Property Name="depth_facings" Type="Int16" />
+          <Property Name="product_id" Type="String" MaxLength="15" Unicode="true" FixedLength="false" />
+          <Property Name="section_id" Type="String" MaxLength="15" Unicode="true" FixedLength="false" />
+          <Property Name="vert_crush" Type="Double" />
+          <Property Name="horiz_crush" Type="Double" />
+          <Property Name="depth_crush" Type="Double" />
+          <Property Name="Peg" Type="Int32" />
+          <Property Name="Horiz_Gap" Type="Double" />
+          <Property Name="Vert_Gap" Type="Double" />
+          <Property Name="Rotation" Type="Int16" />
+          <Property Name="PegSpread" Type="Int16" />
+          <Property Name="Complex" Type="Int16" />
+          <Property Name="LeftHorizontal" Type="Int16" />
+          <Property Name="LeftVertical" Type="Int16" />
+          <Property Name="LeftDepthFacings" Type="Int16" />
+          <Property Name="LeftHorizCrush" Type="Double" />
+          <Property Name="LeftVertCrush" Type="Double" />
+          <Property Name="LeftDepthCrush" Type="Double" />
+          <Property Name="LeftOrientation" Type="Int16" />
+          <Property Name="LeftMerchStyle" Type="Int16" />
+          <Property Name="RightHorizontal" Type="Int16" />
+          <Property Name="RightVertical" Type="Int16" />
+          <Property Name="RightDepthFacings" Type="Int16" />
+          <Property Name="RightHorizCrush" Type="Double" />
+          <Property Name="RightVertCrush" Type="Double" />
+          <Property Name="RightDepthCrush" Type="Double" />
+          <Property Name="RightOrientation" Type="Int16" />
+          <Property Name="RightMerchStyle" Type="Int16" />
+          <Property Name="TopHorizontal" Type="Int16" />
+          <Property Name="TopVertical" Type="Int16" />
+          <Property Name="TopDepthFacings" Type="Int16" />
+          <Property Name="TopHorizCrush" Type="Double" />
+          <Property Name="TopVertCrush" Type="Double" />
+          <Property Name="TopDepthCrush" Type="Double" />
+          <Property Name="TopOrientation" Type="Int16" />
+          <Property Name="TopMerchStyle" Type="Int16" />
+          <Property Name="BackHorizontal" Type="Int16" />
+          <Property Name="BackVertical" Type="Int16" />
+          <Property Name="BackDepthFacings" Type="Int16" />
+          <Property Name="BackHorizCrush" Type="Double" />
+          <Property Name="BackVertCrush" Type="Double" />
+          <Property Name="BackDepthCrush" Type="Double" />
+          <Property Name="BackOrientation" Type="Int16" />
+          <Property Name="BackMerchStyle" Type="Int16" />
+          <Property Name="ContainerPositionID" Type="String" MaxLength="32" Unicode="false" FixedLength="false" />
+          <Property Name="SharedPegID" Type="String" MaxLength="32" Unicode="false" FixedLength="false" />
+          <Property Name="PegRow" Type="Int16" />
+          <Property Name="PegCol" Type="Int16" />
+          <Property Name="AutoFillPeg" Type="Int16" />
+          <Property Name="RankX" Type="Int32" />
+          <Property Name="RankY" Type="Int32" />
+          <Property Name="RankZ" Type="Int32" />
+          <Property Name="PegsPerFacing" Type="Int16" />
+          <Property Name="TotalPegs" Type="Int16" />
+        </EntityType>
+        <EntityType Name="PRODUCT">
+          <Key>
+            <PropertyRef Name="product_id" />
+          </Key>
+          <Property Name="product_id" Type="String" Nullable="false" MaxLength="15" Unicode="true" FixedLength="false" />
+          <Property Name="upc" Type="String" MaxLength="15" Unicode="true" FixedLength="false" />
+          <Property Name="name" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+          <Property Name="size_val" Type="Double" />
+          <Property Name="uom" Type="String" MaxLength="10" Unicode="true" FixedLength="false" />
+          <Property Name="manufacturer" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
+          <Property Name="category" Type="String" MaxLength="32" Unicode="true" FixedLength="false" />
+          <Property Name="desc_a" Type="String" MaxLength="32" Unicode="true" FixedLength="false" />
+          <Property Name="desc_b" Type="String" MaxLength="32" Unicode="true" FixedLength="false" />
+          <Property Name="desc_c" Type="String" MaxLength="32" Unicode="true" FixedLength="false" />
+          <Property Name="desc_d" Type="String" MaxLength="32" Unicode="true" FixedLength="false" />
+          <Property Name="desc_e" Type="String" MaxLength="32" Unicode="true" FixedLength="false" />
+          <Property Name="desc_f" Type="String" MaxLength="32" Unicode="true" FixedLength="false" />
+          <Property Name="desc_g" Type="String" MaxLength="32" Unicode="true" FixedLength="false" />
+          <Property Name="desc_h" Type="String" MaxLength="32" Unicode="true" FixedLength="false" />
+          <Property Name="desc_i" Type="String" MaxLength="32" Unicode="true" FixedLength="false" />
+          <Property Name="desc_j" Type="String" MaxLength="32" Unicode="true" FixedLength="false" />
+          <Property Name="key_val" Type="String" MaxLength="15" Unicode="true" FixedLength="false" />
+          <Property Name="fill_color" Type="Int16" />
+          <Property Name="fill_pattern" Type="Int16" />
+          <Property Name="package_type" Type="Int16" />
+          <Property Name="shape_id" Type="String" MaxLength="32" Unicode="true" FixedLength="false" />
+          <Property Name="height" Type="Double" />
+          <Property Name="width" Type="Double" />
+          <Property Name="depth" Type="Double" />
+          <Property Name="tray_height" Type="Double" />
+          <Property Name="tray_width" Type="Double" />
+          <Property Name="tray_depth" Type="Double" />
+          <Property Name="units_case" Type="Int16" />
+          <Property Name="units_case_high" Type="Int16" />
+          <Property Name="units_case_wide" Type="Int16" />
+          <Property Name="units_case_deep" Type="Int16" />
+          <Property Name="units_tray" Type="Int16" />
+          <Property Name="units_tray_high" Type="Int16" />
+          <Property Name="units_tray_wide" Type="Int16" />
+          <Property Name="units_tray_deep" Type="Int16" />
+          <Property Name="peg_1_right" Type="Double" />
+          <Property Name="peg_1_down" Type="Double" />
+          <Property Name="vert_nest" Type="Double" />
+          <Property Name="basket_factor" Type="Int16" />
+          <Property Name="merch_style" Type="Int16" />
+          <Property Name="cap_style" Type="Int16" />
+          <Property Name="depth_fill" Type="Int16" />
+          <Property Name="std_orient" Type="Int16" />
+          <Property Name="fit_type" Type="Int16" />
+          <Property Name="preferred_fixel" Type="String" MaxLength="15" Unicode="true" FixedLength="false" />
+          <Property Name="rank" Type="String" MaxLength="6" Unicode="true" FixedLength="false" />
+          <Property Name="hang" Type="Int16" />
+          <Property Name="std_peg" Type="String" MaxLength="15" Unicode="true" FixedLength="false" />
+          <Property Name="front_0" Type="Int16" />
+          <Property Name="front_90" Type="Int16" />
+          <Property Name="front_180" Type="Int16" />
+          <Property Name="front_270" Type="Int16" />
+          <Property Name="back_0" Type="Int16" />
+          <Property Name="back_90" Type="Int16" />
+          <Property Name="back_180" Type="Int16" />
+          <Property Name="back_270" Type="Int16" />
+          <Property Name="left_0" Type="Int16" />
+          <Property Name="left_90" Type="Int16" />
+          <Property Name="left_180" Type="Int16" />
+          <Property Name="left_270" Type="Int16" />
+          <Property Name="right_0" Type="Int16" />
+          <Property Name="right_90" Type="Int16" />
+          <Property Name="right_180" Type="Int16" />
+          <Property Name="right_270" Type="Int16" />
+          <Property Name="top_0" Type="Int16" />
+          <Property Name="top_90" Type="Int16" />
+          <Property Name="top_180" Type="Int16" />
+          <Property Name="top_270" Type="Int16" />
+          <Property Name="bottom_0" Type="Int16" />
+          <Property Name="bottom_90" Type="Int16" />
+          <Property Name="bottom_180" Type="Int16" />
+          <Property Name="bottom_270" Type="Int16" />
+          <Property Name="cost_basis" Type="Int16" />
+          <Property Name="tax_code" Type="Int16" />
+          <Property Name="tax_per" Type="Double" />
+          <Property Name="movement_basis" Type="Int16" />
+          <Property Name="discount" Type="Double" />
+          <Property Name="discount_per" Type="Double" />
+          <Property Name="net_discount_per" Type="Double" />
+          <Property Name="Overhang" Type="Double" />
+          <Property Name="max_vert_crush" Type="Double" />
+          <Property Name="max_horiz_crush" Type="Double" />
+          <Property Name="max_depth_crush" Type="Double" />
+          <Property Name="Horiz_Nest" Type="Double" />
+          <Property Name="Depth_Nest" Type="Double" />
+          <Property Name="Case_Height" Type="Double" />
+          <Property Name="Case_Width" Type="Double" />
+          <Property Name="Case_Depth" Type="Double" />
+          <Property Name="Price_Multiple" Type="Int16" />
+          <Property Name="Peg_Right" Type="Double" />
+          <Property Name="Peg_Down" Type="Double" />
+          <Property Name="Display_Height" Type="Double" />
+          <Property Name="Display_Width" Type="Double" />
+          <Property Name="Display_Depth" Type="Double" />
+          <Property Name="Colour" Type="Int32" />
+          <Property Name="ColourIsClear" Type="Int16" />
+          <Property Name="Cost" Type="Double" />
+          <Property Name="Price" Type="Double" />
+          <Property Name="Promo_Movement" Type="Double" />
+          <Property Name="Reg_Movement" Type="Double" />
+          <Property Name="String1" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="String2" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="String3" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="String4" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="String5" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="Integer1" Type="Int32" />
+          <Property Name="Integer2" Type="Int32" />
+          <Property Name="Integer3" Type="Int32" />
+          <Property Name="Integer4" Type="Int32" />
+          <Property Name="Integer5" Type="Int32" />
+          <Property Name="Long1" Type="Int32" />
+          <Property Name="Long2" Type="Int32" />
+          <Property Name="Long3" Type="Int32" />
+          <Property Name="Long4" Type="Int32" />
+          <Property Name="Long5" Type="Int32" />
+          <Property Name="Double1" Type="Double" />
+          <Property Name="Double2" Type="Double" />
+          <Property Name="Double3" Type="Double" />
+          <Property Name="Double4" Type="Double" />
+          <Property Name="Double5" Type="Double" />
+          <Property Name="UseImageOverride" Type="Int32" />
+          <Property Name="UseUnitImageForTraysAndCases" Type="Int32" />
+          <Property Name="ImageOverride" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="ContainHeight" Type="Double" />
+          <Property Name="ContainWidth" Type="Double" />
+          <Property Name="ContainDepth" Type="Double" />
+          <Property Name="Peg_1_Depth" Type="Double" />
+          <Property Name="PegsPerFacing" Type="Int16" />
+          <Property Name="GTIN" Type="String" MaxLength="14" Unicode="false" FixedLength="false" />
+          <Property Name="Brand" Type="String" MaxLength="32" Unicode="false" FixedLength="false" />
+          <Property Name="Subcategory" Type="String" MaxLength="32" Unicode="false" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="PRODUCT_LIST">
+          <Key>
+            <PropertyRef Name="Key_id" />
+            <PropertyRef Name="product_id" />
+          </Key>
+          <Property Name="Key_id" Type="Int32" Nullable="false" />
+          <Property Name="product_id" Type="String" Nullable="false" MaxLength="15" Unicode="true" FixedLength="false" />
+          <Property Name="Areal_Space" Type="Double" />
+          <Property Name="Cubic_Space" Type="Double" />
+          <Property Name="DPC_1" Type="Double" />
+          <Property Name="DPC_2" Type="Double" />
+          <Property Name="Eff_Tax_Per" Type="Double" />
+          <Property Name="Lineal_space" Type="Double" />
+          <Property Name="Lost_GP" Type="Double" />
+          <Property Name="Lost_Sales" Type="Double" />
+          <Property Name="Lost_Units" Type="Double" />
+          <Property Name="Markdown_Per" Type="Double" />
+          <Property Name="Optimal_GP" Type="Double" />
+          <Property Name="Optimal_Sales" Type="Double" />
+          <Property Name="Optimal_Units" Type="Double" />
+          <Property Name="Peak_Eff_Sl" Type="Double" />
+          <Property Name="Period_Eff_Sl" Type="Double" />
+          <Property Name="Profit" Type="Double" />
+          <Property Name="Proj_GP_ROII" Type="Double" />
+          <Property Name="Projected_gp" Type="Double" />
+          <Property Name="Projected_Sales" Type="Double" />
+          <Property Name="Projected_Units" Type="Double" />
+          <Property Name="Sales" Type="Double" />
+          <Property Name="Share_Val" Type="Double" />
+          <Property Name="Shelf_Required" Type="Double" />
+          <Property Name="Total_Facings" Type="Double" />
+          <Property Name="Total_Positions" Type="Double" />
+          <Property Name="Total_Units" Type="Double" />
+          <Property Name="Unit_Cost" Type="Double" />
+          <Property Name="Unit_Movement" Type="Double" />
+          <Property Name="Unit_Price" Type="Double" />
+          <Property Name="Unit_Profit" Type="Double" />
+          <Property Name="Horizon_Gap" Type="Double" />
+          <Property Name="Crush_Factor" Type="Double" />
+          <Property Name="Finger_Space" Type="Double" />
+          <Property Name="Vert_Gap" Type="Double" />
+          <Property Name="Case_Cost" Type="Double" />
+          <Property Name="Lineal_Space_Per" Type="Double" />
+          <Property Name="Areal_Space_Per" Type="Double" />
+          <Property Name="Cubic_Space_Per" Type="Double" />
+          <Property Name="Mark_Up_Per" Type="Double" />
+          <Property Name="Location_ID" Type="String" MaxLength="32" Unicode="true" FixedLength="false" />
+          <Property Name="Manual_Inv" Type="Int16" />
+          <Property Name="Cost2" Type="Double" />
+          <Property Name="Price2" Type="Double" />
+          <Property Name="DPC_1_2" Type="Double" />
+          <Property Name="DPC_2_2" Type="Double" />
+          <Property Name="Days_Of_Supply" Type="Double" />
+          <Property Name="Discount2" Type="Double" />
+          <Property Name="Model_Sched" Type="String" MaxLength="32" Unicode="true" FixedLength="false" />
+          <Property Name="Max_High" Type="Int16" />
+          <Property Name="Max_Deep" Type="Int16" />
+          <Property Name="Min_High" Type="Int16" />
+          <Property Name="Min_Deep" Type="Int16" />
+          <Property Name="full_facings" Type="Int16" />
+          <Property Name="Container" Type="Int16" />
+          <Property Type="String" Name="String6" MaxLength="32" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="String7" MaxLength="32" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="String8" MaxLength="32" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="String9" MaxLength="32" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="String10" MaxLength="32" FixedLength="false" Unicode="false" />
+          <Property Type="Int16" Name="Action" />
+          <Property Type="Double" Name="TimeStamp" />
+          <Property Type="String" Name="LinkProductId" MaxLength="15" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="ssc_assortment_change_NewItemStrategy">
+          <Key>
+            <PropertyRef Name="StrategyID" />
+          </Key>
+          <Property Name="StrategyID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="New_Item_Strategy" Type="String" MaxLength="200" Unicode="false" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="ssc_assortment_change_snapshot">
+          <Key>
+            <PropertyRef Name="snapshot_id" />
+          </Key>
+          <Property Name="snapshot_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="snapshot_nbr" Type="String" Nullable="false" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="snapshot_desc" Type="String" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="snapshot_keyid" Type="Int32" Nullable="false" />
+          <Property Name="snapshot_status" Type="String" Nullable="false" MaxLength="16" Unicode="false" FixedLength="false" />
+          <Property Name="snapshot_size" Type="Int32" />
+          <Property Name="snapshot_season" Type="String" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="snapshot_year" Type="Int32" />
+          <Property Name="snapshot_location" Type="String" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="snapshot_buyer" Type="String" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="snapshot_date_added" Type="DateTime" />
+          <Property Name="snapshot_chg_user" Type="String" MaxLength="16" Unicode="false" FixedLength="false" />
+          <Property Name="snapshot_chg_date" Type="DateTime" />
+          <NavigationProperty Name="ssc_assortment_change_snapshot_detail" Relationship="ssc1200028_ssc_spacemanModel.FK_asst_chg_snap_id" FromRole="ssc_assortment_change_snapshot" ToRole="ssc_assortment_change_snapshot_detail" />
+        </EntityType>
+        <EntityType Name="ssc_assortment_change_snapshot_detail">
+          <Key>
+            <PropertyRef Name="detail_id" />
+          </Key>
+          <Property Name="detail_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="snapshot_id" Type="Int32" Nullable="false" />
+          <Property Name="product_id" Type="String" Nullable="false" MaxLength="8" Unicode="false" FixedLength="false" />
+          <Property Name="product_upc" Type="String" MaxLength="30" Unicode="false" FixedLength="false" />
+          <Property Name="product_desc" Type="String" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="product_status" Type="String" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="product_strategy" Type="String" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="product_repl_prod" Type="String" MaxLength="8" Unicode="false" FixedLength="false" />
+          <Property Name="product_repl_prod_desc" Type="String" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="product_repl_status" Type="String" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="product_repl_strategy" Type="String" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="facing_change" Type="String" MaxLength="30" Unicode="false" FixedLength="false" />
+          <Property Name="facing_quantity" Type="Int32" />
+          <NavigationProperty Name="ssc_assortment_change_snapshot" Relationship="ssc1200028_ssc_spacemanModel.FK_asst_chg_snap_id" FromRole="ssc_assortment_change_snapshot_detail" ToRole="ssc_assortment_change_snapshot" />
+          <Property Type="String" Name="exit_strategy" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="discontinued_comments" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="discontinued_by" MaxLength="10" FixedLength="true" Unicode="false" />
+          <Property Type="String" Name="product_repl_upc" MaxLength="30" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="ssc_sku_status">
+          <Key>
+            <PropertyRef Name="ROWID" />
+          </Key>
+          <Property Name="sku" Type="String" MaxLength="30" Unicode="false" FixedLength="false" />
+          <Property Name="sku_desc" Type="String" MaxLength="255" Unicode="false" FixedLength="false" />
+          <Property Name="stk44" Type="String" MaxLength="16" Unicode="false" FixedLength="false" />
+          <Property Name="sea44" Type="String" MaxLength="16" Unicode="false" FixedLength="false" />
+          <Property Name="inv44" Type="Int32" />
+          <Property Name="stk47" Type="String" MaxLength="16" Unicode="false" FixedLength="false" />
+          <Property Name="sea47" Type="String" MaxLength="16" Unicode="false" FixedLength="false" />
+          <Property Name="inv47" Type="Int32" />
+          <Property Name="stk49" Type="String" MaxLength="16" Unicode="false" FixedLength="false" />
+          <Property Name="sea49" Type="String" MaxLength="16" Unicode="false" FixedLength="false" />
+          <Property Name="inv49" Type="Int32" />
+          <Property Name="stk41" Type="String" MaxLength="16" Unicode="false" FixedLength="false" />
+          <Property Name="sea41" Type="String" MaxLength="16" Unicode="false" FixedLength="false" />
+          <Property Name="dmn41" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="wmn41" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="chgstamp" Type="DateTime" />
+          <Property Name="ROWID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+        </EntityType>
+        <Association Name="FK_asst_chg_snap_id">
+          <End Role="ssc_assortment_change_snapshot" Type="ssc1200028_ssc_spacemanModel.ssc_assortment_change_snapshot" Multiplicity="1" />
+          <End Role="ssc_assortment_change_snapshot_detail" Type="ssc1200028_ssc_spacemanModel.ssc_assortment_change_snapshot_detail" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ssc_assortment_change_snapshot">
+              <PropertyRef Name="snapshot_id" />
+            </Principal>
+            <Dependent Role="ssc_assortment_change_snapshot_detail">
+              <PropertyRef Name="snapshot_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="ssc1200027_ssc_spacemanModelStoreContainer" CdmEntityContainer="ssc1200028_ssc_spacemanEntities1">
+          <EntitySetMapping Name="FIXELs"><EntityTypeMapping TypeName="ssc1200028_ssc_spacemanModel.FIXEL"><MappingFragment StoreEntitySet="FIXEL">
+            <ScalarProperty Name="Key_id" ColumnName="Key_id" />
+            <ScalarProperty Name="fixel_id" ColumnName="fixel_id" />
+            <ScalarProperty Name="name" ColumnName="name" />
+            <ScalarProperty Name="manufacturer" ColumnName="manufacturer" />
+            <ScalarProperty Name="type" ColumnName="type" />
+            <ScalarProperty Name="segment" ColumnName="segment" />
+            <ScalarProperty Name="frame_element" ColumnName="frame_element" />
+            <ScalarProperty Name="occupancy" ColumnName="occupancy" />
+            <ScalarProperty Name="reserve" ColumnName="reserve" />
+            <ScalarProperty Name="fill_color" ColumnName="fill_color" />
+            <ScalarProperty Name="rotation" ColumnName="rotation" />
+            <ScalarProperty Name="slope" ColumnName="slope" />
+            <ScalarProperty Name="notch_position" ColumnName="notch_position" />
+            <ScalarProperty Name="x" ColumnName="x" />
+            <ScalarProperty Name="y" ColumnName="y" />
+            <ScalarProperty Name="z" ColumnName="z" />
+            <ScalarProperty Name="height" ColumnName="height" />
+            <ScalarProperty Name="width" ColumnName="width" />
+            <ScalarProperty Name="depth" ColumnName="depth" />
+            <ScalarProperty Name="thickness" ColumnName="thickness" />
+            <ScalarProperty Name="horiz_spacing" ColumnName="horiz_spacing" />
+            <ScalarProperty Name="vert_spacing" ColumnName="vert_spacing" />
+            <ScalarProperty Name="dep_spacing" ColumnName="dep_spacing" />
+            <ScalarProperty Name="horiz_start" ColumnName="horiz_start" />
+            <ScalarProperty Name="vert_start" ColumnName="vert_start" />
+            <ScalarProperty Name="depth_start" ColumnName="depth_start" />
+            <ScalarProperty Name="horiz_end" ColumnName="horiz_end" />
+            <ScalarProperty Name="vert_end" ColumnName="vert_end" />
+            <ScalarProperty Name="depth_end" ColumnName="depth_end" />
+            <ScalarProperty Name="horiz_direction" ColumnName="horiz_direction" />
+            <ScalarProperty Name="vert_direction" ColumnName="vert_direction" />
+            <ScalarProperty Name="depth_direction" ColumnName="depth_direction" />
+            <ScalarProperty Name="support" ColumnName="support" />
+            <ScalarProperty Name="grill_height" ColumnName="grill_height" />
+            <ScalarProperty Name="grill_slope" ColumnName="grill_slope" />
+            <ScalarProperty Name="max_merch" ColumnName="max_merch" />
+            <ScalarProperty Name="cost" ColumnName="cost" />
+            <ScalarProperty Name="quantity" ColumnName="quantity" />
+            <ScalarProperty Name="top" ColumnName="top" />
+            <ScalarProperty Name="front" ColumnName="front" />
+            <ScalarProperty Name="grid_type" ColumnName="grid_type" />
+            <ScalarProperty Name="assembly" ColumnName="assembly" />
+            <ScalarProperty Name="attached_to" ColumnName="attached_to" />
+            <ScalarProperty Name="horiz_gap" ColumnName="horiz_gap" />
+            <ScalarProperty Name="spacer_thick" ColumnName="spacer_thick" />
+            <ScalarProperty Name="finger_space" ColumnName="finger_space" />
+            <ScalarProperty Name="available" ColumnName="available" />
+            <ScalarProperty Name="grill" ColumnName="grill" />
+            <ScalarProperty Name="fill_mode" ColumnName="fill_mode" />
+            <ScalarProperty Name="basket_fill" ColumnName="basket_fill" />
+            <ScalarProperty Name="spread_products" ColumnName="spread_products" />
+            <ScalarProperty Name="max_high" ColumnName="max_high" />
+            <ScalarProperty Name="max_deep" ColumnName="max_deep" />
+            <ScalarProperty Name="min_high" ColumnName="min_high" />
+            <ScalarProperty Name="min_deep" ColumnName="min_deep" />
+            <ScalarProperty Name="placement" ColumnName="placement" />
+            <ScalarProperty Name="shelf_rise" ColumnName="shelf_rise" />
+            <ScalarProperty Name="fit_type" ColumnName="fit_type" />
+            <ScalarProperty Name="left_overhang" ColumnName="left_overhang" />
+            <ScalarProperty Name="right_overhang" ColumnName="right_overhang" />
+            <ScalarProperty Name="front_overhang" ColumnName="front_overhang" />
+            <ScalarProperty Name="back_overhang" ColumnName="back_overhang" />
+            <ScalarProperty Name="upper_overhang" ColumnName="upper_overhang" />
+            <ScalarProperty Name="lower_overhang" ColumnName="lower_overhang" />
+            <ScalarProperty Name="combine" ColumnName="combine" />
+            <ScalarProperty Name="allow_overlap" ColumnName="allow_overlap" />
+            <ScalarProperty Name="draw" ColumnName="draw" />
+            <ScalarProperty Name="dim_width" ColumnName="dim_width" />
+            <ScalarProperty Name="dim_elevation" ColumnName="dim_elevation" />
+            <ScalarProperty Name="section_id" ColumnName="section_id" />
+            <ScalarProperty Name="textfield" ColumnName="textfield" />
+            <ScalarProperty Name="auto_crush" ColumnName="auto_crush" />
+            <ScalarProperty Name="flipped" ColumnName="flipped" />
+            <ScalarProperty Name="fontid" ColumnName="fontid" />
+            <ScalarProperty Name="Colour" ColumnName="Colour" />
+            <ScalarProperty Name="ColourIsClear" ColumnName="ColourIsClear" />
+            <ScalarProperty Name="Fill_Pattern" ColumnName="Fill_Pattern" />
+            <ScalarProperty Name="Textbox_Word_Wrap" ColumnName="Textbox_Word_Wrap" />
+            <ScalarProperty Name="Salary" ColumnName="Salary" />
+            <ScalarProperty Name="Textbox_Reduce_To_Fit" ColumnName="Textbox_Reduce_To_Fit" />
+            <ScalarProperty Name="HorizSlotStart" ColumnName="HorizSlotStart" />
+            <ScalarProperty Name="HorizSlotSpacing" ColumnName="HorizSlotSpacing" />
+            <ScalarProperty Name="DepthSlotStart" ColumnName="DepthSlotStart" />
+            <ScalarProperty Name="DepthSlotSpacing" ColumnName="DepthSlotSpacing" />
+            <ScalarProperty Name="LocalX" ColumnName="LocalX" />
+            <ScalarProperty Name="LocalY" ColumnName="LocalY" />
+            <ScalarProperty Name="LocalZ" ColumnName="LocalZ" />
+            <ScalarProperty Name="SnapToSlot" ColumnName="SnapToSlot" />
+            <ScalarProperty Name="SlotOrientation" ColumnName="SlotOrientation" />
+            <ScalarProperty Name="fixed" ColumnName="fixed" />
+            <ScalarProperty Name="fixturedistance" ColumnName="fixturedistance" />
+            <ScalarProperty Name="treatassign" ColumnName="treatassign" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="PLANO_KEY"><EntityTypeMapping TypeName="ssc1200028_ssc_spacemanModel.PLANO_KEY"><MappingFragment StoreEntitySet="PLANO_KEY">
+            <ScalarProperty Name="Key_id" ColumnName="Key_id" />
+            <ScalarProperty Name="Market" ColumnName="Market" />
+            <ScalarProperty Name="Period" ColumnName="Period" />
+            <ScalarProperty Name="Planogram" ColumnName="Planogram" />
+            <ScalarProperty Name="Status" ColumnName="Status" />
+            <ScalarProperty Name="Owner" ColumnName="Owner" />
+            <ScalarProperty Name="ModifiedBy" ColumnName="ModifiedBy" />
+            <ScalarProperty Name="AccessedBy" ColumnName="AccessedBy" />
+            <ScalarProperty Name="CreationDate" ColumnName="CreationDate" />
+            <ScalarProperty Name="ModifiedDate" ColumnName="ModifiedDate" />
+            <ScalarProperty Name="AccessedDate" ColumnName="AccessedDate" />
+            <ScalarProperty Name="Group1" ColumnName="Group1" />
+            <ScalarProperty Name="Category" ColumnName="Category" />
+            <ScalarProperty Name="SubCategory" ColumnName="SubCategory" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="PLANOGRAMs"><EntityTypeMapping TypeName="ssc1200028_ssc_spacemanModel.PLANOGRAM"><MappingFragment StoreEntitySet="PLANOGRAM">
+            <ScalarProperty Name="Key_id" ColumnName="Key_id" />
+            <ScalarProperty Name="merch_dir" ColumnName="merch_dir" />
+            <ScalarProperty Name="spread_products" ColumnName="spread_products" />
+            <ScalarProperty Name="fill_mode" ColumnName="fill_mode" />
+            <ScalarProperty Name="full_facings" ColumnName="full_facings" />
+            <ScalarProperty Name="ros_basis" ColumnName="ros_basis" />
+            <ScalarProperty Name="min_facings" ColumnName="min_facings" />
+            <ScalarProperty Name="max_facings" ColumnName="max_facings" />
+            <ScalarProperty Name="xturns" ColumnName="xturns" />
+            <ScalarProperty Name="turns" ColumnName="turns" />
+            <ScalarProperty Name="id_type" ColumnName="id_type" />
+            <ScalarProperty Name="alt_id_type" ColumnName="alt_id_type" />
+            <ScalarProperty Name="reduce_to_fit" ColumnName="reduce_to_fit" />
+            <ScalarProperty Name="best_fit" ColumnName="best_fit" />
+            <ScalarProperty Name="wrap_text" ColumnName="wrap_text" />
+            <ScalarProperty Name="info_type" ColumnName="info_type" />
+            <ScalarProperty Name="alt_label" ColumnName="alt_label" />
+            <ScalarProperty Name="manufacturer" ColumnName="manufacturer" />
+            <ScalarProperty Name="category" ColumnName="category" />
+            <ScalarProperty Name="desc_a" ColumnName="desc_a" />
+            <ScalarProperty Name="desc_b" ColumnName="desc_b" />
+            <ScalarProperty Name="desc_c" ColumnName="desc_c" />
+            <ScalarProperty Name="desc_d" ColumnName="desc_d" />
+            <ScalarProperty Name="desc_e" ColumnName="desc_e" />
+            <ScalarProperty Name="desc_f" ColumnName="desc_f" />
+            <ScalarProperty Name="desc_g" ColumnName="desc_g" />
+            <ScalarProperty Name="desc_h" ColumnName="desc_h" />
+            <ScalarProperty Name="desc_i" ColumnName="desc_i" />
+            <ScalarProperty Name="desc_j" ColumnName="desc_j" />
+            <ScalarProperty Name="promo_per" ColumnName="promo_per" />
+            <ScalarProperty Name="horiz_gap" ColumnName="horiz_gap" />
+            <ScalarProperty Name="vert_gap" ColumnName="vert_gap" />
+            <ScalarProperty Name="report_measure" ColumnName="report_measure" />
+            <ScalarProperty Name="default_peg_id" ColumnName="default_peg_id" />
+            <ScalarProperty Name="shelf_tags" ColumnName="shelf_tags" />
+            <ScalarProperty Name="cap_style" ColumnName="cap_style" />
+            <ScalarProperty Name="hang_prompt" ColumnName="hang_prompt" />
+            <ScalarProperty Name="seg_split" ColumnName="seg_split" />
+            <ScalarProperty Name="horiz_field" ColumnName="horiz_field" />
+            <ScalarProperty Name="vert_field" ColumnName="vert_field" />
+            <ScalarProperty Name="horiz_method" ColumnName="horiz_method" />
+            <ScalarProperty Name="vert_method" ColumnName="vert_method" />
+            <ScalarProperty Name="horiz_value" ColumnName="horiz_value" />
+            <ScalarProperty Name="vert_value" ColumnName="vert_value" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="POSITIONs"><EntityTypeMapping TypeName="ssc1200028_ssc_spacemanModel.POSITION"><MappingFragment StoreEntitySet="POSITION">
+            <ScalarProperty Name="Key_id" ColumnName="Key_id" />
+            <ScalarProperty Name="fixel_id" ColumnName="fixel_id" />
+            <ScalarProperty Name="position_id" ColumnName="position_id" />
+            <ScalarProperty Name="pos_order" ColumnName="pos_order" />
+            <ScalarProperty Name="x" ColumnName="x" />
+            <ScalarProperty Name="y" ColumnName="y" />
+            <ScalarProperty Name="z" ColumnName="z" />
+            <ScalarProperty Name="fixed" ColumnName="fixed" />
+            <ScalarProperty Name="shelf_tags" ColumnName="shelf_tags" />
+            <ScalarProperty Name="merch_style" ColumnName="merch_style" />
+            <ScalarProperty Name="cap_style" ColumnName="cap_style" />
+            <ScalarProperty Name="depth_fill" ColumnName="depth_fill" />
+            <ScalarProperty Name="peg_id" ColumnName="peg_id" />
+            <ScalarProperty Name="vertical" ColumnName="vertical" />
+            <ScalarProperty Name="horizontal" ColumnName="horizontal" />
+            <ScalarProperty Name="total_units" ColumnName="total_units" />
+            <ScalarProperty Name="shelf_loc" ColumnName="shelf_loc" />
+            <ScalarProperty Name="vert_space" ColumnName="vert_space" />
+            <ScalarProperty Name="horiz_space" ColumnName="horiz_space" />
+            <ScalarProperty Name="depth_space" ColumnName="depth_space" />
+            <ScalarProperty Name="direction" ColumnName="direction" />
+            <ScalarProperty Name="slope" ColumnName="slope" />
+            <ScalarProperty Name="orientation" ColumnName="orientation" />
+            <ScalarProperty Name="req_inv" ColumnName="req_inv" />
+            <ScalarProperty Name="h_remain" ColumnName="h_remain" />
+            <ScalarProperty Name="v_remain" ColumnName="v_remain" />
+            <ScalarProperty Name="d_remain" ColumnName="d_remain" />
+            <ScalarProperty Name="fit_type" ColumnName="fit_type" />
+            <ScalarProperty Name="location_id" ColumnName="location_id" />
+            <ScalarProperty Name="depth_facings" ColumnName="depth_facings" />
+            <ScalarProperty Name="product_id" ColumnName="product_id" />
+            <ScalarProperty Name="section_id" ColumnName="section_id" />
+            <ScalarProperty Name="vert_crush" ColumnName="vert_crush" />
+            <ScalarProperty Name="horiz_crush" ColumnName="horiz_crush" />
+            <ScalarProperty Name="depth_crush" ColumnName="depth_crush" />
+            <ScalarProperty Name="Peg" ColumnName="Peg" />
+            <ScalarProperty Name="Horiz_Gap" ColumnName="Horiz_Gap" />
+            <ScalarProperty Name="Vert_Gap" ColumnName="Vert_Gap" />
+            <ScalarProperty Name="Rotation" ColumnName="Rotation" />
+            <ScalarProperty Name="PegSpread" ColumnName="PegSpread" />
+            <ScalarProperty Name="Complex" ColumnName="Complex" />
+            <ScalarProperty Name="LeftHorizontal" ColumnName="LeftHorizontal" />
+            <ScalarProperty Name="LeftVertical" ColumnName="LeftVertical" />
+            <ScalarProperty Name="LeftDepthFacings" ColumnName="LeftDepthFacings" />
+            <ScalarProperty Name="LeftHorizCrush" ColumnName="LeftHorizCrush" />
+            <ScalarProperty Name="LeftVertCrush" ColumnName="LeftVertCrush" />
+            <ScalarProperty Name="LeftDepthCrush" ColumnName="LeftDepthCrush" />
+            <ScalarProperty Name="LeftOrientation" ColumnName="LeftOrientation" />
+            <ScalarProperty Name="LeftMerchStyle" ColumnName="LeftMerchStyle" />
+            <ScalarProperty Name="RightHorizontal" ColumnName="RightHorizontal" />
+            <ScalarProperty Name="RightVertical" ColumnName="RightVertical" />
+            <ScalarProperty Name="RightDepthFacings" ColumnName="RightDepthFacings" />
+            <ScalarProperty Name="RightHorizCrush" ColumnName="RightHorizCrush" />
+            <ScalarProperty Name="RightVertCrush" ColumnName="RightVertCrush" />
+            <ScalarProperty Name="RightDepthCrush" ColumnName="RightDepthCrush" />
+            <ScalarProperty Name="RightOrientation" ColumnName="RightOrientation" />
+            <ScalarProperty Name="RightMerchStyle" ColumnName="RightMerchStyle" />
+            <ScalarProperty Name="TopHorizontal" ColumnName="TopHorizontal" />
+            <ScalarProperty Name="TopVertical" ColumnName="TopVertical" />
+            <ScalarProperty Name="TopDepthFacings" ColumnName="TopDepthFacings" />
+            <ScalarProperty Name="TopHorizCrush" ColumnName="TopHorizCrush" />
+            <ScalarProperty Name="TopVertCrush" ColumnName="TopVertCrush" />
+            <ScalarProperty Name="TopDepthCrush" ColumnName="TopDepthCrush" />
+            <ScalarProperty Name="TopOrientation" ColumnName="TopOrientation" />
+            <ScalarProperty Name="TopMerchStyle" ColumnName="TopMerchStyle" />
+            <ScalarProperty Name="BackHorizontal" ColumnName="BackHorizontal" />
+            <ScalarProperty Name="BackVertical" ColumnName="BackVertical" />
+            <ScalarProperty Name="BackDepthFacings" ColumnName="BackDepthFacings" />
+            <ScalarProperty Name="BackHorizCrush" ColumnName="BackHorizCrush" />
+            <ScalarProperty Name="BackVertCrush" ColumnName="BackVertCrush" />
+            <ScalarProperty Name="BackDepthCrush" ColumnName="BackDepthCrush" />
+            <ScalarProperty Name="BackOrientation" ColumnName="BackOrientation" />
+            <ScalarProperty Name="BackMerchStyle" ColumnName="BackMerchStyle" />
+            <ScalarProperty Name="ContainerPositionID" ColumnName="ContainerPositionID" />
+            <ScalarProperty Name="SharedPegID" ColumnName="SharedPegID" />
+            <ScalarProperty Name="PegRow" ColumnName="PegRow" />
+            <ScalarProperty Name="PegCol" ColumnName="PegCol" />
+            <ScalarProperty Name="AutoFillPeg" ColumnName="AutoFillPeg" />
+            <ScalarProperty Name="RankX" ColumnName="RankX" />
+            <ScalarProperty Name="RankY" ColumnName="RankY" />
+            <ScalarProperty Name="RankZ" ColumnName="RankZ" />
+            <ScalarProperty Name="PegsPerFacing" ColumnName="PegsPerFacing" />
+            <ScalarProperty Name="TotalPegs" ColumnName="TotalPegs" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="PRODUCTs"><EntityTypeMapping TypeName="ssc1200028_ssc_spacemanModel.PRODUCT"><MappingFragment StoreEntitySet="PRODUCT">
+            <ScalarProperty Name="product_id" ColumnName="product_id" />
+            <ScalarProperty Name="upc" ColumnName="upc" />
+            <ScalarProperty Name="name" ColumnName="name" />
+            <ScalarProperty Name="size_val" ColumnName="size_val" />
+            <ScalarProperty Name="uom" ColumnName="uom" />
+            <ScalarProperty Name="manufacturer" ColumnName="manufacturer" />
+            <ScalarProperty Name="category" ColumnName="category" />
+            <ScalarProperty Name="desc_a" ColumnName="desc_a" />
+            <ScalarProperty Name="desc_b" ColumnName="desc_b" />
+            <ScalarProperty Name="desc_c" ColumnName="desc_c" />
+            <ScalarProperty Name="desc_d" ColumnName="desc_d" />
+            <ScalarProperty Name="desc_e" ColumnName="desc_e" />
+            <ScalarProperty Name="desc_f" ColumnName="desc_f" />
+            <ScalarProperty Name="desc_g" ColumnName="desc_g" />
+            <ScalarProperty Name="desc_h" ColumnName="desc_h" />
+            <ScalarProperty Name="desc_i" ColumnName="desc_i" />
+            <ScalarProperty Name="desc_j" ColumnName="desc_j" />
+            <ScalarProperty Name="key_val" ColumnName="key_val" />
+            <ScalarProperty Name="fill_color" ColumnName="fill_color" />
+            <ScalarProperty Name="fill_pattern" ColumnName="fill_pattern" />
+            <ScalarProperty Name="package_type" ColumnName="package_type" />
+            <ScalarProperty Name="shape_id" ColumnName="shape_id" />
+            <ScalarProperty Name="height" ColumnName="height" />
+            <ScalarProperty Name="width" ColumnName="width" />
+            <ScalarProperty Name="depth" ColumnName="depth" />
+            <ScalarProperty Name="tray_height" ColumnName="tray_height" />
+            <ScalarProperty Name="tray_width" ColumnName="tray_width" />
+            <ScalarProperty Name="tray_depth" ColumnName="tray_depth" />
+            <ScalarProperty Name="units_case" ColumnName="units_case" />
+            <ScalarProperty Name="units_case_high" ColumnName="units_case_high" />
+            <ScalarProperty Name="units_case_wide" ColumnName="units_case_wide" />
+            <ScalarProperty Name="units_case_deep" ColumnName="units_case_deep" />
+            <ScalarProperty Name="units_tray" ColumnName="units_tray" />
+            <ScalarProperty Name="units_tray_high" ColumnName="units_tray_high" />
+            <ScalarProperty Name="units_tray_wide" ColumnName="units_tray_wide" />
+            <ScalarProperty Name="units_tray_deep" ColumnName="units_tray_deep" />
+            <ScalarProperty Name="peg_1_right" ColumnName="peg_1_right" />
+            <ScalarProperty Name="peg_1_down" ColumnName="peg_1_down" />
+            <ScalarProperty Name="vert_nest" ColumnName="vert_nest" />
+            <ScalarProperty Name="basket_factor" ColumnName="basket_factor" />
+            <ScalarProperty Name="merch_style" ColumnName="merch_style" />
+            <ScalarProperty Name="cap_style" ColumnName="cap_style" />
+            <ScalarProperty Name="depth_fill" ColumnName="depth_fill" />
+            <ScalarProperty Name="std_orient" ColumnName="std_orient" />
+            <ScalarProperty Name="fit_type" ColumnName="fit_type" />
+            <ScalarProperty Name="preferred_fixel" ColumnName="preferred_fixel" />
+            <ScalarProperty Name="rank" ColumnName="rank" />
+            <ScalarProperty Name="hang" ColumnName="hang" />
+            <ScalarProperty Name="std_peg" ColumnName="std_peg" />
+            <ScalarProperty Name="front_0" ColumnName="front_0" />
+            <ScalarProperty Name="front_90" ColumnName="front_90" />
+            <ScalarProperty Name="front_180" ColumnName="front_180" />
+            <ScalarProperty Name="front_270" ColumnName="front_270" />
+            <ScalarProperty Name="back_0" ColumnName="back_0" />
+            <ScalarProperty Name="back_90" ColumnName="back_90" />
+            <ScalarProperty Name="back_180" ColumnName="back_180" />
+            <ScalarProperty Name="back_270" ColumnName="back_270" />
+            <ScalarProperty Name="left_0" ColumnName="left_0" />
+            <ScalarProperty Name="left_90" ColumnName="left_90" />
+            <ScalarProperty Name="left_180" ColumnName="left_180" />
+            <ScalarProperty Name="left_270" ColumnName="left_270" />
+            <ScalarProperty Name="right_0" ColumnName="right_0" />
+            <ScalarProperty Name="right_90" ColumnName="right_90" />
+            <ScalarProperty Name="right_180" ColumnName="right_180" />
+            <ScalarProperty Name="right_270" ColumnName="right_270" />
+            <ScalarProperty Name="top_0" ColumnName="top_0" />
+            <ScalarProperty Name="top_90" ColumnName="top_90" />
+            <ScalarProperty Name="top_180" ColumnName="top_180" />
+            <ScalarProperty Name="top_270" ColumnName="top_270" />
+            <ScalarProperty Name="bottom_0" ColumnName="bottom_0" />
+            <ScalarProperty Name="bottom_90" ColumnName="bottom_90" />
+            <ScalarProperty Name="bottom_180" ColumnName="bottom_180" />
+            <ScalarProperty Name="bottom_270" ColumnName="bottom_270" />
+            <ScalarProperty Name="cost_basis" ColumnName="cost_basis" />
+            <ScalarProperty Name="tax_code" ColumnName="tax_code" />
+            <ScalarProperty Name="tax_per" ColumnName="tax_per" />
+            <ScalarProperty Name="movement_basis" ColumnName="movement_basis" />
+            <ScalarProperty Name="discount" ColumnName="discount" />
+            <ScalarProperty Name="discount_per" ColumnName="discount_per" />
+            <ScalarProperty Name="net_discount_per" ColumnName="net_discount_per" />
+            <ScalarProperty Name="Overhang" ColumnName="Overhang" />
+            <ScalarProperty Name="max_vert_crush" ColumnName="max_vert_crush" />
+            <ScalarProperty Name="max_horiz_crush" ColumnName="max_horiz_crush" />
+            <ScalarProperty Name="max_depth_crush" ColumnName="max_depth_crush" />
+            <ScalarProperty Name="Horiz_Nest" ColumnName="Horiz_Nest" />
+            <ScalarProperty Name="Depth_Nest" ColumnName="Depth_Nest" />
+            <ScalarProperty Name="Case_Height" ColumnName="Case_Height" />
+            <ScalarProperty Name="Case_Width" ColumnName="Case_Width" />
+            <ScalarProperty Name="Case_Depth" ColumnName="Case_Depth" />
+            <ScalarProperty Name="Price_Multiple" ColumnName="Price_Multiple" />
+            <ScalarProperty Name="Peg_Right" ColumnName="Peg_Right" />
+            <ScalarProperty Name="Peg_Down" ColumnName="Peg_Down" />
+            <ScalarProperty Name="Display_Height" ColumnName="Display_Height" />
+            <ScalarProperty Name="Display_Width" ColumnName="Display_Width" />
+            <ScalarProperty Name="Display_Depth" ColumnName="Display_Depth" />
+            <ScalarProperty Name="Colour" ColumnName="Colour" />
+            <ScalarProperty Name="ColourIsClear" ColumnName="ColourIsClear" />
+            <ScalarProperty Name="Cost" ColumnName="Cost" />
+            <ScalarProperty Name="Price" ColumnName="Price" />
+            <ScalarProperty Name="Promo_Movement" ColumnName="Promo_Movement" />
+            <ScalarProperty Name="Reg_Movement" ColumnName="Reg_Movement" />
+            <ScalarProperty Name="String1" ColumnName="String1" />
+            <ScalarProperty Name="String2" ColumnName="String2" />
+            <ScalarProperty Name="String3" ColumnName="String3" />
+            <ScalarProperty Name="String4" ColumnName="String4" />
+            <ScalarProperty Name="String5" ColumnName="String5" />
+            <ScalarProperty Name="Integer1" ColumnName="Integer1" />
+            <ScalarProperty Name="Integer2" ColumnName="Integer2" />
+            <ScalarProperty Name="Integer3" ColumnName="Integer3" />
+            <ScalarProperty Name="Integer4" ColumnName="Integer4" />
+            <ScalarProperty Name="Integer5" ColumnName="Integer5" />
+            <ScalarProperty Name="Long1" ColumnName="Long1" />
+            <ScalarProperty Name="Long2" ColumnName="Long2" />
+            <ScalarProperty Name="Long3" ColumnName="Long3" />
+            <ScalarProperty Name="Long4" ColumnName="Long4" />
+            <ScalarProperty Name="Long5" ColumnName="Long5" />
+            <ScalarProperty Name="Double1" ColumnName="Double1" />
+            <ScalarProperty Name="Double2" ColumnName="Double2" />
+            <ScalarProperty Name="Double3" ColumnName="Double3" />
+            <ScalarProperty Name="Double4" ColumnName="Double4" />
+            <ScalarProperty Name="Double5" ColumnName="Double5" />
+            <ScalarProperty Name="UseImageOverride" ColumnName="UseImageOverride" />
+            <ScalarProperty Name="UseUnitImageForTraysAndCases" ColumnName="UseUnitImageForTraysAndCases" />
+            <ScalarProperty Name="ImageOverride" ColumnName="ImageOverride" />
+            <ScalarProperty Name="ContainHeight" ColumnName="ContainHeight" />
+            <ScalarProperty Name="ContainWidth" ColumnName="ContainWidth" />
+            <ScalarProperty Name="ContainDepth" ColumnName="ContainDepth" />
+            <ScalarProperty Name="Peg_1_Depth" ColumnName="Peg_1_Depth" />
+            <ScalarProperty Name="PegsPerFacing" ColumnName="PegsPerFacing" />
+            <ScalarProperty Name="GTIN" ColumnName="GTIN" />
+            <ScalarProperty Name="Brand" ColumnName="Brand" />
+            <ScalarProperty Name="Subcategory" ColumnName="Subcategory" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="PRODUCT_LIST"><EntityTypeMapping TypeName="ssc1200028_ssc_spacemanModel.PRODUCT_LIST"><MappingFragment StoreEntitySet="PRODUCT_LIST">
+            <ScalarProperty Name="LinkProductId" ColumnName="LinkProductId" />
+                <ScalarProperty Name="TimeStamp" ColumnName="TimeStamp" />
+                <ScalarProperty Name="Action" ColumnName="Action" />
+                <ScalarProperty Name="String10" ColumnName="String10" />
+                <ScalarProperty Name="String9" ColumnName="String9" />
+                <ScalarProperty Name="String8" ColumnName="String8" />
+                <ScalarProperty Name="String7" ColumnName="String7" />
+                <ScalarProperty Name="String6" ColumnName="String6" />
+                <ScalarProperty Name="Key_id" ColumnName="Key_id" />
+            <ScalarProperty Name="product_id" ColumnName="product_id" />
+            <ScalarProperty Name="Areal_Space" ColumnName="Areal_Space" />
+            <ScalarProperty Name="Cubic_Space" ColumnName="Cubic_Space" />
+            <ScalarProperty Name="DPC_1" ColumnName="DPC_1" />
+            <ScalarProperty Name="DPC_2" ColumnName="DPC_2" />
+            <ScalarProperty Name="Eff_Tax_Per" ColumnName="Eff_Tax_Per" />
+            <ScalarProperty Name="Lineal_space" ColumnName="Lineal_space" />
+            <ScalarProperty Name="Lost_GP" ColumnName="Lost_GP" />
+            <ScalarProperty Name="Lost_Sales" ColumnName="Lost_Sales" />
+            <ScalarProperty Name="Lost_Units" ColumnName="Lost_Units" />
+            <ScalarProperty Name="Markdown_Per" ColumnName="Markdown_Per" />
+            <ScalarProperty Name="Optimal_GP" ColumnName="Optimal_GP" />
+            <ScalarProperty Name="Optimal_Sales" ColumnName="Optimal_Sales" />
+            <ScalarProperty Name="Optimal_Units" ColumnName="Optimal_Units" />
+            <ScalarProperty Name="Peak_Eff_Sl" ColumnName="Peak_Eff_Sl" />
+            <ScalarProperty Name="Period_Eff_Sl" ColumnName="Period_Eff_Sl" />
+            <ScalarProperty Name="Profit" ColumnName="Profit" />
+            <ScalarProperty Name="Proj_GP_ROII" ColumnName="Proj_GP_ROII" />
+            <ScalarProperty Name="Projected_gp" ColumnName="Projected_gp" />
+            <ScalarProperty Name="Projected_Sales" ColumnName="Projected_Sales" />
+            <ScalarProperty Name="Projected_Units" ColumnName="Projected_Units" />
+            <ScalarProperty Name="Sales" ColumnName="Sales" />
+            <ScalarProperty Name="Share_Val" ColumnName="Share_Val" />
+            <ScalarProperty Name="Shelf_Required" ColumnName="Shelf_Required" />
+            <ScalarProperty Name="Total_Facings" ColumnName="Total_Facings" />
+            <ScalarProperty Name="Total_Positions" ColumnName="Total_Positions" />
+            <ScalarProperty Name="Total_Units" ColumnName="Total_Units" />
+            <ScalarProperty Name="Unit_Cost" ColumnName="Unit_Cost" />
+            <ScalarProperty Name="Unit_Movement" ColumnName="Unit_Movement" />
+            <ScalarProperty Name="Unit_Price" ColumnName="Unit_Price" />
+            <ScalarProperty Name="Unit_Profit" ColumnName="Unit_Profit" />
+            <ScalarProperty Name="Horizon_Gap" ColumnName="Horizon_Gap" />
+            <ScalarProperty Name="Crush_Factor" ColumnName="Crush_Factor" />
+            <ScalarProperty Name="Finger_Space" ColumnName="Finger_Space" />
+            <ScalarProperty Name="Vert_Gap" ColumnName="Vert_Gap" />
+            <ScalarProperty Name="Case_Cost" ColumnName="Case_Cost" />
+            <ScalarProperty Name="Lineal_Space_Per" ColumnName="Lineal_Space_Per" />
+            <ScalarProperty Name="Areal_Space_Per" ColumnName="Areal_Space_Per" />
+            <ScalarProperty Name="Cubic_Space_Per" ColumnName="Cubic_Space_Per" />
+            <ScalarProperty Name="Mark_Up_Per" ColumnName="Mark_Up_Per" />
+            <ScalarProperty Name="Location_ID" ColumnName="Location_ID" />
+            <ScalarProperty Name="Manual_Inv" ColumnName="Manual_Inv" />
+            <ScalarProperty Name="Cost2" ColumnName="Cost2" />
+            <ScalarProperty Name="Price2" ColumnName="Price2" />
+            <ScalarProperty Name="DPC_1_2" ColumnName="DPC_1_2" />
+            <ScalarProperty Name="DPC_2_2" ColumnName="DPC_2_2" />
+            <ScalarProperty Name="Days_Of_Supply" ColumnName="Days_Of_Supply" />
+            <ScalarProperty Name="Discount2" ColumnName="Discount2" />
+            <ScalarProperty Name="Model_Sched" ColumnName="Model_Sched" />
+            <ScalarProperty Name="Max_High" ColumnName="Max_High" />
+            <ScalarProperty Name="Max_Deep" ColumnName="Max_Deep" />
+            <ScalarProperty Name="Min_High" ColumnName="Min_High" />
+            <ScalarProperty Name="Min_Deep" ColumnName="Min_Deep" />
+            <ScalarProperty Name="full_facings" ColumnName="full_facings" />
+            <ScalarProperty Name="Container" ColumnName="Container" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="ssc_assortment_change_NewItemStrategy"><EntityTypeMapping TypeName="ssc1200028_ssc_spacemanModel.ssc_assortment_change_NewItemStrategy"><MappingFragment StoreEntitySet="ssc_assortment_change_NewItemStrategy">
+            <ScalarProperty Name="StrategyID" ColumnName="StrategyID" />
+            <ScalarProperty Name="New_Item_Strategy" ColumnName="New_Item_Strategy" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="ssc_assortment_change_snapshot"><EntityTypeMapping TypeName="ssc1200028_ssc_spacemanModel.ssc_assortment_change_snapshot"><MappingFragment StoreEntitySet="ssc_assortment_change_snapshot">
+            <ScalarProperty Name="snapshot_id" ColumnName="snapshot_id" />
+            <ScalarProperty Name="snapshot_nbr" ColumnName="snapshot_nbr" />
+            <ScalarProperty Name="snapshot_desc" ColumnName="snapshot_desc" />
+            <ScalarProperty Name="snapshot_keyid" ColumnName="snapshot_keyid" />
+            <ScalarProperty Name="snapshot_status" ColumnName="snapshot_status" />
+            <ScalarProperty Name="snapshot_size" ColumnName="snapshot_size" />
+            <ScalarProperty Name="snapshot_season" ColumnName="snapshot_season" />
+            <ScalarProperty Name="snapshot_year" ColumnName="snapshot_year" />
+            <ScalarProperty Name="snapshot_location" ColumnName="snapshot_location" />
+            <ScalarProperty Name="snapshot_buyer" ColumnName="snapshot_buyer" />
+            <ScalarProperty Name="snapshot_date_added" ColumnName="snapshot_date_added" />
+            <ScalarProperty Name="snapshot_chg_user" ColumnName="snapshot_chg_user" />
+            <ScalarProperty Name="snapshot_chg_date" ColumnName="snapshot_chg_date" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="ssc_assortment_change_snapshot_detail"><EntityTypeMapping TypeName="ssc1200028_ssc_spacemanModel.ssc_assortment_change_snapshot_detail"><MappingFragment StoreEntitySet="ssc_assortment_change_snapshot_detail">
+            <ScalarProperty Name="product_repl_upc" ColumnName="product_repl_upc" />
+                <ScalarProperty Name="discontinued_by" ColumnName="discontinued_by" />
+                <ScalarProperty Name="discontinued_comments" ColumnName="discontinued_comments" />
+                <ScalarProperty Name="exit_strategy" ColumnName="exit_strategy" />
+                <ScalarProperty Name="detail_id" ColumnName="detail_id" />
+            <ScalarProperty Name="snapshot_id" ColumnName="snapshot_id" />
+            <ScalarProperty Name="product_id" ColumnName="product_id" />
+            <ScalarProperty Name="product_upc" ColumnName="product_upc" />
+            <ScalarProperty Name="product_desc" ColumnName="product_desc" />
+            <ScalarProperty Name="product_status" ColumnName="product_status" />
+            <ScalarProperty Name="product_strategy" ColumnName="product_strategy" />
+            <ScalarProperty Name="product_repl_prod" ColumnName="product_repl_prod" />
+            <ScalarProperty Name="product_repl_prod_desc" ColumnName="product_repl_prod_desc" />
+            <ScalarProperty Name="product_repl_status" ColumnName="product_repl_status" />
+            <ScalarProperty Name="product_repl_strategy" ColumnName="product_repl_strategy" />
+            <ScalarProperty Name="facing_change" ColumnName="facing_change" />
+            <ScalarProperty Name="facing_quantity" ColumnName="facing_quantity" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="ssc_sku_status"><EntityTypeMapping TypeName="ssc1200028_ssc_spacemanModel.ssc_sku_status"><MappingFragment StoreEntitySet="ssc_sku_status">
+            <ScalarProperty Name="sku" ColumnName="sku" />
+            <ScalarProperty Name="sku_desc" ColumnName="sku_desc" />
+            <ScalarProperty Name="stk44" ColumnName="stk44" />
+            <ScalarProperty Name="sea44" ColumnName="sea44" />
+            <ScalarProperty Name="inv44" ColumnName="inv44" />
+            <ScalarProperty Name="stk47" ColumnName="stk47" />
+            <ScalarProperty Name="sea47" ColumnName="sea47" />
+            <ScalarProperty Name="inv47" ColumnName="inv47" />
+            <ScalarProperty Name="stk49" ColumnName="stk49" />
+            <ScalarProperty Name="sea49" ColumnName="sea49" />
+            <ScalarProperty Name="inv49" ColumnName="inv49" />
+            <ScalarProperty Name="stk41" ColumnName="stk41" />
+            <ScalarProperty Name="sea41" ColumnName="sea41" />
+            <ScalarProperty Name="dmn41" ColumnName="dmn41" />
+            <ScalarProperty Name="wmn41" ColumnName="wmn41" />
+            <ScalarProperty Name="chgstamp" ColumnName="chgstamp" />
+            <ScalarProperty Name="ROWID" ColumnName="ROWID" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams>
+      <Diagram Name="ssc1200027_Planograms">
+        <EntityTypeShape EntityType="ssc1200028_ssc_spacemanModel.FIXEL" Width="1.5" PointX="5.75" PointY="0.75" Height="18.710511067708335" IsExpanded="true" />
+        <EntityTypeShape EntityType="ssc1200028_ssc_spacemanModel.PLANO_KEY" Width="1.5" PointX="0.75" PointY="5.75" Height="3.7109993489583317" IsExpanded="true" />
+        <EntityTypeShape EntityType="ssc1200028_ssc_spacemanModel.PLANOGRAM" Width="1.5" PointX="2.75" PointY="5.75" Height="9.4800423177083317" IsExpanded="true" />
+        <EntityTypeShape EntityType="ssc1200028_ssc_spacemanModel.POSITION" Width="1.5" PointX="7.75" PointY="0.75" Height="16.979798177083335" IsExpanded="true" />
+        <EntityTypeShape EntityType="ssc1200028_ssc_spacemanModel.PRODUCT" Width="1.5" PointX="9.75" PointY="0.75" Height="26.402568359375003" IsExpanded="true" />
+        <EntityTypeShape EntityType="ssc1200028_ssc_spacemanModel.PRODUCT_LIST" Width="1.5" PointX="11.75" PointY="0.75" Height="11.787659505208332" IsExpanded="true" />
+        <EntityTypeShape EntityType="ssc1200028_ssc_spacemanModel.ssc_assortment_change_NewItemStrategy" Width="1.5" PointX="13.75" PointY="0.75" Height="1.018779296875" IsExpanded="true" />
+        <EntityTypeShape EntityType="ssc1200028_ssc_spacemanModel.ssc_assortment_change_snapshot" Width="1.5" PointX="0.75" PointY="1" Height="3.7109993489583313" IsExpanded="true" />
+        <EntityTypeShape EntityType="ssc1200028_ssc_spacemanModel.ssc_assortment_change_snapshot_detail" Width="1.5" PointX="3" PointY="1" Height="3.7109993489583317" IsExpanded="true" />
+        <EntityTypeShape EntityType="ssc1200028_ssc_spacemanModel.ssc_sku_status" Width="1.5" PointX="13.75" PointY="3.75" Height="4.2879036458333353" IsExpanded="true" />
+        <AssociationConnector Association="ssc1200028_ssc_spacemanModel.FK_asst_chg_snap_id" ManuallyRouted="false">
+          <ConnectorPoint PointX="2.25" PointY="2.8554996744791659" />
+          <ConnectorPoint PointX="3" PointY="2.8554996744791659" />
+        </AssociationConnector>
+      </Diagram>
+    </Diagrams>
+  </Designer>
+</edmx:Edmx>
